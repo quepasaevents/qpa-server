@@ -3,10 +3,14 @@ import { Link } from "react-router-dom"
 import * as React from "react"
 import styled from "@emotion/styled"
 
-const Header = () => (
+interface Props {
+  className?: string
+}
+
+const Header = (props: Props) => (
   <AppContext>
     {({ me }) => (
-      <Root>
+      <Root className={props.className}>
         <Menu />
         <Title />
         <LinksSection>
@@ -36,7 +40,6 @@ const Title = styled.div`
   flex: 1;
 `
 const Root = styled.div`
-  height: 48px;
   background: rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: row;

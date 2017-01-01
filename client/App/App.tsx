@@ -18,11 +18,12 @@ import { AppContextProvider, AppContext } from "./Context/AppContext"
 import Header from "./Header/Header"
 import Login from "./Auth/Login"
 import styled from "@emotion/styled"
+import Footer from "./Footer";
 
 
 const App = () => (
   <Root>
-    <Header />
+    <StyledHeader />
     <Content>
       <Switch>
         <Route path="/create" component={CreateEvent} />
@@ -37,14 +38,29 @@ const App = () => (
         <Redirect to="/" />
       </Switch>
     </Content>
+    <StyledFooter />
   </Root>
 )
 
 const Root = styled.div`
-
+  display: grid;
+  height: 100%;
+  grid-template-columns: 1fr;
+  grid-template-rows: [header] 48px [body] 1fr [footer] 32px;
 `
+
 const Content = styled.div`
+  grid-row: body;
   display: flex;
+  flex-direction: row;
   justify-content: center;
+  align-items: center;
+`
+
+const StyledFooter = styled(Footer)`
+  grid-row: footer
+`
+const StyledHeader = styled(Header)`
+  grid-row: header
 `
 export default App

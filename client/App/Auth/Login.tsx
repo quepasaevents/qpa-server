@@ -24,11 +24,13 @@ const Input = styled.input`
   font-size: 24px;
   text-align: center;
   color: rgba(0,0,0,.7);
+  margin-top: 18px;
 `
 const Button = styled.button`
   height: 38px;
   width: 68px;
   align-self: center;
-  margin-top: 8px;
+  margin-top: 48px;
+  
 `
 export default Login
