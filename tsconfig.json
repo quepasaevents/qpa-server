@@ -1,9 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2015",
     "module": "commonjs",
     "outDir": "dist/"
   },
+  "lib": [
+    "es2016"
+  ],
   "exclude": [
     "node_modules"
   ]
