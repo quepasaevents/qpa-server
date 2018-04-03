@@ -16,6 +16,9 @@
     "typescript": "^2.8.1"
   },
   "scripts": {
-    "build": "./node_modules/.bin/tsc"
+    "build": "./node_modules/.bin/tsc",
+    "deploy": "gcloud beta functions deploy isUserAvailable --trigger-http",
+    "logs": "gcloud beta functions logs read"
+
   }
 }

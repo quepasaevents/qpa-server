@@ -16,6 +16,7 @@ exports.isUserAvailable = (req, res) => __awaiter(this, void 0, void 0, function
         email: params.email,
         username: params.username
     });
+    console.log('got user from repository', JSON.stringify(user));
     res.send({
         exists: !!user
     });

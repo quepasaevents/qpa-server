@@ -25,6 +25,7 @@ export default class Repository {
   }
 
   static async getUser (user: UserKeys) {
+    console.log('Search for user', JSON.stringify(user))
     let query = datastore
       .createQuery('user')
 
@@ -37,7 +38,12 @@ export default class Repository {
 
     return await datastore.runQuery(query)
       .then(results => {
-        return results[0]
+        console.log('Got results', JSON.stringify(results))
+        const resultSet = results[0]
+        if (resultSet.length > 1) {
+          console.warn('Got more than one user, should have gotten at most one', JSON.stringify(resultSet))
+        }
+        return resultSet.length ? resultSet[0] : null
       });
   };
 }

@@ -9,6 +9,7 @@ export const isUserAvailable = async (req, res) => {
     username: params.username as string
   })
 
+  console.log('got user from repository', JSON.stringify(user))
   res.send({
     exists: !!user
   });
