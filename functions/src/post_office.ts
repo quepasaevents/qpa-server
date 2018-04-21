@@ -11,6 +11,7 @@ interface Email {
 }
 
 export const sendEmail = async (email: Email) => {
+  console.log('Will try to send following email', JSON.stringify(email))
   return new Promise((resolve, reject) => {
     mailgun.messages().send(email, function (error, body) {
       if (error) {
@@ -19,6 +20,5 @@ export const sendEmail = async (email: Email) => {
         resolve(body)
       }
     });
-
   })
 }

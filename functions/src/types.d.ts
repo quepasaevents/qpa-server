@@ -14,15 +14,16 @@ export interface SessionInvite {
 }
 
 interface DBEntity {
-  id: string
+  id?: string
 }
 
 interface UserKeys {
   username: string,
   email: string
 }
+interface UserProperties extends UserKeys {
+  name: string
+}
 
 interface User extends UserKeys, DBEntity {
-  firstName: string
-  lastName?: string
 }
