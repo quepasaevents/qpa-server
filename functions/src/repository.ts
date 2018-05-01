@@ -1,6 +1,6 @@
 const Datastore = require('@google-cloud/datastore')
-import {SessionInvite, User, UserKeys} from './types'
-import { projectId } from './config'
+import {SessionInvite, User, UserKeys, UserProperties} from './types'
+import {projectId} from './config'
 
 const datastore = Datastore({
   projectId: projectId,
@@ -8,12 +8,24 @@ const datastore = Datastore({
 
 export default class Repository {
 
-  static createUser(user: User) {
+  async createUser(userProperties: UserProperties): Promise<User> {
     const entity = {
-      key: datastore.key('User'),
-      data: user
+      key: datastore.key('user'),
+      data: userProperties
     }
-    return datastore.save(entity)
+
+    return new Promise((resolve, reject) => {
+      return datastore.save(entity, err => {
+        if (err) {
+          reject(err)
+        } else {
+          const user = await this.getUser({
+            username: userProperties.username,
+          })
+          resolve(user as User)
+        }
+      })
+    })
   }
 
   static async saveSessionInvite(invite: SessionInvite) {
@@ -24,7 +36,7 @@ export default class Repository {
     return await datastore.save(entity)
   }
 
-  static async getUser (user: UserKeys) {
+  static async getUser(user: UserKeys): Promise<User> {
     let query = datastore
       .createQuery('user')
 
@@ -35,13 +47,19 @@ export default class Repository {
       query = query.filter('username', '=', user.username)
     }
 
-    return await datastore.runQuery(query)
-      .then(results => {
-        const resultSet = results[0]
-        if (resultSet.length > 1) {
-          console.warn('Got more than one user, should have gotten at most one', JSON.stringify(resultSet))
+    return new Promise((resolve, reject) => {
+      datastore.runQuery(query, (err, entities) => {
+        if (err) {
+          reject(err)
+        } else {
+          const resultSet = entities[0]
+          if (resultSet.length > 1) {
+            console.warn('Got more than one user, should have gotten at most one', JSON.stringify(resultSet))
+          }
+          const result: User = resultSet.length ? resultSet[0] : null
+          resolve(result)
         }
-        return resultSet.length ? resultSet[0] : null
-      });
+      })
+    })
   };
 }

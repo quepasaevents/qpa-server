@@ -1,5 +1,5 @@
 // Free API to get location from IP: http://freegeoip.net/json/149.11.144.50
-import randomstring from 'randomstring'
+import randomstring from 'random-string'
 
 import { sendEmail } from './post_office'
 import { domain } from './config'
@@ -8,9 +8,10 @@ import {SessionInvite, User} from "./types";
 
 const newInvite = (user: User): SessionInvite => {
   return {
-    oneTimeKey: randomstring.generate({
+    oneTimeKey: randomstring({
       length: 24,
-      charset: 'alphabetic'
+      letters: true,
+      special: false,
     }),
     userId: user.id
   }

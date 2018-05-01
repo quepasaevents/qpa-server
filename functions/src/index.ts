@@ -2,6 +2,7 @@ import {parse} from 'url'
 import {getUser, createUser} from './user'
 import { Request, Response } from 'express'
 import { inviteUser } from './session'
+import {UserProperties} from "./types";
 
 export const isUserAvailable = async (req: Request, res: Response) => {
   const params = parse(req.url, true).query
@@ -20,7 +21,10 @@ export const isUserAvailable = async (req: Request, res: Response) => {
 
 export const signup = async (req: Request, res: Response) => {
   const {username, email, name} = req.body
-  console.log('Signup request', {username, email, name})
+  console.log('typeof req.body', typeof req.body)
+  console.log('req.body', req.body)
+  const userProperties: UserProperties = {username, email, name}
+
   let newUser
   try {
     newUser = await createUser({
@@ -38,7 +42,7 @@ export const signup = async (req: Request, res: Response) => {
     inviteUser(newUser)
   } else {
     res.status(409)
-    res.send('Could not create user')
+    res.send(`Could not create user: ${JSON.stringify(userProperties)}`)
     return
   }
 }

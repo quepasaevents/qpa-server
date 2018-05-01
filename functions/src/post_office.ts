@@ -1,7 +1,6 @@
-import mailgun from 'mailgun-js';
-import {mailgun as mailgunConfig} from './config';
+import { mailgun as mailgunConfig } from './config';
 
-const client = mailgun(mailgunConfig);
+const client = require('mailgun-js')(mailgunConfig);
 
 interface Email {
   from: string
@@ -13,7 +12,7 @@ interface Email {
 export const sendEmail = async (email: Email) => {
   console.log('Will try to send following email', JSON.stringify(email))
   return new Promise((resolve, reject) => {
-    mailgun.messages().send(email, function (error, body) {
+    client.messages().send(email, function (error, body) {
       if (error) {
         reject(error)
       } else {
