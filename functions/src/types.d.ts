@@ -18,8 +18,8 @@ interface DBEntity {
 }
 
 interface UserKeys {
-  username: string,
-  email: string
+  username?: string,
+  email?: string
 }
 interface UserProperties extends UserKeys {
   name: string

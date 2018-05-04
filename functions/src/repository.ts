@@ -1,43 +1,48 @@
-const Datastore = require('@google-cloud/datastore')
+import * as Datastore from '@google-cloud/datastore'
 import {SessionInvite, User, UserKeys, UserProperties} from './types'
 import {projectId} from './config'
 
-const datastore = Datastore({
-  projectId: projectId,
-});
-
 export default class Repository {
+
+  datastore: Datastore
+
+  constructor() {
+    this.datastore = new Datastore({
+      projectId: projectId,
+    });
+  }
 
   async createUser(userProperties: UserProperties): Promise<User> {
     const entity = {
-      key: datastore.key('user'),
+      key: this.datastore.key(['user']),
       data: userProperties
     }
 
     return new Promise((resolve, reject) => {
-      return datastore.save(entity, err => {
+      return this.datastore.save(entity, err => {
         if (err) {
           reject(err)
+
         } else {
-          const user = await this.getUser({
+          this.getUser({
             username: userProperties.username,
-          })
-          resolve(user as User)
+          }).then(resolve)
+
         }
       })
     })
   }
 
-  static async saveSessionInvite(invite: SessionInvite) {
+  async saveSessionInvite(invite: SessionInvite) {
     const entity = {
-      key: datastore.key('SessionInvite'),
+      key: this.datastore.key(['SessionInvite']),
       data: invite
     }
-    return await datastore.save(entity)
+    return await this.datastore.save(entity)
   }
 
-  static async getUser(user: UserKeys): Promise<User> {
-    let query = datastore
+  async getUser(user: UserKeys): Promise<User> {
+    let query = this.datastore
       .createQuery('user')
 
     if (user.email) {
@@ -46,20 +51,23 @@ export default class Repository {
     if (user.username) {
       query = query.filter('username', '=', user.username)
     }
-
     return new Promise((resolve, reject) => {
-      datastore.runQuery(query, (err, entities) => {
-        if (err) {
-          reject(err)
-        } else {
-          const resultSet = entities[0]
-          if (resultSet.length > 1) {
-            console.warn('Got more than one user, should have gotten at most one', JSON.stringify(resultSet))
+      this.datastore.runQuery(query, (err, resultSet: Array<User>) => {
+        console.log('Result Set:', JSON.stringify(resultSet))
+          if (err) {
+            reject(err)
+          } else {
+            if (resultSet.length > 1) {
+              const message = `Got more than one user, should have gotten at most one: ${JSON.stringify(resultSet)}`
+              console.error(message)
+              reject(new Error(message))
+            }
+            const userData = resultSet.length ? resultSet[0] : null
+            const result: User = userData as User
+            resolve(result)
           }
-          const result: User = resultSet.length ? resultSet[0] : null
-          resolve(result)
         }
-      })
+      )
     })
-  };
+  }
 }
