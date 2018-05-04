@@ -1,13 +1,19 @@
 import {parse} from 'url'
-import {getUser, createUser} from './user'
+import UserManager from './user'
 import { Request, Response } from 'express'
-import { inviteUser } from './session'
+import SessionManager from './session'
+import Repository from './repository'
+import {projectId} from './config'
 import {UserProperties} from "./types";
+
+const repository = new Repository(projectId)
+const userManager = new UserManager(repository)
+const sessionManager = new SessionManager(repository)
 
 export const isUserAvailable = async (req: Request, res: Response) => {
   const params = parse(req.url, true).query
 
-  const user = await getUser({
+  const user = await userManager.getUser({
     email: params.email as string,
     username: params.username as string
   })
@@ -27,7 +33,7 @@ export const signup = async (req: Request, res: Response) => {
 
   let newUser
   try {
-    newUser = await createUser({
+    newUser = await userManager.createUser({
       username, email, name
     })
   } catch (e) {
@@ -39,7 +45,7 @@ export const signup = async (req: Request, res: Response) => {
   if (newUser) {
     res.status(200)
     res.write('User created. Invitation will be sent.')
-    inviteUser(newUser)
+    sessionManager.inviteUser(newUser)
   } else {
     res.status(409)
     res.send(`Could not create user: ${JSON.stringify(userProperties)}`)

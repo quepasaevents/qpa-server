@@ -8,11 +8,6 @@ export interface Session {
   location: string
 }
 
-export interface SessionInvite {
-  oneTimeKey: string
-  userId: string
-}
-
 interface DBEntity {
   id?: string
 }

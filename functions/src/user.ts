@@ -1,10 +1,20 @@
 import {User, UserKeys, UserProperties} from './types'
-import repository from './repository'
+import Repository from './repository'
 
-export const getUser = async (keys: UserKeys) => {
-  return await repository.getUser(keys)
+export default class UserManager {
+  repository: Repository
+
+  constructor(repository: Repository) {
+    this.repository = repository
+  }
+
+  getUser = async (keys: UserKeys) => {
+    return await this.repository.getUser(keys)
+  }
+
+  createUser = async (user: UserProperties): Promise<User> => {
+    return await this.repository.createUser(user)
+  }
+
 }
 
-export const createUser = async (user: UserProperties): Promise<User> => {
-  return await repository.createUser(user)
-}

@@ -5,7 +5,7 @@
     "outDir": "lib/"
   },
   "lib": [
-    "es2016"
+    "es2015"
   ],
   "exclude": [
     "node_modules"
