@@ -1,3 +1,6 @@
+import { SessionInvite } from '../session'
+
 it('test one', () => {
-  expect(1).toEqual(1)
+  const si = new SessionInvite({id: 'testId'})
+  expect(si.oneTimeKey).toHaveLength(24)
 })
