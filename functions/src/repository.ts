@@ -13,6 +13,7 @@ export default class Repository {
   }
 
   async createUser(userProperties: UserProperties): Promise<User> {
+    console.log(`Will try to create use with properties: ${JSON.stringify(userProperties)}`)
     const entity = {
       key: this.datastore.key(['user']),
       data: userProperties
@@ -21,13 +22,16 @@ export default class Repository {
     return new Promise((resolve, reject) => {
       return this.datastore.save(entity, err => {
         if (err) {
+          console.log(`Error creating user with properties: ${JSON.stringify(userProperties)}`)
           reject(err)
-
         } else {
+          console.log(`Successfully created user ${userProperties.username}. Will try to fetch now.`)
           this.getUser({
             username: userProperties.username,
           }).then(resolve)
-
+            .catch(e => {
+              console.error(`Error with fetch confirmation for new user ${userProperties.username}`)
+            })
         }
       })
     })
@@ -53,7 +57,7 @@ export default class Repository {
     }
     const resultPromise = new Promise((resolve, reject) => {
       this.datastore.runQuery(query, (err, resultSet: Array<User>) => {
-          console.log('Result Set:', JSON.stringify(resultSet))
+          console.log('Result Set:', JSON.stringify(resultSet[0]), JSON.stringify(resultSet[1]))
           if (err) {
             reject(err)
           } else {

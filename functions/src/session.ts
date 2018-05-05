@@ -1,6 +1,5 @@
 // Free API to get location from IP: http://freegeoip.net/json/149.11.144.50
 import randomstring from 'random-string'
-
 import {sendEmail} from './post_office'
 import {domain} from './config'
 import Repository from './repository'
@@ -12,6 +11,7 @@ export class SessionInvite {
   userId: string
 
   constructor(user: User) {
+    console.log('RANDOMSTRING', randomstring)
     this.oneTimeKey = randomstring({
       length: 24,
       letters: true,

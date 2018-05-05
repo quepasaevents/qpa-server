@@ -13,7 +13,7 @@ export default class UserManager {
   }
 
   createUser = async (user: UserProperties): Promise<User> => {
-    return await this.repository.createUser(user)
+    return this.repository.createUser(user)
   }
 
 }

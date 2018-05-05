@@ -1,6 +1,6 @@
 import {parse} from 'url'
 import UserManager from './user'
-import { Request, Response } from 'express'
+import {Request, Response} from 'express'
 import SessionManager from './session'
 import Repository from './repository'
 import {projectId} from './config'
@@ -25,24 +25,27 @@ export const isUserAvailable = async (req: Request, res: Response) => {
   return true
 }
 
-export const signup = async (req: Request, res: Response) => {
+const handleSignup = async (req: Request, res: Response) => {
   const {username, email, name} = req.body
   console.log('typeof req.body', typeof req.body)
   console.log('req.body', req.body)
   const userProperties: UserProperties = {username, email, name}
 
   let newUser
+  const userKeys = {
+    username, email, name
+  }
   try {
-    newUser = await userManager.createUser({
-      username, email, name
-    })
+    newUser = await userManager.createUser(userKeys)
   } catch (e) {
+    console.error('Error creating new user', userKeys, e)
     res.status(409)
     res.send(e.message)
     return
   }
 
   if (newUser) {
+    console.log('User creater', JSON.stringify(newUser))
     res.status(200)
     res.write('User created. Invitation will be sent.')
     sessionManager.inviteUser(newUser)
@@ -50,6 +53,16 @@ export const signup = async (req: Request, res: Response) => {
     res.status(409)
     res.send(`Could not create user: ${JSON.stringify(userProperties)}`)
     return
+  }
+}
+
+
+export const signup = async (req: Request, res: Response) => {
+  try {
+    handleSignup(req, res)
+  } catch (e) {
+    console.error('Signup handle error', e)
+    throw e
   }
 }
 
