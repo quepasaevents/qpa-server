@@ -40,7 +40,7 @@ export default class Repository {
 
       tx.runQuery(query, async (err, entities: Array<User>) => {
         if (err) {
-          console.error('Error confirming existance of user before saving', err)
+          console.error('Error confirming existence of user before saving', err)
           reject(err)
         } else if (entities) {
           console.warn('Refusing to save user since it already exists')
