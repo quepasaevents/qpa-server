@@ -1,6 +1,7 @@
 import * as Datastore from '@google-cloud/datastore'
 import {User, UserKeys, UserProperties} from './types'
 import {SessionInvite} from './session'
+import {DatastoreTransaction} from "@google-cloud/datastore/transaction";
 
 export default class Repository {
 
@@ -13,25 +14,41 @@ export default class Repository {
   }
 
   async createUser(userProperties: UserProperties): Promise<User> {
+    if (!(userProperties.username && userProperties.email)) {
+      const message = `Cannot create user without username and email: ${userProperties}`
+      console.error(message)
+      return Promise.reject(new Error(message))
+    }
+
     console.log(`Will try to create use with properties: ${JSON.stringify(userProperties)}`)
-    const entity = {
+    const entityToSave = {
       key: this.datastore.key(['user']),
       data: userProperties
     }
 
-    return new Promise((resolve, reject) => {
-      return this.datastore.save(entity, err => {
+    return new Promise(async (resolve, reject) => {
+      const tx: DatastoreTransaction = await this.datastore.transaction()
+      await tx.run()
+      let query = tx.createQuery('user')
+
+      if (userProperties.email) {
+        query = query.filter('email', '=', userProperties.email)
+      }
+      if (userProperties.username) {
+        query = query.filter('username', '=', userProperties.username)
+      }
+
+      tx.runQuery(query, async (err, entities: Array<User>) => {
         if (err) {
-          console.log(`Error creating user with properties: ${JSON.stringify(userProperties)}`)
+          console.error('Error confirming existance of user before saving', err)
           reject(err)
+        } else if (entities) {
+          console.warn('Refusing to save user since it already exists')
+          reject(new Error(`Refusing to save user since it already exists ${userProperties}`))
         } else {
-          console.log(`Successfully created user ${userProperties.username}. Will try to fetch now.`)
-          this.getUser({
-            username: userProperties.username,
-          }).then(resolve)
-            .catch(e => {
-              console.error(`Error with fetch confirmation for new user ${userProperties.username}`)
-            })
+          await tx.save(entityToSave)
+          await tx.commit()
+          resolve(await this.getUser(userProperties))
         }
       })
     })
