@@ -36,6 +36,7 @@ const handleSignup = async (req: Request, res: Response) => {
     username, email, name
   }
   try {
+    console.log(`Will try to create new user ${userKeys}`)
     newUser = await userManager.createUser(userKeys)
   } catch (e) {
     console.error('Error creating new user', userKeys, e)
@@ -45,7 +46,7 @@ const handleSignup = async (req: Request, res: Response) => {
   }
 
   if (newUser) {
-    console.log('User creater', JSON.stringify(newUser))
+    console.log('User created', JSON.stringify(newUser))
     res.status(200)
     res.write('User created. Invitation will be sent.')
     sessionManager.inviteUser(newUser)
