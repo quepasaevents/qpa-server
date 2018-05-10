@@ -45,16 +45,22 @@ const handleSignup = async (req: Request, res: Response) => {
     return
   }
 
-  if (newUser) {
-    console.log('User created', JSON.stringify(newUser))
-    res.status(200)
-    res.write('User created. Invitation will be sent.')
-    sessionManager.inviteUser(newUser)
-  } else {
+  if (!newUser) {
     res.status(409)
     res.send(`Could not create user: ${JSON.stringify(userProperties)}`)
     return
   }
+
+  console.log('User created', JSON.stringify(newUser))
+  res.status(200)
+  res.send('User created. Invitation will be sent.')
+
+  try {
+    await sessionManager.inviteUser(newUser)
+  } catch (e) {
+    console.error('Error sending invitation', e)
+  }
+
 }
 
 

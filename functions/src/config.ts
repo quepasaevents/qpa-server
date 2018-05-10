@@ -1,6 +1,6 @@
 export const domain = 'quepasaalpujarra.com'
 export const mailgun = {
-  apiKey: 'key-64fc7260cecfd4a8d5fb51e97791b330',
+  apiKey: 'key-59ad615180cb44e4ff5fd41236a9694a',
   domain
 }
 export const projectId = 'calendar-189316'

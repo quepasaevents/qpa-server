@@ -15,7 +15,7 @@ export default class Repository {
 
   async createUser(userProperties: UserProperties): Promise<User> {
     if (!(userProperties.username && userProperties.email)) {
-      const message = `Cannot create user without username and email: ${userProperties}`
+      const message = `Cannot create user without username and email: ${JSON.stringify(userProperties)}`
       console.error(message)
       return Promise.reject(new Error(message))
     }
@@ -50,7 +50,7 @@ export default class Repository {
   async saveSessionInvite(invite: SessionInvite) {
     console.log('Will try and save session invite', invite)
     const entity = {
-      key: this.datastore.key(['SessionInvite']),
+      key: this.datastore.key(['session_invite']),
       data: invite
     }
     return this.datastore.save(entity)
@@ -78,7 +78,10 @@ export default class Repository {
             reject(new Error(message))
           } else {
             const userData = resultSet.length ? resultSet[0] : null
-            const result: User = userData as User
+            const result: User = {
+              ...userData,
+              id: userData[Datastore.KEY].id
+            } as User
             resolve(result)
           }
         }
