@@ -41,7 +41,7 @@ type SessionRequest = DBEntity & {
   hash: string
   email: string // todo: change this to email hash
   userAgent: string
-  isAddress: Array<number>
+  ipAddress: Array<number>
 }
 
 export default class SessionManager {
@@ -91,14 +91,13 @@ export default class SessionManager {
         isValid: true,
         hash: generateHash(),
         userAgent: sessionRequest.userAgent,
-        ipAddress: sessionRequest.isAddress,
+        ipAddress: sessionRequest.ipAddress,
       }
       const persistedSession = await this.repository.createSession(session)
       return Promise.resolve(persistedSession)
     } else {
       return Promise.reject(`User didn't match for ${sessionRequest.email}`)
     }
-
   }
 }
 

@@ -76,8 +76,29 @@ export const signup = async (req: Request, res: Response) => {
 
 const handleSignin = async (req: Request, res: Response) => {
   const params = parse(req.url, true).query
+  const ip = req.ip.split('.').map(parseInt)
+
   console.log('Got sign in request with params', JSON.stringify(params))
-  sessionManager
+  const session = await sessionManager.initiateSession({
+    hash: params.hash as string,
+    email: params.email as string,
+    ipAddress: ip,
+    userAgent: req.headers['user-agent'] as string,
+  })
+
+  if (!session) {
+    res.status(403)
+    res.send('Could not initiate session with the given data')
+    return
+  }
+
+  res.status(200)
+  // todo: invalidate session invite
+
+  res.send('Session initiated')
+
+
+
 }
 
 export const signin = async (req: Request, res: Response) => {
