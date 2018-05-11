@@ -60,7 +60,7 @@ export default class Repository {
     const ds = (datastore || this.datastore)
     let query = ds.createQuery('session_invite')
       .filter('hash', hash)
-    const resultPromise = new Promise((resolve: (SessionInvite) => void, reject) => {
+    return new Promise((resolve: (SessionInvite) => void, reject) => {
       ds.runQuery(query, (err, resultSet: Array<SessionInvite>) => {
         if (err) {
           reject(err)
@@ -75,7 +75,6 @@ export default class Repository {
         }
       })
     })
-    return resultPromise
   }
 
   async createSession(session: Session): Promise<Session> {
