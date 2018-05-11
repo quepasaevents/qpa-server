@@ -3,21 +3,28 @@ const randomstring = require('random-string')
 import {sendEmail} from './post_office'
 import {domain} from './config'
 import Repository from './repository'
-import {User} from "./types";
+import {DBEntity, User} from "./types";
 
 export class SessionInvite {
 
-  oneTimeKey: string
+  hash: string
   userId: string
+  timeValidated: number
 
   constructor(user: User) {
-    this.oneTimeKey = randomstring({
-      length: 24,
+    this.hash = randomstring({
+      length: 48,
       letters: true,
       special: false
     })
     this.userId = user.id
+    this.timeValidated = -1
   }
+}
+
+type SessionRequest = DBEntity & {
+  hash: string
+  email: string // todo: change this to email hash
 }
 
 export default class SessionManager {
@@ -42,7 +49,7 @@ export default class SessionManager {
         const sentMail = await sendEmail({
           to: user.email,
           from: `signin@${domain}`,
-          text: `invitation for session key: ${invite.oneTimeKey}`,
+          text: `invitation for session key: ${invite.hash}`,
           subject: 'Invitation for session'
         })
         console.log(`Sent invitation to ${user.email}`)
@@ -50,6 +57,11 @@ export default class SessionManager {
         console.error('Failed to send invitation email', invite)
         throw e;
       }
+    }
+
+    initiateSession = async (sessionRequest: SessionRequest) => {
+      const session: SessionInvite = this.repository.getSessionInvite(sessionRequest.hash)
+
     }
 }
 

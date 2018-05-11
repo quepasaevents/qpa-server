@@ -56,14 +56,36 @@ export default class Repository {
     return this.datastore.save(entity)
   }
 
-  async getUser(user: UserKeys, datastore?: Datastore | DatastoreTransaction): Promise<User> {
+  async getSessionInvite(hash: string, datastore?: Datastore | DatastoreTransaction): Promise<SessionInvite | null> {
+    const ds = (datastore || this.datastore)
+    let query = ds.createQuery('session_invite')
+      .filter('hash', hash)
+    const resultPromise = new Promise((resolve: (SessionInvite)=>void, reject) => {
+      ds.runQuery(query, (err, resultSet: Array<SessionInvite>) => {
+        if (err) {
+          reject(err)
+        } else if (!resultSet) {
+          // resolve(null)
+        } else if (resultSet.length > 1) {
+          const message = `Got more than two invited for hash ${hash}`
+          console.warn(`Got more than two invited for hash ${hash}`)
+          reject(new Error(message))
+        } else {
+          resolve(resultSet[0])
+        }
+      })
+    })
+    return resultPromise
+  }
+
+  async getUser(userKeys: UserKeys, datastore?: Datastore | DatastoreTransaction): Promise<User> {
     const ds = (datastore || this.datastore)
     let query = ds.createQuery('user')
-    if (user.email) {
-      query = query.filter('email', '=', user.email)
+    if (userKeys.email) {
+      query = query.filter('email', '=', userKeys.email)
     }
-    if (user.username) {
-      query = query.filter('username', '=', user.username)
+    if (userKeys.username) {
+      query = query.filter('username', '=', userKeys.username)
     }
     const resultPromise = new Promise((resolve, reject) => {
       ds.runQuery(query, (err, resultSet: Array<User>) => {

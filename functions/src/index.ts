@@ -69,6 +69,24 @@ export const signup = async (req: Request, res: Response) => {
     handleSignup(req, res)
   } catch (e) {
     console.error('Signup handle error', e)
+    res.send('Signup handle error')
+    throw e
+  }
+}
+
+const handleSignin = async (req: Request, res: Response) => {
+  const params = parse(req.url, true).query
+  console.log('Got sign in request with params', JSON.stringify(params))
+  sessionManager
+}
+
+export const signin = async (req: Request, res: Response) => {
+  try {
+    handleSignin(req, res)
+  } catch (e) {
+    console.error('Sign-in handle error', e)
+    res.send('Sign-in handle error')
+    res.status(500)
     throw e
   }
 }

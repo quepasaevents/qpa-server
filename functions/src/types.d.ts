@@ -10,10 +10,11 @@ export interface Session {
 
 interface DBEntity {
   id?: string
+  ctime?: number,
 }
 
 interface UserKeys {
-  username?: string,
+  username?: string
   email?: string
 }
 interface UserProperties extends UserKeys {
