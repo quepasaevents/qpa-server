@@ -58,6 +58,8 @@ const handleSignup = async (req: Request, res: Response) => {
   try {
     await sessionManager.inviteUser(newUser)
   } catch (e) {
+    res.status(500)
+    res.send(`Error sending invitation. ${e.message}`)
     console.error('Error sending invitation', e)
   }
 
@@ -95,7 +97,7 @@ const handleSignin = async (req: Request, res: Response) => {
   res.status(200)
   // todo: invalidate session invite
 
-  res.send('Session initiated')
+  res.send(`Session initiated: ${JSON.stringify(session)}`)
 
 
 
@@ -110,12 +112,4 @@ export const signin = async (req: Request, res: Response) => {
     res.status(500)
     throw e
   }
-}
-
-export const requestSessionInvite = async (req, res) => {
-
-}
-
-export const startSession = async (req, res) => {
-
 }

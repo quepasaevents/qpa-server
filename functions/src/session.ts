@@ -1,5 +1,4 @@
 // Free API to get location from IP: http://freegeoip.net/json/149.11.144.50
-import {startSession} from "./index";
 
 const randomstring = require('random-string')
 import {sendEmail} from './post_office'
@@ -7,7 +6,7 @@ import {domain} from './config'
 import Repository from './repository'
 import {DBEntity, User} from "./types";
 
-const generateHash = randomstring({
+const generateHash = () => randomstring({
   length: 48,
   letters: true,
   special: false
@@ -96,7 +95,8 @@ export default class SessionManager {
       const persistedSession = await this.repository.createSession(session)
       return Promise.resolve(persistedSession)
     } else {
-      return Promise.reject(`User didn't match for ${sessionRequest.email}`)
+      console.warn(`user ids didn't match. userId: ${matchingUser.id}. sessionUserId: ${sessionInvite.userId}`)
+      return Promise.resolve(null)
     }
   }
 }
