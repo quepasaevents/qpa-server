@@ -37,7 +37,7 @@ export default class Repository {
 
       console.log(`Will try to create user with properties: ${JSON.stringify(userProperties)}`)
       const entityToSave = {
-        key: this.datastore.key(['user']),
+        key: this.datastore.key(['User']),
         data: userProperties
       }
 
@@ -50,7 +50,7 @@ export default class Repository {
   async saveSessionInvite(invite: SessionInvite) {
     console.log('Will try and save session invite', invite)
     const entity = {
-      key: this.datastore.key(['session_invite']),
+      key: this.datastore.key(['SessionInvite']),
       data: invite
     }
     return this.datastore.save(entity)
@@ -58,7 +58,7 @@ export default class Repository {
 
   async getSessionInvite(hash: string, datastore?: Datastore | DatastoreTransaction): Promise<SessionInvite | null> {
     const ds = (datastore || this.datastore)
-    let query = ds.createQuery('session_invite')
+    let query = ds.createQuery('SessionInvite')
       .filter('hash', hash)
     return new Promise((resolve: (SessionInvite) => void, reject) => {
       ds.runQuery(query, (err, resultSet: Array<SessionInvite>) => {
@@ -80,10 +80,10 @@ export default class Repository {
   async createSession(session: Session): Promise<Session> {
     console.log(`Will try to save session ${JSON.stringify(session)}`)
     await this.datastore.save({
-      key: this.datastore.key(['session']),
+      key: this.datastore.key(['Session']),
       data: session
     })
-    const query = this.datastore.createQuery('session')
+    const query = this.datastore.createQuery('Session')
       .filter('hash', session.hash)
       .filter('userId', session.userId)
     return new Promise((resolve: (Session) => void, reject) => {
@@ -104,7 +104,7 @@ export default class Repository {
 
   async getUser(userKeys: UserKeys, datastore?: Datastore | DatastoreTransaction): Promise<User> {
     const ds = (datastore || this.datastore)
-    let query = ds.createQuery('user')
+    let query = ds.createQuery('User')
     if (userKeys.email) {
       query = query.filter('email', '=', userKeys.email)
     }
