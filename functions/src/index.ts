@@ -4,13 +4,14 @@ import {Request, Response} from 'express'
 import SessionManager from './session'
 import Repository from './repository'
 import {projectId} from './config'
-import {UserProperties} from "./types";
+import {UserProperties} from "./types"
+import * as functions from 'firebase-functions';
 
 const repository = new Repository(projectId)
 const userManager = new UserManager(repository)
 const sessionManager = new SessionManager(repository)
 
-export const isUserAvailable = async (req: Request, res: Response) => {
+export const isUserAvailable = functions.https.onRequest(async (req: Request, res: Response) => {
   const params = parse(req.url, true).query
 
   const user = await userManager.getUser({
@@ -23,9 +24,9 @@ export const isUserAvailable = async (req: Request, res: Response) => {
   });
 
   return true
-}
+})
 
-const handleSignup = async (req: Request, res: Response) => {
+const handleSignup = functions.https.onRequest(async (req: Request, res: Response) => {
   const {username, email, name} = req.body
   console.log('typeof req.body', typeof req.body)
   console.log('req.body', req.body)
@@ -63,10 +64,10 @@ const handleSignup = async (req: Request, res: Response) => {
     console.error('Error sending invitation', e)
   }
 
-}
+})
 
 
-export const signup = async (req: Request, res: Response) => {
+export const signup = functions.https.onRequest(async (req: Request, res: Response) => {
   try {
     handleSignup(req, res)
   } catch (e) {
@@ -74,11 +75,11 @@ export const signup = async (req: Request, res: Response) => {
     res.send('Signup handle error')
     throw e
   }
-}
+})
 
-const handleSignin = async (req: Request, res: Response) => {
+const handleSignin = functions.https.onRequest(async (req: Request, res: Response) => {
   const params = parse(req.url, true).query
-  const ip = req.ip.split('.').map(parseInt)
+  const ip = req.ip.split('.').map(num => parseInt(num))
 
   console.log('Got sign in request with params', JSON.stringify(params))
   const session = await sessionManager.initiateSession({
@@ -94,17 +95,16 @@ const handleSignin = async (req: Request, res: Response) => {
     return
   }
 
+
   res.status(200)
   // todo: invalidate session invite
-
+  res.setHeader('set-cookie', `sh=${session.hash}; Secure;`)
   res.send(`Session initiated: ${JSON.stringify(session)}`)
+})
 
-
-
-}
-
-export const signin = async (req: Request, res: Response) => {
+export const signin = functions.https.onRequest(async (req: Request, res: Response) => {
   try {
+    console.log('Will handle signin request')
     handleSignin(req, res)
   } catch (e) {
     console.error('Sign-in handle error', e)
@@ -112,4 +112,4 @@ export const signin = async (req: Request, res: Response) => {
     res.status(500)
     throw e
   }
-}
+})

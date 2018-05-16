@@ -62,7 +62,7 @@ export default class SessionManager {
     }
 
     try {
-      const sentMail = await sendEmail({
+      await sendEmail({
         to: user.email,
         from: `signin@${domain}`,
         text: `invitation for session key: ${invite.hash}`,
@@ -83,7 +83,9 @@ export default class SessionManager {
     const matchingUser: User = await this.repository.getUser({
       email: sessionRequest.email
     })
-    if (matchingUser.id !== sessionInvite.userId) {
+    console.log('typeof matchingUser.id', typeof matchingUser.id)
+    console.log('typeof sessionInvite.userId', typeof sessionInvite.userId)
+    if (matchingUser.id === sessionInvite.userId) {
       const session: Session = {
         userId: matchingUser.id,
         ctime: Date.now(),

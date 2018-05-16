@@ -24,7 +24,7 @@ export default class Repository {
       const tx: DatastoreTransaction = await this.datastore.transaction()
       await tx.run()
 
-      for (let key in ['username', 'email']) {
+      for (const key in ['username', 'email']) {
         const userWithKey = await this.getUser({
           [key]: userProperties[key]
         }, tx)
@@ -41,7 +41,7 @@ export default class Repository {
         data: userProperties
       }
 
-      await tx.save(entityToSave)
+      tx.save(entityToSave)
       await tx.commit()
       resolve(await this.getUser(userProperties))
     })
@@ -58,19 +58,21 @@ export default class Repository {
 
   async getSessionInvite(hash: string, datastore?: Datastore | DatastoreTransaction): Promise<SessionInvite | null> {
     const ds = (datastore || this.datastore)
-    let query = ds.createQuery('SessionInvite')
+    const query = ds.createQuery('SessionInvite')
       .filter('hash', hash)
     return new Promise((resolve: (SessionInvite) => void, reject) => {
       ds.runQuery(query, (err, resultSet: Array<SessionInvite>) => {
         if (err) {
           reject(err)
         } else if (!resultSet) {
-          // resolve(null)
+          console.log('Could not find any session for hash', hash)
+          resolve(null)
         } else if (resultSet.length > 1) {
           const message = `Got more than two invited for hash ${hash}`
           console.warn(`Got more than two invited for hash ${hash}`)
           reject(new Error(message))
         } else {
+          console.log(`Found invitation, ${resultSet[0]}`)
           resolve(resultSet[0])
         }
       })
