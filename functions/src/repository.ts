@@ -29,7 +29,8 @@ export default class Repository {
           [key]: userProperties[key]
         }, tx)
         if (userWithKey) {
-          reject(new Error(`Error creating new user: ${key} ${userWithKey[key]} already exists.`))
+          const message = `Error creating new user: ${key} ${userWithKey[key]} already exists.`
+          reject(new Error(message))
           return
         }
 

@@ -9,8 +9,16 @@
     "public": "public",
     "rewrites": [
       {
-        "source": "/isUserAvailable",
+        "source": "/api/isUserAvailable",
         "function": "isUserAvailable"
+      },
+      {
+        "source": "/api/signup",
+        "function": "signup"
+      },
+      {
+        "source": "/api/signin",
+        "function": "signin"
       },
       {
         "source": "**",
