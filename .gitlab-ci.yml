@@ -5,9 +5,9 @@ cache:
     - node_modules/
     - app/bower_components
 
-deploy_production:
+deploy_staging:
   stage: deploy
-  environment: Production
+  environment: staging
   only:
     - master
   script:
