@@ -11,7 +11,17 @@ const repository = new Repository(projectId)
 const userManager = new UserManager(repository)
 const sessionManager = new SessionManager(repository)
 
-export const isUserAvailable = functions.https.onRequest(async (req: Request, res: Response) => {
+const IS_FIREBASE = true;
+
+const httpHandler = (func) => {
+  let result = func
+  if (IS_FIREBASE) {
+    result = functions.https.onRequest(func)
+  }
+  return result
+}
+
+export const isUserAvailable = httpHandler(async (req: Request, res: Response) => {
   const params = parse(req.url, true).query
 
   const user = await userManager.getUser({
@@ -26,7 +36,7 @@ export const isUserAvailable = functions.https.onRequest(async (req: Request, re
   return true
 })
 
-const handleSignup = functions.https.onRequest(async (req: Request, res: Response) => {
+const handleSignup = (async (req: Request, res: Response) => {
   const {username, email, name} = req.body
   console.log('typeof req.body', typeof req.body)
   console.log('req.body', req.body)
@@ -67,9 +77,9 @@ const handleSignup = functions.https.onRequest(async (req: Request, res: Respons
 })
 
 
-export const signup = functions.https.onRequest(async (req: Request, res: Response) => {
+export const signup = httpHandler(async (req: Request, res: Response) => {
   try {
-    handleSignup(req, res)
+    await handleSignup(req, res)
   } catch (e) {
     console.error('Signup handle error', e)
     res.send('Signup handle error')
@@ -77,7 +87,7 @@ export const signup = functions.https.onRequest(async (req: Request, res: Respon
   }
 })
 
-const handleSignin = functions.https.onRequest(async (req: Request, res: Response) => {
+const handleSignin = (async (req: Request, res: Response) => {
   const params = parse(req.url, true).query
   const ip = req.ip.split('.').map(num => parseInt(num))
 
@@ -88,6 +98,7 @@ const handleSignin = functions.https.onRequest(async (req: Request, res: Respons
     ipAddress: ip,
     userAgent: req.headers['user-agent'] as string,
   })
+  console.log('Session initiated', JSON.stringify(session))
 
   if (!session) {
     res.status(403)
@@ -102,10 +113,10 @@ const handleSignin = functions.https.onRequest(async (req: Request, res: Respons
   res.send(`Session initiated: ${JSON.stringify(session)}`)
 })
 
-export const signin = functions.https.onRequest(async (req: Request, res: Response) => {
+export const signin = httpHandler(async (req: Request, res: Response) => {
   try {
     console.log('Will handle signin request')
-    handleSignin(req, res)
+    await handleSignin(req, res)
   } catch (e) {
     console.error('Sign-in handle error', e)
     res.send('Sign-in handle error')

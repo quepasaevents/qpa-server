@@ -126,7 +126,7 @@ export default class Repository {
             reject(new Error(message))
           } else {
             const userData = resultSet.length ? resultSet[0] : null
-            const result: User = {
+            const result: User = userData && {
               ...userData,
               id: userData[Datastore.KEY].id
             } as User

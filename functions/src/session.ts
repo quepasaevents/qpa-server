@@ -70,7 +70,7 @@ export default class SessionManager {
       })
       console.log(`Sent invitation to ${user.email}`)
     } catch (e) {
-      console.error('Failed to send invitation email', invite)
+      console.error('Failed to send invitation email ', invite, e)
       throw e;
     }
   }
