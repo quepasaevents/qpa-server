@@ -24,16 +24,18 @@ export default class Repository {
       const tx: DatastoreTransaction = await this.datastore.transaction()
       await tx.run()
 
-      for (const key in ['username', 'email']) {
-        const userWithKey = await this.getUser({
-          [key]: userProperties[key]
-        }, tx)
-        if (userWithKey) {
-          const message = `Error creating new user: ${key} ${userWithKey[key]} already exists.`
-          reject(new Error(message))
-          return
-        }
+      const getUserRequests = ['username', 'email'].map(key => this.getUser({
+        [key]: userProperties[key]
+      }, tx))
 
+      const usersWithRequestedKeys = await Promise.all(getUserRequests)
+      const anyExistingUsersFound = usersWithRequestedKeys.filter(Boolean)
+
+      if (anyExistingUsersFound.length > 0) {
+        await tx.rollback()
+        const message = `Error creating new user: already exists. ${JSON.stringify(anyExistingUsersFound)}`
+        reject(new Error(message))
+        return
       }
 
       console.log(`Will try to create user with properties: ${JSON.stringify(userProperties)}`)
@@ -44,6 +46,7 @@ export default class Repository {
 
       tx.save(entityToSave)
       await tx.commit()
+
       resolve(await this.getUser(userProperties))
     })
   }
@@ -57,7 +60,7 @@ export default class Repository {
     return this.datastore.save(entity)
   }
 
-  async getSessionInvite(hash: string, datastore?: Datastore | DatastoreTransaction): Promise<SessionInvite | null> {
+  async getSessionInvite(hash: string, datastore ?: Datastore | DatastoreTransaction): Promise<SessionInvite | null> {
     const ds = (datastore || this.datastore)
     const query = ds.createQuery('SessionInvite')
       .filter('hash', hash)
@@ -82,10 +85,11 @@ export default class Repository {
 
   async createSession(session: Session): Promise<Session> {
     console.log(`Will try to save session ${JSON.stringify(session)}`)
-    await this.datastore.save({
-      key: this.datastore.key(['Session']),
-      data: session
-    })
+    await
+      this.datastore.save({
+        key: this.datastore.key(['Session']),
+        data: session
+      })
     const query = this.datastore.createQuery('Session')
       .filter('hash', session.hash)
       .filter('userId', session.userId)
@@ -105,7 +109,7 @@ export default class Repository {
     })
   }
 
-  async getUser(userKeys: UserKeys, datastore?: Datastore | DatastoreTransaction): Promise<User> {
+  async getUser(userKeys: UserKeys, datastore ?: Datastore | DatastoreTransaction): Promise<User> {
     const ds = (datastore || this.datastore)
     let query = ds.createQuery('User')
     if (userKeys.email) {
@@ -114,7 +118,7 @@ export default class Repository {
     if (userKeys.username) {
       query = query.filter('username', '=', userKeys.username)
     }
-    return new Promise((resolve: (User)=>void , reject) => {
+    return new Promise((resolve: (User) => void, reject) => {
       ds.runQuery(query, (err, resultSet: Array<User>) => {
           console.log('Result Set:', JSON.stringify(resultSet))
           if (!resultSet) {
