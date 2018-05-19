@@ -51,7 +51,7 @@ export default class SessionManager {
     this.repository = repository
   }
 
-  inviteUser = async (user: User) => {
+  inviteUser = async (user: User): Promise<SessionInvite> => {
     const invite = new SessionInvite(user)
     try {
       const persistedInvite = await this.repository.saveSessionInvite(invite)
@@ -61,18 +61,23 @@ export default class SessionManager {
       throw e;
     }
 
-    try {
-      await sendEmail({
-        to: user.email,
-        from: `signin@${domain}`,
-        text: `invitation for session key: ${invite.hash}`,
-        subject: 'Invitation for session'
-      })
-      console.log(`Sent invitation to ${user.email}`)
-    } catch (e) {
-      console.error('Failed to send invitation email ', invite, e)
-      throw e;
-    }
+    return new Promise(async (resolve: (SessionInvite) => void, reject)=>{
+      try {
+        await sendEmail({
+          to: user.email,
+          from: `signin@${domain}`,
+          text: `invitation for session key: ${invite.hash}`,
+          subject: 'Invitation for session'
+        })
+        resolve(invite)
+        console.log(`Sent invitation to ${user.email}`)
+      } catch (e) {
+        reject(e)
+        console.error('Failed to send invitation email ', invite, e)
+        throw e
+      }
+    })
+
   }
 
   initiateSession = async (sessionRequest: SessionRequest): Promise<Session> => {
