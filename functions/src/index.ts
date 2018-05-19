@@ -109,7 +109,7 @@ const handleSignin = (async (req: Request, res: Response) => {
 
   res.status(200)
   // todo: invalidate session invite
-  res.setHeader('set-cookie', `sh=${session.hash}; Secure;`)
+  res.setHeader('set-cookie', `__session=${session.hash}; Secure;`)
   res.send(`Session initiated: ${JSON.stringify(session)}`)
 })
 
