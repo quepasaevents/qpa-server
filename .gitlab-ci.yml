@@ -1,4 +1,4 @@
-image: mysocialobservations/firebase-tools
+image: mysocialobservations/firebase-tools:6.9-alpine
 
 cache:
   paths:
