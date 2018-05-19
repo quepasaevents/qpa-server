@@ -3,7 +3,6 @@ image: node:6.11.5
 cache:
   paths:
     - node_modules/
-    - app/bower_components
 
 deploy_staging:
   stage: deploy
@@ -11,6 +10,7 @@ deploy_staging:
   only:
     - master
   script:
+    - make configure-functions-staging
     - npm install -g firebase-tools
     - yarn
     - (cd functions; yarn)
