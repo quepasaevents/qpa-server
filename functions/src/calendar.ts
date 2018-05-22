@@ -9,7 +9,8 @@ export default class Calendar {
       maxResults: 10,
       singleEvents: true,
       orderBy: 'startTime',
-    }, (err, {data}) => {
+    }, (err, result) => {
+      const data = result && result.data
       if (err) {
         console.log('The API returned an error: ' + err);
         return
