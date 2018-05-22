@@ -8,5 +8,8 @@
   "dependencies": {
     "tslint": "^5.10.0",
     "typescript": "^2.8.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^22.2.3"
   }
 }

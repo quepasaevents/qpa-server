@@ -1,5 +1,4 @@
 import {Request, Response} from "express";
-import {parse} from 'url'
 import Calendar from './calendar';
 
 const calendar = new Calendar()

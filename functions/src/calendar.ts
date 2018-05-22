@@ -10,7 +10,10 @@ export default class Calendar {
       singleEvents: true,
       orderBy: 'startTime',
     }, (err, {data}) => {
-      if (err) return console.log('The API returned an error: ' + err);
+      if (err) {
+        console.log('The API returned an error: ' + err);
+        return
+      }
       const events = data.items;
       if (events.length) {
         console.log('Upcoming 10 events:');
