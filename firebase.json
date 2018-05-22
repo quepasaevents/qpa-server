@@ -21,6 +21,10 @@
         "function": "signin"
       },
       {
+        "source": "/api/events",
+        "function": "events"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
