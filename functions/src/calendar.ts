@@ -1,4 +1,3 @@
-import { google } from 'googleapis'
 import fetch from 'isomorphic-fetch';
 
 export default class Calendar {
