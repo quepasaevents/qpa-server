@@ -9,15 +9,15 @@ const calendar = new Calendar({
 })
 
 export const events = async (req: Request, res: Response) => {
-  let events
+  let result
   try {
-    events = await calendar.listEvents()
+    result = await calendar.listEvents()
   } catch (e) {
     console.log('Caught error while listing events', e)
     res.status(500)
     res.send('Error fetching events')
   }
-  res.send(events)
+  res.send(result)
   res.status(200)
 }
 
