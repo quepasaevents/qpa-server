@@ -27,8 +27,6 @@ export const isUserAvailable = async (req: Request, res: Response) => {
 
 const handleSignup = (async (req: Request, res: Response) => {
   const {username, email, name} = req.body
-  console.log('typeof req.body', typeof req.body)
-  console.log('req.body', req.body)
   const userProperties: UserProperties = {username, email, name}
 
   let newUser
@@ -64,7 +62,6 @@ const handleSignup = (async (req: Request, res: Response) => {
   }
 
 })
-
 
 export const signup = async (req: Request, res: Response) => {
   try {
