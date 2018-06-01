@@ -9,6 +9,7 @@ configure-functions:
 		| sed 's@_GCAL_CLIENT_EMAIL_@'"${GCAL_CLIENT_EMAIL}"'@' \
 		| sed 's@_GCP_PROJECT_ID_@'"${GCP_PROJECT_ID}"'@' > functions/src/config.ts
 configure-functions-staging:
+	@echo "Will populate config.ts with runtime secrets"
 	@$(MAKE) DOMAIN=${DOMAIN_STAGING} \
 		MAILGUN_API_KEY=${MAILGUN_API_KEY_STAGING} \
 		GCP_PROJECT_ID=${GCP_PROJECT_ID_STAGING} \
