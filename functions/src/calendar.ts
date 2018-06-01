@@ -3,11 +3,11 @@ import * as gapi from 'googleapis';
 import {auth, JWT} from 'google-auth-library';
 import Repository from "./repository";
 import {OAuth2Client} from "google-auth-library/build/src/auth/oauth2client";
-
+import atob from 'atob';
 
 type GCalConfig = {
   calendarId: string
-  privateKey: string
+  privateKeyBase64: string
   clientEmail: string
 }
 export default class Calendar {
@@ -26,7 +26,7 @@ export default class Calendar {
 
   getClient = async () => {
     const client: any = auth.fromJSON({
-      private_key: this.gcalConfig.privateKey,
+      private_key: atob(this.gcalConfig.privateKeyBase64),
       client_email: this.gcalConfig.clientEmail
     });
 

@@ -5,7 +5,7 @@ export const mailgun = {
 }
 export const gcal = {
   calendarId: '_GCAL_CALENDAR_ID_',
-  privateKey: '_GCAL_PRIVATE_KEY_',
+  privateKeyBase64: '_GCAL_PRIVATE_KEY_BASE64_',
   clientEmail: '_GCAL_CLIENT_EMAIL_'
 }
 export const projectId = '_GCP_PROJECT_ID_'
