@@ -19,13 +19,7 @@ const httpHandler = (func) => {
   return result
 }
 
-const userHandlers = {
-  isUserAvailable: httpHandler(isUserAvailableHandler),
-  signup: httpHandler(signupHandler),
-  signin: httpHandler(signinHandler),
-}
-
-export default {
-  ...userHandlers,
-  events: httpHandler(eventsHandler)
-}
+export const isUserAvailable = httpHandler(isUserAvailableHandler)
+export const signup = httpHandler(signupHandler)
+export const signin = httpHandler(signinHandler)
+export const events = httpHandler(eventsHandler)
