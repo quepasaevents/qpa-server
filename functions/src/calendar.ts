@@ -29,7 +29,8 @@ export default class Calendar {
     });
 
     client.scopes = ['https://www.googleapis.com/auth/calendar'];
-    return client.authorize() as OAuth2Client;
+    await client.authorize()
+    return client as OAuth2Client;
   }
 
   listEvents = async () => {
