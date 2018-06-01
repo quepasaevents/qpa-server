@@ -1,5 +1,4 @@
 configure-functions:
-	@echo ${GCAL_PRIVATE_KEY_BASE64}
 	@cat functions/src/config.tmpl.ts \
 		| sed 's&_EMAIL_DOMAIN_&'"${EMAIL_DOMAIN}"'&' \
 		| sed 's&_DOMAIN_&'"${DOMAIN}"'&' \
