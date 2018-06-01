@@ -1,6 +1,11 @@
 import {auth} from 'google-auth-library';
+import { atob } from 'atob';
 
 describe('cal access', () => {
+  it('atob test', () => {
+    expect(atob('aGVsbG8=')).toEqual('hello')
+  });
+
   it('try to access', async (done) => {
 
 
