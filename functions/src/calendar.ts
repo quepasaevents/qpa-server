@@ -68,7 +68,7 @@ export default class Calendar {
     }
 
     //todo: merge events with own metadata
-    return eventsResponse.data
+    return eventsResponse.data.items
   }
 
 }
