@@ -33,6 +33,27 @@ export default class Calendar {
     return client as OAuth2Client;
   }
 
+  createPrimaryCalendar = async ( ) => {
+    const client = await this.getClient()
+    const res = await client.request({
+      method: 'post',
+      url: 'https://www.googleapis.com/calendar/v3/calendars',
+      data: {
+        summary: 'primary events calendar'
+      }
+    });
+    console.log('res', res.data)
+    return res.data
+  }
+
+  listCalendars = async () => {
+    const client = await this.getClient()
+    const res = await client.request({
+      url: 'https://www.googleapis.com/calendar/v3/users/me/calendarList'
+    });
+    return (res.data as any).items;
+  }
+
   listEvents = async () => {
     const client = await this.getClient()
     let eventsResponse
