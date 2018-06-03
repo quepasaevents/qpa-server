@@ -10,7 +10,7 @@ const calendar = new Calendar({
   gcalConfig: gcalConfig
 })
 
-export const events = async (req: Request, res: Response) => {
+export const getEvents = async (req: Request, res: Response) => {
   let result
   try {
     result = await calendar.listEvents()
@@ -21,6 +21,19 @@ export const events = async (req: Request, res: Response) => {
   }
   res.send(result)
   res.status(200)
+}
+
+export const events = async (req: Request, res: Response) => {
+  let delegationHandler
+  if (req.method === 'GET') {
+    delegationHandler = getEvents
+  } else if (req.method === 'POST') {
+    delegationHandler = postEvent
+  } else {
+    res.sendStatus(400)
+    return
+  }
+  delegationHandler(req, res)
 }
 
 export const postEvent = async (req: Request, res: Response) => {
