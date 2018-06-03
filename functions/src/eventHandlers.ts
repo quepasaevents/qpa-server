@@ -42,6 +42,7 @@ export const postEvent = async (req: Request, res: Response) => {
       throw new Error('Session cookie required')
     }
   } catch (e) {
+    console.log('Exception getting session', e)
     res.status(401)
     res.send('Authentication required to post an event')
     return
