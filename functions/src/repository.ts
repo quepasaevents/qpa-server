@@ -109,6 +109,25 @@ export default class Repository {
     })
   }
 
+  async getSession(hash: string): Promise<Session> {
+    const query = this.datastore.createQuery('Session')
+      .filter('hash', hash)
+    return new Promise((resolve: (Session) => void, reject) => {
+      this.datastore.runQuery((query), (err, resultSet: Array<Session>) => {
+        if (err) {
+          reject(err)
+        } else if (!resultSet) {
+          resolve(null)
+        } else if (resultSet.length >1) {
+          const message = `Got more than one session with the same hash`
+          reject(message)
+        } else {
+          resolve(resultSet[0])
+        }
+      })
+    })
+  }
+
   async getUser(userKeys: UserKeys, datastore ?: Datastore | DatastoreTransaction): Promise<User> {
     const ds = (datastore || this.datastore)
     let query = ds.createQuery('User')

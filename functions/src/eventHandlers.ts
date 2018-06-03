@@ -1,19 +1,28 @@
 import {Request, Response} from "express";
-import Calendar from './calendar';
-import {projectId, gcal as gcalConfig} from './config'
+import CalendarManager from './calendar';
 import Repository from "./repository";
-// import {CalendarEvent} from "./types";
 import * as cookie from 'cookie'
+import SessionManager, {Session} from "./session";
+import UserManager from "./user";
 
-const calendar = new Calendar({
-  repository: new Repository(projectId),
-  gcalConfig: gcalConfig
-})
+
+let sessionManager, calendarManager
+export type Dependencies = {
+  repository: Repository,
+  userManager: UserManager,
+  sessionManager: SessionManager
+  calendarManager: CalendarManager,
+}
+
+export const setDependencies = (dependencies: Dependencies) => {
+  sessionManager = dependencies.sessionManager
+  calendarManager = dependencies.calendarManager
+}
 
 export const getEvents = async (req: Request, res: Response) => {
   let result
   try {
-    result = await calendar.listEvents()
+    result = await calendarManager.listEvents()
   } catch (e) {
     console.log('Caught error while listing events', e)
     res.status(500)
@@ -25,10 +34,11 @@ export const getEvents = async (req: Request, res: Response) => {
 
 export const postEvent = async (req: Request, res: Response) => {
   // const eventData: CalendarEvent = req.body;
-  let sessionId
+  let sessionHash, session: Session
   try {
-    sessionId = cookie.parse(req.headers.cookie).__session
-    if(!sessionId) {
+    sessionHash = cookie.parse(req.headers.cookie).__session
+    session = await sessionManager.getSession(sessionHash)
+    if (!sessionHash) {
       throw new Error('Session cookie required')
     }
   } catch (e) {
@@ -36,9 +46,9 @@ export const postEvent = async (req: Request, res: Response) => {
     res.send('Authentication required to post an event')
     return
   }
-  console.log('sessionId', sessionId)
+  console.log('sessionId', session.userId)
   res.status(200)
-  res.send(`sessionId: ${sessionId}`)
+  res.send(`sessionId: ${sessionHash}`)
 }
 
 export const events = async (req: Request, res: Response) => {

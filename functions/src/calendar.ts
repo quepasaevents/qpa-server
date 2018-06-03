@@ -8,7 +8,7 @@ type GCalConfig = {
   privateKeyBase64: string
   clientEmail: string
 }
-export default class Calendar {
+export default class CalendarManager {
   repository: Repository
   gcalConfig: GCalConfig
   gcalBaseURL: string

@@ -3,12 +3,20 @@ import UserManager from './user'
 import {Request, Response} from 'express'
 import SessionManager from './session'
 import Repository from './repository'
-import {projectId} from './config'
 import {UserProperties} from "./types"
 
-const repository = new Repository(projectId)
-const userManager = new UserManager(repository)
-const sessionManager = new SessionManager(repository)
+let repository, userManager, sessionManager
+export type Dependencies = {
+  repository: Repository,
+  userManager: UserManager,
+  sessionManager: SessionManager
+}
+
+export const setDependencies = (dependencies) => {
+  repository = dependencies.repository
+  userManager = dependencies.userManager
+  sessionManager = dependencies.sessionManager
+}
 
 export const isUserAvailable = async (req: Request, res: Response) => {
   const params = parse(req.url, true).query

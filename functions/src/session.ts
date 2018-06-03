@@ -104,5 +104,9 @@ export default class SessionManager {
       return Promise.resolve(null)
     }
   }
+
+  getSession = async(sessionHash: string): Promise<Session> => {
+    return await this.repository.getSession(sessionHash)
+  }
 }
 
