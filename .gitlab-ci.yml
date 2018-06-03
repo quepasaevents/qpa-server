@@ -11,6 +11,7 @@ deploy_staging:
   only:
     - master
   script:
+    - sudo apt-get install build-essential
     - make configure-functions-staging
     - yarn
     - (cd functions; yarn)
