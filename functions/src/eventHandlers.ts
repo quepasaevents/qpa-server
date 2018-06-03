@@ -23,6 +23,14 @@ export const getEvents = async (req: Request, res: Response) => {
   res.status(200)
 }
 
+export const postEvent = async (req: Request, res: Response) => {
+  // const eventData: CalendarEvent = req.body;
+  const sessionId = cookie.parse(req.headers.cookie).__session
+  console.log('sessionId', sessionId)
+  res.status(200)
+  res.send(`sessionId: ${sessionId}`)
+}
+
 export const events = async (req: Request, res: Response) => {
   let delegationHandler
   if (req.method === 'GET') {
@@ -36,10 +44,3 @@ export const events = async (req: Request, res: Response) => {
   delegationHandler(req, res)
 }
 
-export const postEvent = async (req: Request, res: Response) => {
-  const eventData: CalendarEvent = req.body;
-  const sessionId = cookie.parse(req.headers.cookie).__session
-  console.log('sessionId', sessionId)
-  res.status(200)
-  res.send(`sessionId: ${sessionId}`)
-}
