@@ -25,7 +25,14 @@ export const getEvents = async (req: Request, res: Response) => {
 
 export const postEvent = async (req: Request, res: Response) => {
   // const eventData: CalendarEvent = req.body;
-  const sessionId = cookie.parse(req.headers.cookie).__session
+  let sessionId
+  try {
+    sessionId = cookie.parse(req.headers.cookie).__session
+  } catch (e) {
+    res.status(401)
+    res.send('Authentication required to post an event')
+    return
+  }
   console.log('sessionId', sessionId)
   res.status(200)
   res.send(`sessionId: ${sessionId}`)

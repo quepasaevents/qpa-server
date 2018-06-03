@@ -3,6 +3,7 @@ image: devillex/docker-firebase:latest
 cache:
   paths:
     - node_modules/
+    - functions/node_modules/
 
 deploy_staging:
   stage: deploy
