@@ -3,7 +3,7 @@ import Calendar from './calendar';
 import {projectId, gcal as gcalConfig} from './config'
 import Repository from "./repository";
 import {CalendarEvent} from "./types";
-import cookie from 'cookie'
+import * as cookie from 'cookie'
 
 const calendar = new Calendar({
   repository: new Repository(projectId),
