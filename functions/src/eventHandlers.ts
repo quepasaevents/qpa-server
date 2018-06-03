@@ -2,7 +2,7 @@ import {Request, Response} from "express";
 import Calendar from './calendar';
 import {projectId, gcal as gcalConfig} from './config'
 import Repository from "./repository";
-import {CalendarEvent} from "./types";
+// import {CalendarEvent} from "./types";
 import * as cookie from 'cookie'
 
 const calendar = new Calendar({
@@ -28,6 +28,9 @@ export const postEvent = async (req: Request, res: Response) => {
   let sessionId
   try {
     sessionId = cookie.parse(req.headers.cookie).__session
+    if(!sessionId) {
+      throw new Error('Session cookie required')
+    }
   } catch (e) {
     res.status(401)
     res.send('Authentication required to post an event')
