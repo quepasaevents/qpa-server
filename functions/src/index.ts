@@ -7,7 +7,7 @@ import {
 
 import {
   events as eventsHandler,
-} from './calendarHandlers';
+} from './eventHandlers';
 
 const IS_FIREBASE = true;
 
