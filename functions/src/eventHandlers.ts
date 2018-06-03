@@ -36,6 +36,9 @@ export const postEvent = async (req: Request, res: Response) => {
   // const eventData: CalendarEvent = req.body;
   let sessionHash, session: Session
   try {
+    const cookiesHeader = req.headers.cookie
+    console.log('allHeaders', req.headers)
+    console.log('cookiesHeader', cookiesHeader)
     sessionHash = cookie.parse(req.headers.cookie).__session
     session = await sessionManager.getSession(sessionHash)
     if (!sessionHash) {
