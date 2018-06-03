@@ -28,10 +28,10 @@ const calendarManager = new Calendar({
 })
 
 setUserHandlerDependencies({
-  repository, userManager, sessionManager
+  userManager, sessionManager
 })
 setEventsHandlerDependencies({
-  repository, userManager, sessionManager, calendarManager
+  sessionManager, calendarManager
 })
 
 const httpHandler = (func) => {

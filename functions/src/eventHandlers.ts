@@ -1,15 +1,10 @@
 import {Request, Response} from "express";
 import CalendarManager from './calendar';
-import Repository from "./repository";
-import * as cookie from 'cookie'
-import SessionManager, {Session} from "./session";
-import UserManager from "./user";
-
+import SessionManager from "./session";
+import {AuthenticatedRequest, authRequest} from "./authRequest";
 
 let sessionManager, calendarManager
 export type Dependencies = {
-  repository: Repository,
-  userManager: UserManager,
   sessionManager: SessionManager
   calendarManager: CalendarManager,
 }
@@ -33,26 +28,14 @@ export const getEvents = async (req: Request, res: Response) => {
 }
 
 export const postEvent = async (req: Request, res: Response) => {
-  // const eventData: CalendarEvent = req.body;
-  let sessionHash, session: Session
-  try {
-    const cookiesHeader = req.headers.cookie
-    console.log('allHeaders', req.headers)
-    console.log('cookiesHeader', cookiesHeader)
-    sessionHash = cookie.parse(req.headers.cookie).__session
-    session = await sessionManager.getSession(sessionHash)
-    if (!sessionHash) {
-      throw new Error('Session cookie required')
-    }
-  } catch (e) {
-    console.log('Exception getting session', e)
-    res.status(401)
-    res.send('Authentication required to post an event')
-    return
+  await authRequest(sessionManager)(req, res)
+  const session = (req as AuthenticatedRequest).session
+  if (session.isValid) {
+    res.status(200)
+    res.send(`Session for user id: ${session.userId}`)
+  } else {
+    res.sendStatus(403)
   }
-  console.log('sessionId', session.userId)
-  res.status(200)
-  res.send(`sessionId: ${sessionHash}`)
 }
 
 export const events = async (req: Request, res: Response) => {

@@ -2,18 +2,15 @@ import {parse} from 'url'
 import UserManager from './user'
 import {Request, Response} from 'express'
 import SessionManager from './session'
-import Repository from './repository'
-import {UserProperties} from "./types"
+import {UserProperties} from './types'
 
-let repository, userManager, sessionManager
+let userManager, sessionManager
 export type Dependencies = {
-  repository: Repository,
   userManager: UserManager,
   sessionManager: SessionManager
 }
 
 export const setDependencies = (dependencies) => {
-  repository = dependencies.repository
   userManager = dependencies.userManager
   sessionManager = dependencies.sessionManager
 }
