@@ -2,6 +2,8 @@ import {Request, Response} from "express";
 import Calendar from './calendar';
 import {projectId, gcal as gcalConfig} from './config'
 import Repository from "./repository";
+import {CalendarEvent} from "./types";
+import cookie from 'cookie'
 
 const calendar = new Calendar({
   repository: new Repository(projectId),
@@ -22,5 +24,9 @@ export const events = async (req: Request, res: Response) => {
 }
 
 export const postEvent = async (req: Request, res: Response) => {
-  const {} = req.body;
+  const eventData: CalendarEvent = req.body;
+  const sessionId = cookie.parse(req.headers.cookie).__session
+  console.log('sessionId', sessionId)
+  res.status(200)
+  res.send(`sessionId: ${sessionId}`)
 }

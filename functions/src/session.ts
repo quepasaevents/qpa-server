@@ -88,8 +88,6 @@ export default class SessionManager {
     const matchingUser: User = await this.repository.getUser({
       email: sessionRequest.email
     })
-    console.log('typeof matchingUser.id', typeof matchingUser.id)
-    console.log('typeof sessionInvite.userId', typeof sessionInvite.userId)
     if (matchingUser.id === sessionInvite.userId) {
       const session: Session = {
         userId: matchingUser.id,

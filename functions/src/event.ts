@@ -1,49 +1,52 @@
-type EventTime = {
-  date: string // in format  "yyyy-mm-dd" for all-day event
-  dateTime: string // in RFC3339 e.g. 2002-10-02T10:00:00-05:00 or 2002-10-02T15:00:00Z
-  timeZone: string // IANA Timezone e.g. "Europe/Zurich"
-}
+import Calendar from './calendar';
+import Repository from "./repository";
+import {CalendarEvent} from './types'
+import * as JoiBase from "joi";
+import * as JoiTimezone from 'joi-timezone';
+import * as JoiPhoneNumber from 'joi-phone-number'
 
-// Event Timing is the instance that gets persisted over the calendar API
-// and contains just the necessary data to solve the scheduling. The rest
-// of the meta of an event is handled by the application directly.
-type EventTiming = {
-  // The (exclusive) end time of the event. For a recurring event, this
-  // is the end time of the first instance.
-  end: EventTime
+const Joi = JoiBase
+  .extend(JoiTimezone)
+  .extend(JoiPhoneNumber)
 
-  // The (inclusive) start time of the event. For a recurring event,
-  // this is the start time of the first instance.
-  start: EventTime
 
-  // For an instance of a recurring event, this is the time at which
-  // this event would start according to the recurrence data in the
-  // recurring event identified by recurringEventId. Immutable.
-  originalStartTime: EventTime
 
-  // List of RRULE, EXRULE, RDATE and EXDATE lines for a recurring event,
-  // as specified in RFC5545. Note that DTSTART and DTEND lines are not
-  // allowed in this field; event start and end times are specified in
-  // the start and end fields. This field is omitted for single events or
-  // instances of recurring events.
-  recurrence: string[]
+const EventTimingSchema = Joi.any()
 
-  status: "confirmed" | "tentative" | "cancelled"
-  calendarEventId: string
-}
+export const EventSchema = Joi.object().keys({
+  timeZone: Joi.string().timezone(),
+  owner: Joi.number().required(),
+  contactPhone: Joi.string().phoneNumber(),
+  contactEmail: Joi.string().email(),
+  locationAddress: Joi.string(),
+  location: Joi.string(),
+  locationCoordinate: Joi.array().items(Joi.number().min(-180).max(180)).length(2),
+  title: Joi.string().min(5).max(120),
+  description: Joi.string().min(160),
+  imageUrl: Joi.string(),
+  tags: Joi.array().items(Joi.string()).min(1),
+  gcalEntry: Joi.number().required(),
+  timing: EventTimingSchema.required()
+}).or('location', 'locationAddress', 'locationCoordinate')
 
-type CalendarEvent = {
-  timeZone?: string
-  owner: string
-  contactPhone: string
-  contactEmail: string
-  locationAddress: string
-  locationCoordinate: Array<number>,
-  title: string
-  description: string
-  imageUrl: string
-  tags: Array<string>
-  gcalEntry: number
-  id: number
-  timing: EventTiming
+export default class EventManager {
+  calendar: Calendar
+  repository: Repository
+
+  constructor(calendar: Calendar, repository: Repository) {
+    this.calendar = calendar
+    this.repository = repository
+  }
+
+  validateEventData(eventDetails: CalendarEvent) {
+      return EventSchema.validate(eventDetails)
+  }
+
+  createEvent(eventDetails: CalendarEvent) {
+    if (!this.validateEventData(eventDetails)) {
+      return
+    }
+  }
+
+
 }

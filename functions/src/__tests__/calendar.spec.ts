@@ -16,7 +16,7 @@ describe('cal access', () => {
     expect(atob('aGVsbG8=')).toEqual('hello')
   });
 
-  it('read events', async (done) => {
+  xit('read events', async (done) => {
     const events = await calendar.listEvents()
     console.log('events', events)
     done()
