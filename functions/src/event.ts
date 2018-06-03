@@ -42,7 +42,7 @@ export default class EventManager {
       return EventSchema.validate(eventDetails)
   }
 
-  createEvent(eventDetails: CalendarEvent) {
+  async createEvent(eventDetails: CalendarEvent) {
     if (!this.validateEventData(eventDetails)) {
       return
     }

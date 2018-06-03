@@ -43,7 +43,9 @@ export const postEvent = async (req: Request, res: Response) => {
 
   const eventData = req.body as CalendarEvent
   eventData.owner = session.userId
-  const event = await eventManager.createEvent(eventData)
+  await eventManager.createEvent(eventData)
+  console.log('event created')
+  res.sendStatus(200)
 }
 
 export const events = async (req: Request, res: Response) => {
