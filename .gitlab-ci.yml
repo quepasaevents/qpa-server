@@ -1,4 +1,4 @@
-image: devillex/docker-firebase:latest
+image: devillex/docker-firebase:slim
 
 cache:
   paths:
