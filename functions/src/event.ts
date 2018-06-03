@@ -1,13 +1,13 @@
-import Calendar from './calendar';
+import CalendarManager from './calendar';
 import Repository from "./repository";
 import {CalendarEvent} from './types'
 
 export default class EventManager {
-  calendar: Calendar
+  calendarManager: CalendarManager
   repository: Repository
 
-  constructor(calendar: Calendar, repository: Repository) {
-    this.calendar = calendar
+  constructor(calendar: CalendarManager, repository: Repository) {
+    this.calendarManager = calendar
     this.repository = repository
   }
 
@@ -20,6 +20,4 @@ export default class EventManager {
       return
     }
   }
-
-
 }
