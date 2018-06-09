@@ -10,10 +10,9 @@ const Joi = JoiBase
   .extend(JoiPhoneNumber)
 
 
-
 const EventTimingSchema = Joi.any()
 
-export const EventSchema = Joi.object().keys({
+export const EventSchema: JoiBase.Schema = Joi.object().keys({
   timeZone: Joi.string().timezone(),
   owner: Joi.number().required(),
   contactPhone: Joi.string().phoneNumber(),
@@ -38,13 +37,24 @@ export default class EventManager {
     this.repository = repository
   }
 
-  validateEventData(eventDetails: CalendarEvent) {
-      return EventSchema.validate(eventDetails)
+  getValidationErrors(eventDetails: CalendarEvent) {
+    return EventSchema.validate(eventDetails).error
   }
 
-  async createEvent(eventDetails: CalendarEvent) {
-    if (!this.validateEventData(eventDetails)) {
-      return
+  async createEvent(eventDetails: CalendarEvent): Promise<CalendarEvent> {
+    let dbEvent
+    try {
+      dbEvent = await this.repository.createEvent(eventDetails)
+    } catch (e) {
+      console.error('Error while persisting new event', e)
     }
+
+    if (!(dbEvent && dbEvent.id)) {
+      console.error('Could not get persisted event from the database')
+      return null
+    }
+
+    const calEvent = await this.calendarManager.createEvent(dbEvent)
+    return dbEvent;
   }
 }

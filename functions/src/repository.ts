@@ -1,5 +1,5 @@
 import * as Datastore from '@google-cloud/datastore'
-import {User, UserKeys, UserProperties} from './types'
+import {CalendarEvent, User, UserKeys, UserProperties} from './types'
 import {SessionInvite, Session} from './session'
 import {DatastoreTransaction} from "@google-cloud/datastore/transaction";
 
@@ -101,7 +101,7 @@ export default class Repository {
           resolve(null)
         } else if (resultSet.length > 1) {
           const message = `Got more than one session with the same user id: ${session.userId}`
-          reject(message)
+          reject(new Error(message))
         } else {
           resolve(resultSet[0])
         }
@@ -118,7 +118,7 @@ export default class Repository {
           reject(err)
         } else if (!resultSet) {
           resolve(null)
-        } else if (resultSet.length >1) {
+        } else if (resultSet.length > 1) {
           const message = `Got more than one session with the same hash`
           reject(message)
         } else {
@@ -159,5 +159,48 @@ export default class Repository {
         }
       )
     })
+  }
+
+  async getEvent(id: string, datastore ?: Datastore | DatastoreTransaction): Promise<CalendarEvent> {
+    const ds = (datastore || this.datastore)
+    const query = ds.createQuery('Event')
+      .filter('__key__', id)
+    return new Promise(async (resolve: (CalendarEvent) => void, reject) => {
+      const results = await ds.runQuery(query, (err, resultSet: Array<CalendarEvent>) => {
+        if (err) {
+          reject(err)
+        } else if (!resultSet) {
+          resolve(null)
+        } else if (resultSet.length > 1) {
+          const message = `Got more than one calendar-event with the same id: ${id}`
+          reject(new Error(message))
+        } else {
+          resolve(resultSet[0])
+        }
+      })
+    })
+  }
+
+  async createEvent(event: CalendarEvent): Promise<CalendarEvent> {
+    console.log(`Will persist event to the db: ${JSON.stringify(event)}`)
+    const commitResult = await this.datastore.save({
+      key: this.datastore.key(['Event']),
+      data: event
+    })
+    console.log('Saved with following commit result', JSON.stringify(commitResult))
+    const givenId = commitResult[0].mutationResults[0].key.id
+    console.log('Will try now to retrieve event from the DB with id', givenId)
+
+    let retrievedEvent
+    try {
+      retrievedEvent = this.getEvent(givenId)
+    } catch (e) {
+      console.error('Error retrieving event', e.message)
+      throw e
+    }
+    if (!retrievedEvent) {
+      throw new Error(`Error, no matching event was found to id ${givenId}`)
+    }
+    return retrievedEvent
   }
 }

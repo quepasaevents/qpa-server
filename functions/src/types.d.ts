@@ -71,7 +71,7 @@ export type CalendarEvent = {
   description: string
   imageUrl: string
   tags: Array<string>
-  gcalEntry: number
+  gcalEntryId: number
   id: number
   timing: EventTiming
 }

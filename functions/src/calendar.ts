@@ -2,6 +2,7 @@ import {auth} from 'google-auth-library';
 import Repository from "./repository";
 import {OAuth2Client} from "google-auth-library/build/src/auth/oauth2client";
 import { atob } from 'atob';
+import {CalendarEvent, EventTiming} from "./types";
 
 type GCalConfig = {
   calendarId: string
@@ -69,6 +70,31 @@ export default class CalendarManager {
 
     //todo: merge events with own metadata
     return eventsResponse.data.items
+  }
+
+  createEvent = async (event: CalendarEvent) => {
+    if (!event.id || !event.timing) {
+      throw new Error('Event doesn\'t have id or timing data')
+    }
+    const calEvent = {
+      ...event.timing,
+      extendedProperties: {
+        private: {
+          eventId: event.id
+        }
+      }
+    }
+
+    try {
+      const response = await (await this.getClient()).request({
+        method: 'post',
+        url: `${this.gcalBaseURL}/events`,
+        data: calEvent
+      })
+      console.log('Event was saved', response.data)
+    } catch (e) {
+      console.error('There was an error saving event with gcal', e)
+    }
   }
 
 }
