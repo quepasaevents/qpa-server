@@ -72,7 +72,7 @@ export default class CalendarManager {
     return eventsResponse.data.items
   }
 
-  createEvent = async (event: CalendarEvent) => {
+  createEvent = async (event: CalendarEvent): Promise<String> => {
     if (!event.id || !event.timing) {
       throw new Error('Event doesn\'t have id or timing data')
     }
@@ -85,8 +85,9 @@ export default class CalendarManager {
       }
     }
 
+    let response
     try {
-      const response = await (await this.getClient()).request({
+      response = await (await this.getClient()).request({
         method: 'post',
         url: `${this.gcalBaseURL}/events`,
         data: calEvent
@@ -94,7 +95,14 @@ export default class CalendarManager {
       console.log('Event was saved', response.data)
     } catch (e) {
       console.error('There was an error saving event with gcal', e)
+      throw e
     }
+
+    if (!(response.data && response.data.id)) {
+      throw new Error(`Could not save event on gcal. Event id: ${event.id}`)
+    }
+
+    return response.data.id
   }
 
 }

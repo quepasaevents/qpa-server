@@ -45,6 +45,7 @@ export default class EventManager {
     let dbEvent
     try {
       dbEvent = await this.repository.createEvent(eventDetails)
+      console.log('Event created on the db', JSON.stringify(dbEvent))
     } catch (e) {
       console.error('Error while persisting new event', e)
     }
@@ -54,7 +55,20 @@ export default class EventManager {
       return null
     }
 
-    const calEvent = await this.calendarManager.createEvent(dbEvent)
+    let calEventId
+    try {
+      calEventId = await this.calendarManager.createEvent(dbEvent)
+    } catch (e) {
+      console.error('Error saving event with calendar API', e)
+    }
+
+    if (!calEventId) {
+      console.warn(`Could not persist event on calendar. Event id: ${dbEvent.id}`)
+    } else {
+      dbEvent.gcalEntryId = calEventId
+      this.repository.updateEvent(dbEvent)
+    }
+
     return dbEvent;
   }
 }

@@ -2,6 +2,7 @@ import * as Datastore from '@google-cloud/datastore'
 import {CalendarEvent, User, UserKeys, UserProperties} from './types'
 import {SessionInvite, Session} from './session'
 import {DatastoreTransaction} from "@google-cloud/datastore/transaction";
+import {DatastoreKey} from "@google-cloud/datastore/entity";
 
 export default class Repository {
 
@@ -163,22 +164,17 @@ export default class Repository {
 
   async getEvent(id: string, datastore ?: Datastore | DatastoreTransaction): Promise<CalendarEvent> {
     const ds = (datastore || this.datastore)
-    const query = ds.createQuery('Event')
-      .filter('__key__', id)
-    return new Promise(async (resolve: (CalendarEvent) => void, reject) => {
-      const results = await ds.runQuery(query, (err, resultSet: Array<CalendarEvent>) => {
-        if (err) {
-          reject(err)
-        } else if (!resultSet) {
-          resolve(null)
-        } else if (resultSet.length > 1) {
-          const message = `Got more than one calendar-event with the same id: ${id}`
-          reject(new Error(message))
-        } else {
-          resolve(resultSet[0])
-        }
-      })
-    })
+    const result = await ds.get({
+      kind: 'Event',
+      id,
+    } as DatastoreKey)
+
+    if (result.length > 1) {
+      const message = `Got more than one even for the same queried id ${id}`
+      throw new Error(message)
+    }
+
+    return result[0] as CalendarEvent;
   }
 
   async createEvent(event: CalendarEvent): Promise<CalendarEvent> {
@@ -202,5 +198,23 @@ export default class Repository {
       throw new Error(`Error, no matching event was found to id ${givenId}`)
     }
     return retrievedEvent
+  }
+
+  async updateEvent(event: CalendarEvent): Promise<CalendarEvent> {
+    console.log('Will update event on the db with id', event.id);
+    let result
+    try {
+      result = await this.datastore.update({
+        key: {
+          kind: 'Event',
+          id: event.id
+        },
+        data: event
+      })
+    } catch (e) {
+      console.error('Error updating event with id', event, e)
+      throw e
+    }
+    return result[0]
   }
 }

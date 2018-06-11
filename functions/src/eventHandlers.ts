@@ -34,22 +34,22 @@ export const getEvents = async (req: Request, res: Response) => {
 export const postEvent = async (req: Request, res: Response) => {
   await authRequest(sessionManager)(req, res)
   const session = (req as AuthenticatedRequest).session
-  if (session.isValid) {
-    res.status(200)
-    res.send(`Session for user id: ${session.userId}`)
-  } else {
-    res.sendStatus(403)
+  if (!session.isValid) {
+    res.send('Session expired')
+    res.sendStatus(401)
   }
 
   const eventData = req.body as CalendarEvent
   eventData.owner = session.userId
   const validationError = eventManager.getValidationErrors(eventData)
   if (!validationError) {
-    await eventManager.createEvent(eventData)
-    console.log('event created')
+    console.log('Validation succeeded for event', eventData)
+    const event = await eventManager.createEvent(eventData)
+    console.log('event created with id', event.id)
+    res.send({eventId: event.id})
     res.sendStatus(200)
   } else {
-    res.status(401)
+    res.status(400)
     res.send(validationError)
   }
   return
