@@ -2,7 +2,7 @@ import {auth} from 'google-auth-library';
 import Repository from "./repository";
 import {OAuth2Client} from "google-auth-library/build/src/auth/oauth2client";
 import { atob } from 'atob';
-import {CalendarEvent, EventTiming} from "./types";
+import {CalendarEvent} from "./types";
 
 type GCalConfig = {
   calendarId: string

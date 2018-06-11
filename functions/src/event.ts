@@ -66,7 +66,7 @@ export default class EventManager {
       console.warn(`Could not persist event on calendar. Event id: ${dbEvent.id}`)
     } else {
       dbEvent.gcalEntryId = calEventId
-      this.repository.updateEvent(dbEvent)
+      await this.repository.updateEvent(dbEvent)
     }
 
     return dbEvent;
