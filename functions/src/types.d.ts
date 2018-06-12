@@ -1,3 +1,5 @@
+import { Event } from '@types/gapi.client.calendar';
+
 // export interface Session {
 //   createdAt: Date
 //   ttlMs: number
@@ -59,19 +61,23 @@ type EventTiming = {
   calendarEventId: string
 }
 
-export type CalendarEvent = {
-  timeZone?: string
-  owner: string
-  contactPhone: string
-  contactEmail: string
-  locationAddress: string
-  location: string
-  locationCoordinate: Array<number>,
+export type CalendarEventRequest = {
   title: string
   description: string
-  imageUrl: string
   tags: Array<string>
-  gcalEntryId: number
-  id: number
   timing: EventTiming
+  timeZone?: string
+  contactPhone?: string
+  contactEmail?: string
+
+  locationAddress?: string
+  location?: string
+  locationCoordinate?: Array<number>,
+  imageUrl?: string
+}
+
+export type CalendarEvent = CalendarEventRequest & {
+  owner?: string
+  gcalEntryId?: number
+  id?: number
 }
