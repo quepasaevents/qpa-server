@@ -1,5 +1,3 @@
-import { Event } from '@types/gapi.client.calendar';
-
 // export interface Session {
 //   createdAt: Date
 //   ttlMs: number
