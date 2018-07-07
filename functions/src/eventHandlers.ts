@@ -49,6 +49,8 @@ export const postEvent = async (req: Request, res: Response) => {
     res.send({eventId: event.id})
     res.sendStatus(200)
   } else {
+    console.warn('Bad request coming in', eventData, validationError)
+
     res.status(400)
     res.send(validationError)
   }
