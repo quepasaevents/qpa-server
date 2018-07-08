@@ -1,5 +1,6 @@
 import {CalendarEventRequest, EventTime} from "../src/types";
 import fetch from 'node-fetch';
+import {UserEventSchema} from "../src/event";
 
 const event: CalendarEventRequest = {
   "contactPhone": "+34655700372",
@@ -11,7 +12,7 @@ const event: CalendarEventRequest = {
     -3.426283
   ],
   "title": "Rastro",
-  "description": "Second hand market, carboot sale.",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tincidunt nisl nec libero consectetur mattis. Quisque dapibus purus diam, at lacinia justo volutpat." ,
   "tags": ["market"],
   "timing": {
     "end": {
@@ -29,16 +30,22 @@ const event: CalendarEventRequest = {
   }
 }
 
-fetch("https://staging.quepasaalpujarra.com/api/events", {
-  method: "POST",
-  headers: {
-    cookie: '__session=OekzPAjhXamEw9lbR4vxdoPmhV4n74FxfJWTRHN1gX2nZzrv',
-    'Content-Type': 'application/json',
-  },
-  // data: JSON.stringify(event),
-}).then(response => {
-  console.log('response', response)
-  console.log('response.body', response.body)
-}).catch(e => {
-  console.error('Error', e)
-})
+const validationErrors = UserEventSchema.validate(event).error
+
+if (validationErrors) {
+  console.error(validationErrors)
+} else {
+  fetch("https://staging.quepasaalpujarra.com/api/events", {
+    method: "POST",
+    headers: {
+      cookie: '__session=OekzPAjhXamEw9lbR4vxdoPmhV4n74FxfJWTRHN1gX2nZzrv',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(event),
+  }).then(response => {
+    console.log('response', response)
+    console.log('response.body', response.body)
+  }).catch(e => {
+    console.error('Error', e)
+  })
+}
