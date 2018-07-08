@@ -184,7 +184,7 @@ export default class Repository {
       data: event
     })
     console.log('Saved with following commit result', JSON.stringify(commitResult))
-    const givenId = (commitResult[0].mutationResults[0].key.path as any).id
+    const givenId = (commitResult[0].mutationResults[0].key.path[0] as any).id
     console.log('Will try now to retrieve event from the DB with id', givenId)
 
     let retrievedEvent
