@@ -1,4 +1,4 @@
-import {EventSchema} from "../event";
+import {UserEventSchema} from "../event";
 
 describe('event', () => {
 

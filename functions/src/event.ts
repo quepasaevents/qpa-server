@@ -12,7 +12,7 @@ const Joi = JoiBase
 
 const EventTimingSchema = Joi.any()
 
-export const EventSchema: JoiBase.Schema = Joi.object().keys({
+export const UserEventSchema: JoiBase.Schema = Joi.object().keys({
   timeZone: Joi.string().timezone(),
   owner: Joi.number().required(),
   contactPhone: Joi.string().phoneNumber(),
@@ -24,7 +24,7 @@ export const EventSchema: JoiBase.Schema = Joi.object().keys({
   description: Joi.string().min(160),
   imageUrl: Joi.string(),
   tags: Joi.array().items(Joi.string()).min(1),
-  gcalEntry: Joi.number().required(),
+  gcalEntry: Joi.number(),
   timing: EventTimingSchema.required()
 }).or('location', 'locationAddress', 'locationCoordinate')
 
@@ -37,8 +37,8 @@ export default class EventManager {
     this.repository = repository
   }
 
-  getValidationErrors(eventDetails: CalendarEvent) {
-    return EventSchema.validate(eventDetails).error
+  getValidationErrors(eventDetails: CalendarEvent): Error {
+    return UserEventSchema.validate(eventDetails).error
   }
 
   async createEvent(eventDetails: CalendarEvent): Promise<CalendarEvent> {
