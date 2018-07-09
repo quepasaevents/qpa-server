@@ -169,7 +169,9 @@ export default class Repository {
       id,
     } as DatastoreKey)
 
-    if (result.length > 1) {
+    if (!result) {
+      return null
+    } else if (result.length > 1) {
       const message = `Got more than one even for the same queried id ${id}`
       throw new Error(message)
     }
