@@ -177,7 +177,7 @@ export default class Repository {
     }
     console.log('repository getEvent succeeded with result', JSON.stringify(result));
     const event = result[0] as CalendarEvent
-    event.id = event[this.datastore.KEY].id
+    event.id = event[Datastore.KEY].id
     return result[0] as CalendarEvent;
   }
 
