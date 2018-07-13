@@ -163,6 +163,7 @@ export default class Repository {
   }
 
   async getEvent(id: string, datastore ?: Datastore | DatastoreTransaction): Promise<CalendarEvent> {
+    console.log('repository getEvent', id)
     const ds = (datastore || this.datastore)
     const result = await ds.get(this.datastore.key(['Event', id]))
 
@@ -172,7 +173,7 @@ export default class Repository {
       const message = `Got more than one even for the same queried id ${id}`
       throw new Error(message)
     }
-
+    console.log('repository getEvent succeeded and will return', result[0])
     return result[0] as CalendarEvent;
   }
 
@@ -182,9 +183,8 @@ export default class Repository {
       key: this.datastore.key(['Event']),
       data: event
     })
-    console.log('Saved with following commit result', JSON.stringify(commitResult))
     const givenId = (commitResult[0].mutationResults[0].key.path[0] as any).id
-    console.log('Will try now to retrieve event from the DB with id', givenId)
+    console.log(`Saved with id ${givenId} following commit result`, JSON.stringify(commitResult))
 
     let retrievedEvent
     try {
