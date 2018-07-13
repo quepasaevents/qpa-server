@@ -173,7 +173,7 @@ export default class Repository {
       const message = `Got more than one even for the same queried id ${id}`
       throw new Error(message)
     }
-    console.log('repository getEvent succeeded and will return', result[0])
+    console.log('repository getEvent succeeded with result', JSON.stringify(result));
     return result[0] as CalendarEvent;
   }
 
