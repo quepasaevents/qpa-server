@@ -73,6 +73,7 @@ export default class CalendarManager {
   }
 
   createEvent = async (event: CalendarEvent): Promise<String> => {
+    console.log('Will try and create calendar event for', JSON.stringify(event))
     if (!event.id || !event.timing) {
       throw new Error('Event doesn\'t have id or timing data')
     }
