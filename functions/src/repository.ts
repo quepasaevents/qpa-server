@@ -164,7 +164,7 @@ export default class Repository {
 
   async getEvent(id: string, datastore ?: Datastore | DatastoreTransaction): Promise<CalendarEvent> {
     const ds = (datastore || this.datastore)
-    const key = this.datastore.key(['Event', id])
+    const key = this.datastore.key(['Event', parseInt(id)])
     console.log('repository getEvent', id, key)
 
     const result = await ds.get(key)
