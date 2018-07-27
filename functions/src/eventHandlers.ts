@@ -31,6 +31,19 @@ export const getEvents = async (req: Request, res: Response) => {
   res.status(200)
 }
 
+export const getEvent = async (req: Request, res: Response) => {
+  let result
+  try {
+    result = await calendarManager.listEvents()
+  } catch (e) {
+    console.log('Caught error while listing events', e)
+    res.status(500)
+    res.send('Error fetching events')
+  }
+  res.send(result)
+  res.status(200)
+}
+
 export const postEvent = async (req: Request, res: Response) => {
   await authRequest(sessionManager)(req, res)
   const session = (req as AuthenticatedRequest).session
@@ -44,9 +57,9 @@ export const postEvent = async (req: Request, res: Response) => {
   const validationError = eventManager.getValidationErrors(eventData)
   if (!validationError) {
     console.log('Validation succeeded for event', eventData)
-    const event = await eventManager.createEvent(eventData)
-    console.log('event created with id', event.id)
-    res.send({eventId: event.id})
+    const dbEvent = await eventManager.createEvent(eventData)
+    console.log('event created with id', dbEvent.id)
+    res.send({eventId: dbEvent.id})
     res.sendStatus(200)
   } else {
     console.warn('Bad request coming in', eventData, validationError)
@@ -69,4 +82,3 @@ export const events = async (req: Request, res: Response) => {
   }
   delegationHandler(req, res)
 }
-

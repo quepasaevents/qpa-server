@@ -1,7 +1,7 @@
 import {auth} from 'google-auth-library';
 import Repository from "./repository";
 import {OAuth2Client} from "google-auth-library/build/src/auth/oauth2client";
-import { atob } from 'atob';
+import {atob} from 'atob';
 import {CalendarEvent} from "./types";
 
 type GCalConfig = {
@@ -34,7 +34,7 @@ export default class CalendarManager {
     return client as OAuth2Client;
   }
 
-  createPrimaryCalendar = async ( ) => {
+  createPrimaryCalendar = async () => {
     const client = await this.getClient()
     const res = await client.request({
       method: 'post',
@@ -68,8 +68,29 @@ export default class CalendarManager {
       throw e;
     }
 
-    //todo: merge events with own metadata
-    return eventsResponse.data.items
+
+    const eventsDBPromises = []
+    const dbIdToGCalEvents = {}
+
+    eventsResponse.data.items.forEach(gCalEvent => {
+      const dbId = gCalEvent.extendedProperties.private.eventId;
+      dbIdToGCalEvents[dbId] = gCalEvent
+      eventsDBPromises.push(
+        this.repository.getEvent(dbId)
+          .catch(e => {
+            console.warn(`Error fetching DB event ${dbId}, will skip this one`, e)
+            return null;
+          })
+      )
+    });
+
+    const allEvents = await Promise.all(eventsDBPromises)
+    const result = allEvents.map(dbEvent => ({
+      ...dbEvent,
+      ...dbIdToGCalEvents[dbEvent.id]
+    }))
+
+    return result
   }
 
   createEvent = async (event: CalendarEvent): Promise<String> => {

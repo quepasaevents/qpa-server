@@ -16,11 +16,11 @@ const event: CalendarEventRequest = {
   "tags": ["market"],
   "timing": {
     "end": {
-      "dateTime": "2018-06-03T15:00", // in RFC3339 e.g. 2002-10-02T10:00:00-05:00 or 2002-10-02T15:00:00Z
+      "dateTime": "2018-06-03T15:00:00", // in RFC3339 e.g. 2002-10-02T10:00:00-05:00 or 2002-10-02T15:00:00Z
       "timeZone": "Europe/Madrid"
     },
     "start": {
-      "dateTime": "2018-06-03T09:00", // in RFC3339 e.g. 2002-10-02T10:00:00-05:00 or 2002-10-02T15:00:00Z
+      "dateTime": "2018-06-03T09:00:00", // in RFC3339 e.g. 2002-10-02T10:00:00-05:00 or 2002-10-02T15:00:00Z
       "timeZone": "Europe/Madrid"
     },
     "recurrence": [
