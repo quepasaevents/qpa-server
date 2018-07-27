@@ -31,19 +31,6 @@ export const getEvents = async (req: Request, res: Response) => {
   res.status(200)
 }
 
-export const getEvent = async (req: Request, res: Response) => {
-  let result
-  try {
-    result = await calendarManager.listEvents()
-  } catch (e) {
-    console.log('Caught error while listing events', e)
-    res.status(500)
-    res.send('Error fetching events')
-  }
-  res.send(result)
-  res.status(200)
-}
-
 export const postEvent = async (req: Request, res: Response) => {
   await authRequest(sessionManager)(req, res)
   const session = (req as AuthenticatedRequest).session
