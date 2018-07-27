@@ -85,7 +85,7 @@ export default class CalendarManager {
     });
 
     const allEvents = await Promise.all(eventsDBPromises)
-    const result = allEvents.map(dbEvent => ({
+    const result = allEvents.filter(Boolean).map(dbEvent => ({
       ...dbEvent,
       ...dbIdToGCalEvents[dbEvent.id]
     }))
