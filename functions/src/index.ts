@@ -17,7 +17,6 @@ import Repository from "./repository";
 import Calendar from "./calendar";
 import EventManager from "./event";
 
-
 const IS_FIREBASE = true;
 
 const repository = new Repository(projectId)

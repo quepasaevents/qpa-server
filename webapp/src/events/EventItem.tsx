@@ -1,9 +1,14 @@
 import * as React from 'react';
+import {CalendarEvent} from "../../../functions/src/types";
 
-interface Props {
-  event: Event
+interface IProps {
+  event: CalendarEvent
 }
 
-export default class Event extends React.Component<Props> {
-
+export default class EventItem extends React.Component<IProps> {
+  public render(){
+    return <div>
+      event item
+    </div>
+  }
 }
