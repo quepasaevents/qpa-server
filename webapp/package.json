@@ -3,12 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/axios": "^0.14.0",
     "axios": "^0.18.0",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
-    "react-scripts-ts": "2.16.0",
-    "styled-components": "^3.3.3"
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "react-scripts-ts": "2.17.0"
   },
   "scripts": {
     "start": "react-scripts-ts start",
@@ -18,9 +16,10 @@
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",
-    "@types/node": "^10.5.3",
-    "@types/react": "^16.4.7",
-    "@types/react-dom": "^16.0.6",
-    "typescript": "^2.9.2"
-  }
+    "@types/node": "^10.7.1",
+    "@types/react": "^16.4.11",
+    "@types/react-dom": "^16.0.7",
+    "typescript": "^3.0.1"
+  },
+  "proxy": "https://staging.quepasaalpujarra.com"
 }

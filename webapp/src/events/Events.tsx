@@ -14,8 +14,8 @@ interface IState {
 
 export default class Events extends React.Component<IProps, IState> {
   public state = {
+    events: [],
     loadingState: null,
-    events: []
   }
 
   public async componentDidMount() {
@@ -23,7 +23,7 @@ export default class Events extends React.Component<IProps, IState> {
       this.setState({
         loadingState: 'loading'
       })
-      const eventsResponse = await axios.get('https://staging.quepasaalpujarra.com/api/events');
+      const eventsResponse = await axios.get('/api/events');
       this.setState({
         events: eventsResponse.data as CalendarEvent[]
       });
