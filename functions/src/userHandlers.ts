@@ -1,7 +1,7 @@
 import {parse} from 'url'
 import UserManager from './user'
 import {Request, Response} from 'express'
-import SessionManager from './session'
+import SessionManager, { SessionRequest } from './session'
 import {UserProperties} from './types'
 
 let userManager, sessionManager
@@ -88,7 +88,7 @@ const handleSignin = (async (req: Request, res: Response) => {
     email: params.email as string,
     ipAddress: ip,
     userAgent: req.headers['user-agent'],
-  })
+  } as SessionRequest)
   console.log('Session initiated', JSON.stringify(session))
 
   if (!session) {

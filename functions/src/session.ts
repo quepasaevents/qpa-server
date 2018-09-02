@@ -36,7 +36,7 @@ export type Session = BasicSessionData & {
   isValid: boolean
 }
 
-type SessionRequest = DBEntity & {
+export type SessionRequest = DBEntity & {
   hash: string
   email: string // todo: change this to email hash
   userAgent: string
