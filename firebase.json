@@ -1,11 +1,11 @@
 {
   "functions": {
     "predeploy": [
-      "; cd functions ; yarn build"
+      "(cd functions ; yarn build;); (cd webapp; yarn build;);'"
     ]
   },
   "hosting": {
-    "public": "public",
+    "public": "webapp/build",
     "rewrites": [
       {
         "source": "/api/isUserAvailable",
