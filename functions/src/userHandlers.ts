@@ -87,7 +87,7 @@ const handleSignin = (async (req: Request, res: Response) => {
     hash: params.hash as string,
     email: params.email as string,
     ipAddress: ip,
-    userAgent: req.headers['user-agent'] as string,
+    userAgent: req.headers['user-agent'],
   })
   console.log('Session initiated', JSON.stringify(session))
 
