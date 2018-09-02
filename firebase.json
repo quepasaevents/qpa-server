@@ -1,7 +1,7 @@
 {
   "functions": {
     "predeploy": [
-      "(cd functions ; yarn build;); (cd webapp; yarn build;);'"
+      "(cd functions; yarn build)", "(cd webapp; yarn build)'"
     ]
   },
   "hosting": {
