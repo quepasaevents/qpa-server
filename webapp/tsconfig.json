@@ -26,5 +26,8 @@
     "webpack",
     "jest",
     "src/setupTests.ts"
+  ],
+  "indlude": [
+    "node_modules/@types"
   ]
 }
