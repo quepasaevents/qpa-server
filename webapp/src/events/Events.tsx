@@ -25,7 +25,8 @@ export default class Events extends React.Component<IProps, IState> {
       })
       const eventsResponse = await axios.get('/api/events');
       this.setState({
-        events: eventsResponse.data as CalendarEvent[]
+        events: (eventsResponse.data || []) as CalendarEvent[],
+        loadingState: null,
       });
     } catch (e) {
       this.setState({
