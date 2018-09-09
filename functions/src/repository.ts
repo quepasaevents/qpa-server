@@ -1,4 +1,4 @@
-import * as Datastore from '@google-cloud/datastore'
+import Datastore from '@google-cloud/datastore'
 import {CalendarEvent, User, UserKeys, UserProperties} from './types'
 import {SessionInvite, Session} from './session'
 import {DatastoreTransaction} from "@google-cloud/datastore/transaction";
