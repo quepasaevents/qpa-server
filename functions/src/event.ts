@@ -1,9 +1,9 @@
 import CalendarManager from './calendar';
 import Repository from "./repository";
 import {CalendarEvent} from './types'
-import * as JoiBase from "joi";
-import * as JoiTimezone from 'joi-timezone';
-import * as JoiPhoneNumber from 'joi-phone-number'
+import JoiBase from "joi";
+import JoiTimezone from 'joi-timezone';
+import JoiPhoneNumber from 'joi-phone-number'
 
 const Joi = JoiBase
   .extend(JoiTimezone)
