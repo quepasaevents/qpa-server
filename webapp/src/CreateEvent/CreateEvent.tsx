@@ -36,10 +36,13 @@ const InitialValues: CalendarEventRequest = {
 
 export default class CreateEvent extends React.Component {
 
+  componentDidMount(){
+    axios.get('/api/events').then(events => console.log('boludo', events))
+  }
   submitEvent(event: CalendarEventRequest) {
-    axios.post('/api/event', event, {
+    axios.post('/api/events', event, {
       headers: {
-        Accept: 'application/json'
+        Accept: '*/*'
       }
     })
   }
