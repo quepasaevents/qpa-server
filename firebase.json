@@ -19,6 +19,10 @@
         "function": "signin"
       },
       {
+        "soure": "/api/session",
+        "function": "postSession"
+      },
+      {
         "source": "/api/events",
         "function": "events"
       },

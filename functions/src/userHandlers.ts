@@ -78,7 +78,7 @@ export const signup = async (req: Request, res: Response) => {
   }
 }
 
-const handleSignin = (async (req: Request, res: Response) => {
+const handleSignin = async (req: Request, res: Response) => {
   const params = parse(req.url, true).query
   const ip = req.ip.split('.').map(num => parseInt(num))
 
@@ -102,7 +102,7 @@ const handleSignin = (async (req: Request, res: Response) => {
   // todo: invalidate session invite
   res.setHeader('set-cookie', `__session=${session.hash}; Secure;`)
   res.send(`Session initiated: ${JSON.stringify(session)}`)
-})
+}
 
 export const signin = async (req: Request, res: Response) => {
   try {
@@ -111,6 +111,32 @@ export const signin = async (req: Request, res: Response) => {
   } catch (e) {
     console.error('Sign-in handle error', e)
     res.send('Sign-in handle error')
+    res.status(500)
+    throw e
+  }
+}
+
+const handlePostSession = async (req: Request, res: Response) => {
+  const { email } = req.body
+
+  console.log('Will request new session for email: ', email)
+  const user = await userManager.getUser({email})
+  if (!user) {
+    res.status(404)
+    res.send('Could not find user')
+    return
+  }
+  await userManager.inviteUser(user)
+  res.status(200)
+  res.send('Invitation sent to email')
+}
+
+export const postSession = async (req: Request, res: Response) => {
+  try {
+    await handlePostSession(req, res)
+  } catch (e) {
+    console.error('Error in request new session for existing user', e)
+    res.send('Request session error')
     res.status(500)
     throw e
   }
