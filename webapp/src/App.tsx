@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './App.css';
-import { Events } from './events'
+import CreateEvent from './CreateEvent';
 import logo from './logo.svg';
 
 class App extends React.Component {
@@ -12,7 +12,7 @@ class App extends React.Component {
           <h1 className="App-title">Welcome to React</h1>
         </header>
         <div className="App-intro">
-          <Events />
+          <CreateEvent />
         </div>
       </div>
     );

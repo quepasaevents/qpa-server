@@ -53,8 +53,6 @@ type EventTiming = {
   status?: "confirmed" | "tentative" | "cancelled"
 }
 
-
-
 export type CalendarEventRequest = {
   title: string
   description: string
@@ -63,7 +61,6 @@ export type CalendarEventRequest = {
   timeZone?: string
   contactPhone?: string
   contactEmail?: string
-
   locationAddress?: string
   location?: string
   locationCoordinate?: Array<number>,
