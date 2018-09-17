@@ -3,7 +3,8 @@ import {
   isUserAvailable as isUserAvailableHandler,
   signup as signupHandler,
   signin as signinHandler,
-  setDependencies as setUserHandlerDependencies
+  setDependencies as setUserHandlerDependencies,
+  postSession as postSessionHandler,
 } from './userHandlers'
 
 import {
@@ -47,3 +48,4 @@ export const isUserAvailable = httpHandler(isUserAvailableHandler)
 export const signup = httpHandler(signupHandler)
 export const signin = httpHandler(signinHandler)
 export const events = httpHandler(eventsHandler)
+export const postSession = httpHandler(postSessionHandler)
