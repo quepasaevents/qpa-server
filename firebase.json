@@ -19,7 +19,7 @@
         "function": "signin"
       },
       {
-        "soure": "/api/session",
+        "source": "/api/session",
         "function": "postSession"
       },
       {
