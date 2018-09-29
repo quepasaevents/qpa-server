@@ -79,7 +79,7 @@ export const signup = async (req: Request, res: Response) => {
 }
 
 const handleSignin = async (req: Request, res: Response) => {
-  const params = parse(req.url, true).query
+  const params = req.body
   const ip = req.ip.split('.').map(num => parseInt(num))
 
   console.log('Got sign in request with params', JSON.stringify(params))
