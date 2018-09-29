@@ -163,6 +163,25 @@ export default class Repository {
     })
   }
 
+  async getUserById(id: string, datastore?: Datastore | DatastoreTransaction): Promise<User> {
+    const ds = (datastore || this.datastore)
+    const key = this.datastore.key(['User', parseInt(id)])
+    console.log('repository getUserById', id, key)
+
+    const result = await ds.get(key)
+
+    if (!result) {
+      return null
+    } else if (result.length > 1) {
+      const message = `Got more than one even for the same queried id ${id}`
+      throw new Error(message)
+    }
+    console.log('repository.getUserById succeeded with result', JSON.stringify(result));
+    const user = result[0] as User
+    user.id = user[Datastore.KEY].id
+    return result[0] as User;
+  }
+
   async getEvent(id: string, datastore ?: Datastore | DatastoreTransaction): Promise<CalendarEvent> {
     const ds = (datastore || this.datastore)
     const key = this.datastore.key(['Event', parseInt(id)])

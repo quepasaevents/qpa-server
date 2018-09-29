@@ -83,6 +83,7 @@ const handleSignin = async (req: Request, res: Response) => {
   const ip = req.ip.split('.').map(num => parseInt(num))
 
   console.log('Got sign in request with params', JSON.stringify(params))
+
   const session: Session = await sessionManager.initiateSession({
     hash: params.hash as string,
     email: params.email as string,

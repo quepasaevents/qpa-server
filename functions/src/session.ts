@@ -85,9 +85,7 @@ export default class SessionManager {
     if (sessionInvite.timeValidated) {
       return Promise.reject('Session request has already been validated')
     }
-    const matchingUser: User = await this.repository.getUser({
-      email: sessionRequest.email
-    })
+    const matchingUser: User = await this.repository.getUserById(sessionInvite.userId)
     if (matchingUser.id === sessionInvite.userId) {
       const session: Session = {
         userId: matchingUser.id,
