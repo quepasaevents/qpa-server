@@ -1,7 +1,7 @@
 import {parse} from 'url'
 import UserManager from './user'
 import {Request, Response} from 'express'
-import SessionManager, { SessionRequest } from './session'
+import SessionManager, {Session, SessionRequest} from './session'
 import {UserProperties} from './types'
 
 let userManager, sessionManager
@@ -83,7 +83,7 @@ const handleSignin = async (req: Request, res: Response) => {
   const ip = req.ip.split('.').map(num => parseInt(num))
 
   console.log('Got sign in request with params', JSON.stringify(params))
-  const session = await sessionManager.initiateSession({
+  const session: Session = await sessionManager.initiateSession({
     hash: params.hash as string,
     email: params.email as string,
     ipAddress: ip,
@@ -96,7 +96,6 @@ const handleSignin = async (req: Request, res: Response) => {
     res.send('Could not initiate session with the given data')
     return
   }
-
 
   res.status(200)
   // todo: invalidate session invite
@@ -126,7 +125,7 @@ const handlePostSession = async (req: Request, res: Response) => {
     res.send('Could not find user')
     return
   }
-  await userManager.inviteUser(user)
+  await sessionManager.inviteUser(user)
   res.status(200)
   res.send('Invitation sent to email')
 }
