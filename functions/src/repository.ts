@@ -64,15 +64,17 @@ export default class Repository {
     const ds = (datastore || this.datastore)
     const query = ds.createQuery('SessionInvite')
       .filter('hash', hash)
+    console.log('Will look for session invite with hash', hash)
     return new Promise((resolve: (SessionInvite) => void, reject) => {
       ds.runQuery(query, (err, resultSet: Array<SessionInvite>) => {
         if (err) {
+          console.error('Got query error', err)
           reject(err)
         } else if (!resultSet) {
           console.log('Could not find any session for hash', hash)
           resolve(null)
         } else if (resultSet.length > 1) {
-          const message = `Got more than two invited for hash ${hash}`
+          const message = `Got more than two invites for hash ${hash}`
           console.warn(`Got more than two invited for hash ${hash}`)
           reject(new Error(message))
         } else {
