@@ -5,24 +5,39 @@ import {Link, match} from "react-router-dom";
 interface Props {
   match: match<{hash: string, email: string}>
 }
-
+type LoginStatus = 'success' | 'error' | 'failure' | 'loading'
 interface State {
-  loginStatus: 'success' | 'error' | 'failure' | 'loading'
+  loginStatus: LoginStatus
 }
 
-const responseCodeToLoginStatus = {
-  200: 'success',
-  403: 'failure',
-  500: 'error'
-}
 class InitiateSession extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {loginStatus: 'loading'}
+  }
+
   async componentDidMount() {
     const { hash } = this.props.match.params
-    this.setState({loginStatus: 'loading'})
-    const response = await axios.post('/api/signin', {
-      hash,
-    })
-    const loginStatus = responseCodeToLoginStatus[response.status] || 'error';
+    let loginStatus: LoginStatus = 'loading';
+    this.setState({loginStatus})
+
+    try {
+      const response = await axios.post('/api/signin', {
+        hash,
+      })
+      if (response.status === 200) {
+        loginStatus = 'success'
+      } else if (response.status === 403) {
+        loginStatus = 'failure'
+      } else if (response.status === 401) {
+        loginStatus = 'failure';
+      }
+    } catch (e) {
+        loginStatus = 'error';
+    }
+    if (loginStatus === undefined) {
+      throw new Error('Could not determine login statue')
+    }
     this.setState({loginStatus})
   }
 
@@ -33,7 +48,7 @@ class InitiateSession extends React.Component<Props, State> {
         this.state.loginStatus === 'loading' && <div>Please wait ...</div>
       }
       {
-        this.state.loginStatus === 'success' && <div>You are now logged in. <Link to="/events/create">Create your event</Link></div>
+        this.state.loginStatus === 'success' && <div>You are now logged in. <Link to="/events/create">Create an event</Link></div>
       }
       {
         this.state.loginStatus === 'failure' && <div>Could not log you in</div>

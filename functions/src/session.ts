@@ -6,9 +6,8 @@ import {domain} from './config'
 import Repository from './repository'
 import {DBEntity, User} from "./types";
 
-export class SessionAlreadyValidatedError extends Error {
+export class SessionAlreadyValidatedError extends Error {}
 
-}
 const generateHash = () => randomstring({
   length: 48,
   letters: true,
@@ -68,7 +67,7 @@ export default class SessionManager {
         await sendEmail({
           to: user.email,
           from: `signin@${domain}`,
-          text: `Follow this link to start a session: https://${domain}/signin?hash=${invite.hash}&email=${user.email}`,
+          text: `Follow this link to start a session: https://${domain}/login/${invite.hash}`,
           subject: 'Invitation for session'
         })
         resolve(invite)
