@@ -6,6 +6,9 @@ import {domain} from './config'
 import Repository from './repository'
 import {DBEntity, User} from "./types";
 
+export class SessionAlreadyValidatedError extends Error {
+
+}
 const generateHash = () => randomstring({
   length: 48,
   letters: true,
@@ -38,7 +41,6 @@ export type Session = BasicSessionData & {
 
 export type SessionRequest = DBEntity & {
   hash: string
-  email: string // todo: change this to email hash
   userAgent: string
   ipAddress: Array<number>
 }
@@ -83,7 +85,7 @@ export default class SessionManager {
   initiateSession = async (sessionRequest: SessionRequest): Promise<Session> => {
     const sessionInvite: SessionInvite = await this.repository.getSessionInvite(sessionRequest.hash)
     if (sessionInvite.timeValidated) {
-      return Promise.reject('Session request has already been validated')
+      throw new SessionAlreadyValidatedError()
     }
     const matchingUser: User = await this.repository.getUserById(sessionInvite.userId)
     if (matchingUser.id === sessionInvite.userId) {

@@ -9,7 +9,7 @@ class App extends React.Component {
     return (
       <Router>
           <Switch>
-            <Route path="/login/:hash/:email" component={InitiateSession}/>
+            <Route path="/login/:hash" component={InitiateSession}/>
             <Route path="/login" component={RequestMagicLink}/>
             <Route path="/post" component={CreateEvent}/>
           </Switch>

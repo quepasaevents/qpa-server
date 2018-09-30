@@ -1,22 +1,45 @@
 import axios from 'axios';
 import * as React from 'react';
-import {match} from "react-router-dom";
+import {Link, match} from "react-router-dom";
+
 interface Props {
   match: match<{hash: string, email: string}>
 }
 
+interface State {
+  loginStatus: 'success' | 'error' | 'failure' | 'loading'
+}
 
-class InitiateSession extends React.Component<Props> {
-  componentDidMount() {
-    const { email, hash } = this.props.match.params
-    const response = axios.post('/api/signin', {
-      email, hash,
+const responseCodeToLoginStatus = {
+  200: 'success',
+  403: 'failure',
+  500: 'error'
+}
+class InitiateSession extends React.Component<Props, State> {
+  async componentDidMount() {
+    const { hash } = this.props.match.params
+    this.setState({loginStatus: 'loading'})
+    const response = await axios.post('/api/signin', {
+      hash,
     })
-    console.log('response', response)
+    const loginStatus = responseCodeToLoginStatus[response.status] || 'error';
+    this.setState({loginStatus})
   }
 
   render() {
-    return <h1>Will submit your hash for intiation. Please wait... {this.props.match.params.hash} - {this.props.match.params.email}</h1>
+    return <div>
+      <h1>Thanks for coming back, we will log you in now.</h1>
+      {
+        this.state.loginStatus === 'loading' && <div>Please wait ...</div>
+      }
+      {
+        this.state.loginStatus === 'success' && <div>You are now logged in. <Link to="/events/create">Create your event</Link></div>
+      }
+      {
+        this.state.loginStatus === 'failure' && <div>Could not log you in</div>
+      }
+      <h1>Thanks for coming back, we will log you in now.</h1>
+    </div>
   }
 }
 

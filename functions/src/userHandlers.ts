@@ -1,7 +1,7 @@
 import {parse} from 'url'
 import UserManager from './user'
 import {Request, Response} from 'express'
-import SessionManager, {Session, SessionRequest} from './session'
+import SessionManager, {Session, SessionAlreadyValidatedError, SessionRequest} from './session'
 import {UserProperties} from './types'
 
 let userManager, sessionManager
@@ -83,14 +83,21 @@ const handleSignin = async (req: Request, res: Response) => {
   const ip = req.ip.split('.').map(num => parseInt(num))
 
   console.log('Got sign in request with params', JSON.stringify(params))
+  let session = null
+  try {
 
-  const session: Session = await sessionManager.initiateSession({
+  session = await sessionManager.initiateSession({
     hash: params.hash as string,
-    email: params.email as string,
     ipAddress: ip,
     userAgent: req.headers['user-agent'],
   } as SessionRequest)
-  console.log('Session initiated', JSON.stringify(session))
+  } catch (e) {
+    if (e instanceof SessionAlreadyValidatedError) {
+      res.status(401)
+      res.send('Session already validated')
+      return
+    }
+  }
 
   if (!session) {
     res.status(403)
@@ -98,8 +105,8 @@ const handleSignin = async (req: Request, res: Response) => {
     return
   }
 
+  console.log('Session initiated', JSON.stringify(session))
   res.status(200)
-  // todo: invalidate session invite
   res.setHeader('set-cookie', `__session=${session.hash}; Secure;`)
   res.send(`Session initiated: ${JSON.stringify(session)}`)
 }
