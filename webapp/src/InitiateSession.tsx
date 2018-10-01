@@ -33,6 +33,8 @@ class InitiateSession extends React.Component<Props, State> {
         loginStatus = 'failure';
       }
     } catch (e) {
+      const err = e
+        console.log('caught error', err)
         loginStatus = 'error';
     }
     if (loginStatus === undefined) {
