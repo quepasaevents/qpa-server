@@ -1,15 +1,22 @@
 {
   "name": "gcf-auth",
+  "private": true,
   "version": "1.0.0",
   "main": "index.js",
   "repository": "git@gitlab.com:amiiit/gcf-auth.git",
   "author": "Amit Jakubowicz <a.jakubowicz@travelaudience.com>",
   "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "webapp",
+    "functions"
+  ],
   "dependencies": {
     "tslint": "^5.10.0",
-    "typescript": "^2.8.3"
+    "typescript": "^3.1.1"
   },
   "devDependencies": {
-    "@types/jest": "^22.2.3"
+    "@types/jest": "^22.2.3",
+    "tslint-react": "^3.6.0"
   }
 }

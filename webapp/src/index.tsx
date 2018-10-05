@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
 
+const appDiv = document.createElement('div')
+document.body.appendChild(appDiv)
 ReactDOM.render(
   <App />,
-  document.getElementById('root') as HTMLElement
+  appDiv as HTMLElement
 );
-registerServiceWorker();

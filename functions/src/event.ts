@@ -14,7 +14,7 @@ const EventTimingSchema = Joi.any()
 
 export const UserEventSchema: JoiBase.Schema = Joi.object().keys({
   timeZone: Joi.string().timezone(),
-  owner: Joi.number(),
+  owner: Joi.number().required(),
   contactPhone: Joi.string().phoneNumber(),
   contactEmail: Joi.string().email(),
   locationAddress: Joi.string(),

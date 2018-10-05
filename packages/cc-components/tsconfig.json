@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "build/dist",
-    "module": "commonjs",
+    "module": "esnext",
     "target": "es5",
     "lib": ["es6", "dom"],
     "sourceMap": true,
@@ -20,10 +20,14 @@
   },
   "exclude": [
     "node_modules",
-    "build"
+    "build",
+    "scripts",
+    "acceptance-tests",
+    "webpack",
+    "jest",
+    "src/setupTests.ts"
   ],
   "indlude": [
-    "node_modules/@types",
-    "./src/**/*"
+    "node_modules/@types"
   ]
 }

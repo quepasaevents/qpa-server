@@ -4,7 +4,6 @@
     ]
   },
   "hosting": {
-    "public": "webapp/build",
     "rewrites": [
       {
         "source": "/api/isUserAvailable",
@@ -30,6 +29,8 @@
         "source": "**",
         "destination": "/index.html"
       }
-    ]
+    ],
+    "public": "webapp/dist"
+
   }
 }

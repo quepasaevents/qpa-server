@@ -1,9 +1,11 @@
 import axios from 'axios';
+import Input from 'cc-components/Input';
 import * as addHours from 'date-fns/add_hours';
 import * as fnsFormat from 'date-fns/format';
 import * as startOfTomorrow from 'date-fns/start_of_tomorrow';
 import {Field, FieldProps, Form, Formik, FormikProps} from 'formik';
 import * as React from 'react';
+import {ChangeEvent} from "react";
 import styled from 'styled-components';
 import {CalendarEventRequest} from "../../../functions/src/types";
 
@@ -34,12 +36,25 @@ const InitialValues: CalendarEventRequest = {
   imageUrl: '',
 }
 
-export default class CreateEvent extends React.Component {
+interface Props {
+}
 
-  componentDidMount(){
+interface State {
+  wholeDayEvent: boolean
+}
+
+export default class CreateEvent extends React.Component<Props, State> {
+
+  state = {
+    wholeDayEvent: false
+  }
+
+  componentDidMount() {
     axios.get('/api/events').then(events => console.log('boludo', events))
   }
+
   submitEvent(event: CalendarEventRequest) {
+    event.timeZone = 'Europe/Madrid'
     axios.post('/api/events', event, {
       headers: {
         Accept: '*/*'
@@ -47,17 +62,74 @@ export default class CreateEvent extends React.Component {
     })
   }
 
+  handleWholeDayEventChange = (e: ChangeEvent<HTMLInputElement>) => {
+    this.setState({wholeDayEvent: e.target.checked})
+  }
+
   render() {
     return <Root>
       <Title>Post your own event</Title>
       <Formik onSubmit={this.submitEvent} initialValues={InitialValues}>
         {
-          ({ values }: FormikProps<CalendarEventRequest>) => (<Form>
-            <Field name="title">
-              {
-                ({field}: FieldProps) => <input {...field} />
-              }
-            </Field>
+          ({values}: FormikProps<CalendarEventRequest>) => (<Form>
+            <label>Title
+              <Field name="title">
+                {
+                  ({field}: FieldProps) => <Input {...field} />
+                }
+              </Field>
+            </label>
+            <label>Location
+              <Field name="location">
+                {
+                  ({field}: FieldProps) => <Input {...field} />
+                }
+              </Field>
+              <label>Contact phone number
+                <Field name="contactPhone">
+                  {
+                    ({field}: FieldProps) => <Input type="phone" {...field} />
+                  }
+                </Field>
+              </label>
+              <label>Contact email
+                <Field name="contactEmail">
+                  {
+                    ({field}: FieldProps) => <Input type="email" {...field} />
+                  }
+                </Field>
+              </label>
+            </label>
+            <label>
+              Start date
+              <Field name="timing.start.date">
+                {
+                  ({field}: FieldProps) => <Input type="date" {...field} />
+                }
+              </Field>
+            </label>
+            <label>
+              This is a whole day event
+              <Input type="checkbox" checked={this.state.wholeDayEvent} onChange={this.handleWholeDayEventChange}/>
+            </label>
+
+            <label>
+              Start date
+              <Field name="timing.start.date">
+                {
+                  ({field}: FieldProps) => <Input type="date" {...field} />
+                }
+              </Field>
+            </label>
+
+            <label>
+              Start time
+              <Field name="timing.start.date">
+                {
+                  ({field}: FieldProps) => <Input disabled={this.state.wholeDayEvent} type="time" {...field} />
+                }
+              </Field>
+            </label>
             <button type="submit">Submit</button>
           </Form>)
         }
