@@ -14,7 +14,7 @@ deploy_staging:
     - make configure-functions-staging
     - yarn
     - (cd functions; yarn; yarn lint; yarn build)
-    - (yarn global add typescript create-react-app react-scripts-ts)
+    - (yarn global add typescript)
     - (cd webapp; yarn; yarn build)
     - firebase use --token $FIREBASE_DEPLOY_KEY_STAGING qpa-staging
     - firebase deploy -m "Pipeline $CI_PIPELINE_ID, build $CI_BUILD_ID" --non-interactive --token $FIREBASE_DEPLOY_KEY_STAGING

@@ -10,13 +10,5 @@
     "packages/*",
     "webapp",
     "functions"
-  ],
-  "dependencies": {
-    "tslint": "^5.10.0",
-    "typescript": "^3.1.1"
-  },
-  "devDependencies": {
-    "@types/jest": "^22.2.3",
-    "tslint-react": "^3.6.0"
-  }
+  ]
 }
