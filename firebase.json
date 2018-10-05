@@ -22,7 +22,7 @@
         "function": "postSession"
       },
       {
-        "source": "/api/events",
+        "source": "/events",
         "function": "events"
       },
       {
