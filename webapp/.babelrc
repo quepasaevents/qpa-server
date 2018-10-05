@@ -1,0 +1,12 @@
+{
+  "env": {
+    "development": {
+      "plugins": ["react-hot-loader/babel", "babel-plugin-styled-components"]
+    },
+    "production": {
+    },
+    "test": {
+      "plugins": ["transform-es2015-modules-commonjs"]
+    }
+  }
+}
