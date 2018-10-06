@@ -1,4 +1,5 @@
-import * as functions from 'firebase-functions';
+import express from 'express';
+
 import {
   isUserAvailable as isUserAvailableHandler,
   signup as signupHandler,
@@ -18,8 +19,6 @@ import Repository from "./repository";
 import Calendar from "./calendar";
 import EventManager from "./event";
 
-const IS_FIREBASE = true;
-
 const repository = new Repository(projectId)
 const userManager = new UserManager(repository)
 const sessionManager = new SessionManager(repository)
@@ -36,16 +35,6 @@ setEventsHandlerDependencies({
   sessionManager, calendarManager, eventManager
 })
 
-const httpHandler = (func) => {
-  let result = func
-  if (IS_FIREBASE) {
-    result = functions.https.onRequest(func)
-  }
-  return result
-}
+console.log('cc service exiting')
 
-export const isUserAvailable = httpHandler(isUserAvailableHandler)
-export const signup = httpHandler(signupHandler)
-export const signin = httpHandler(signinHandler)
-export const events = httpHandler(eventsHandler)
-export const postSession = httpHandler(postSessionHandler)
+const app = express();
