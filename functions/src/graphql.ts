@@ -48,8 +48,9 @@ export default class GraphQLInterface {
   static schema = schema
 
   resolvers = {
-    events: (req) => {
-      return [];
+    events: async (req) => {
+      const events = await this.calendarManager.listEvents()
+      return events;
     },
   };
 }
