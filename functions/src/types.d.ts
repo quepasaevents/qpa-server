@@ -13,6 +13,10 @@ interface DBEntity {
   ctime?: number,
 }
 
+interface IDable {
+  id: string
+}
+
 interface UserKeys {
   username?: string
   email?: string
@@ -21,7 +25,7 @@ interface UserProperties extends UserKeys {
   name: string
 }
 
-interface User extends UserKeys, DBEntity {
+interface User extends UserKeys, IDable{
 }
 
 
@@ -67,8 +71,8 @@ export type CalendarEventRequest = {
   imageUrl?: string
 }
 
-export type CalendarEvent = CalendarEventRequest & {
+export interface CalendarEvent extends CalendarEventRequest, DBEntity {
   owner?: string
   gcalEntryId?: number
-  id?: number
+  id?: string
 }

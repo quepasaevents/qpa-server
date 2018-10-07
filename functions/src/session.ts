@@ -3,7 +3,7 @@
 const randomstring = require('random-string')
 import {sendEmail} from './post_office'
 import {domain} from './config'
-import Repository from './repository'
+import { Repository } from './repository'
 import {DBEntity, User} from "./types";
 
 export class SessionAlreadyValidatedError extends Error {}
@@ -14,10 +14,11 @@ const generateHash = () => randomstring({
   special: false
 })
 
-export class SessionInvite {
+export class SessionInvite implements DBEntity {
   hash: string
   userId: string
   timeValidated?: number
+  id: string
 
   constructor(user: User) {
     this.hash = generateHash()

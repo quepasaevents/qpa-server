@@ -1,5 +1,4 @@
 import express from 'express';
-
 import {
   isUserAvailable as isUserAvailableHandler,
   signup as signupHandler,
@@ -15,26 +14,49 @@ import {
 import {gcal as gcalConfig, projectId} from './config'
 import UserManager from "./user";
 import SessionManager from "./session";
-import Repository from "./repository";
+import MongoRepository from './mongorepo'
 import Calendar from "./calendar";
 import EventManager from "./event";
+import GraphQLInterface from "./graphql";
 
-const repository = new Repository(projectId)
-const userManager = new UserManager(repository)
-const sessionManager = new SessionManager(repository)
-const calendarManager = new Calendar({
-  repository,
-  gcalConfig: gcalConfig
-})
-const eventManager = new EventManager(calendarManager, repository)
+async function start() {
+  const repository = new MongoRepository(projectId)
+  await repository.connect()
 
-setUserHandlerDependencies({
-  userManager, sessionManager
-})
-setEventsHandlerDependencies({
-  sessionManager, calendarManager, eventManager
-})
+  const userManager = new UserManager(repository)
+  const sessionManager = new SessionManager(repository)
+  const calendarManager = new Calendar({
+    repository,
+    gcalConfig: gcalConfig
+  })
+  const eventManager = new EventManager(calendarManager, repository)
 
-console.log('cc service exiting')
+  setUserHandlerDependencies({
+    userManager, sessionManager
+  })
+  setEventsHandlerDependencies({
+    sessionManager, calendarManager, eventManager
+  })
 
-const app = express();
+  const app = express();
+
+  app.use('/graphql', new GraphQLInterface({
+    repository,
+    userManager,
+    sessionManager,
+    calendarManager,
+    eventManager,
+  }).httpHandler);
+
+  app.use('/api/isUserAvailable', isUserAvailableHandler)
+  app.use('/api/signup', signupHandler)
+  app.use('/api/signin', signinHandler)
+  app.use('/api/session', postSessionHandler)
+  app.use('/api/events', eventsHandler)
+
+
+  app.listen(4000);
+  console.log('Running a GraphQL API server at localhost:4000/graphql');
+}
+
+start()
