@@ -1,5 +1,5 @@
+import Repository from './mongorepo'
 import {User, UserKeys, UserProperties} from './types'
-import Repository from './repository'
 
 export default class UserManager {
   repository: Repository

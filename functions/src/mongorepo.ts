@@ -3,11 +3,15 @@ import {Repository} from "./repository";
 import {CalendarEvent, DBEntity, IDable, User, UserKeys, UserProperties} from "./types";
 import {Session, SessionInvite} from "./session";
 
-interface MongoEntity<T> extends OIDable<T> {}
+interface MongoEntity<T> extends OIDable<T> {
+}
 
-function transformId<T extends DBEntity>(mongoInstance: MongoEntity<T>): T {
-  const { _id, ...entityProps } = mongoInstance
-  return {...entityProps, id: _id.toString() } as T;
+function transformId<T extends DBEntity>(mongoInstance?: MongoEntity<T>): T {
+  if (!mongoInstance) {
+    return null
+  }
+  const {_id, ...entityProps} = mongoInstance
+  return {...entityProps, id: _id.toString()} as T;
 }
 
 interface OIDable<T> {
@@ -30,6 +34,7 @@ export default class MongoRepository implements Repository {
   }
 
   async connect() {
+    console.log('Will connect to mongo db')
     this.client = await MongoClient.connect('mongodb://localhost')
     this.db = this.client.db(this.dbName)
     this.c = {
@@ -38,14 +43,15 @@ export default class MongoRepository implements Repository {
       sessionInvites: this.db.collection<OIDable<SessionInvite>>('session_invites'),
       events: this.db.collection<OIDable<CalendarEvent>>('events'),
     }
+    console.log('Mongo connected and collections set up')
   }
+
   async createUser(userProperties: UserProperties): Promise<User> {
     if (!(userProperties.username && userProperties.email)) {
       const message = `Cannot create user without username and email: ${JSON.stringify(userProperties)}`
       console.error(message)
       return Promise.reject(new Error(message))
     }
-
     const dbSession = this.client.startSession()
     try {
       const existingUser = await this.c.users.findOne({
@@ -74,7 +80,7 @@ export default class MongoRepository implements Repository {
       }
     }
 
-    const retrievedUser = await this.c.users.findOne({ username: userProperties.username, email: userProperties.email })
+    const retrievedUser = await this.c.users.findOne({username: userProperties.username, email: userProperties.email})
     return transformId(retrievedUser)
   }
 
@@ -86,7 +92,7 @@ export default class MongoRepository implements Repository {
   }
 
   async getSessionInvite(hash: string): Promise<SessionInvite | null> {
-    const result = await this.c.sessionInvites.findOne({ hash })
+    const result = await this.c.sessionInvites.findOne({hash})
     return transformId(result)
   }
 
@@ -112,20 +118,22 @@ export default class MongoRepository implements Repository {
   }
 
   async getSession(hash: string): Promise<Session> {
-    const result = await this.c.sessions.findOne({ hash })
+    const result = await this.c.sessions.findOne({hash})
     return transformId(result)
   }
 
   async getUser(userKeys: UserKeys): Promise<User> {
-    const result = await this.c.users.findOne({$or: [
+    const result = await this.c.users.findOne({
+      $or: [
         {id: userKeys.email},
         {id: userKeys.username},
-      ]})
+      ]
+    })
     return transformId(result)
   }
 
   async getUserById(id: string): Promise<User> {
-    const result = await this.c.sessions.findOne({ id })
+    const result = await this.c.sessions.findOne({id})
     return transformId(result)
   }
 
@@ -140,7 +148,7 @@ export default class MongoRepository implements Repository {
   }
 
   async updateEvent(event: CalendarEvent): Promise<CalendarEvent> {
-    const { id, ...strippedFromId } = event;
+    const {id, ...strippedFromId} = event;
     const updateResult = await this.c.events.updateOne({
       _id: event.id
     }, strippedFromId as OIDable<CalendarEvent>)
@@ -153,6 +161,6 @@ export default class MongoRepository implements Repository {
 
   async getEvent(id: string): Promise<CalendarEvent> {
     return transformId(await this.c.events.findOne({_id: id}))
-}
+  }
 
 }

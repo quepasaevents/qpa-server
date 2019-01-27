@@ -31,8 +31,8 @@ export const isUserAvailable = async (req: Request, res: Response) => {
 }
 
 const handleSignup = (async (req: Request, res: Response) => {
-  const {username, email, name} = req.body
-  const userProperties: UserProperties = {username, email, name}
+  const {username, email, firstName, lastName} = req.body
+  const userProperties: UserProperties = {username, email, firstName, lastName}
 
   let newUser
   const userKeys = {

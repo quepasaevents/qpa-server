@@ -38,25 +38,16 @@ async function start() {
     sessionManager, calendarManager, eventManager
   })
 
-  const app = express();
-
-  app.use('/graphql', new GraphQLInterface({
+  const gql = new GraphQLInterface({
     repository,
     userManager,
     sessionManager,
     calendarManager,
     eventManager,
-  }).httpHandler);
+  });
 
-  app.use('/api/isUserAvailable', isUserAvailableHandler)
-  app.use('/api/signup', signupHandler)
-  app.use('/api/signin', signinHandler)
-  app.use('/api/session', postSessionHandler)
-  app.use('/api/events', eventsHandler)
+  gql.start()
 
-
-  app.listen(4000);
-  console.log('Running a GraphQL API server at localhost:4000/graphql');
 }
 
 start()

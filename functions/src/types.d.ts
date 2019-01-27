@@ -22,12 +22,12 @@ interface UserKeys {
   email?: string
 }
 interface UserProperties extends UserKeys {
-  name: string
+  firstName: string
+  lastName: string
 }
 
-interface User extends UserKeys, IDable{
+interface User extends UserKeys, IDable {
 }
-
 
 export type EventTime = {
   date?: string // in format  "yyyy-mm-dd" for all-day event

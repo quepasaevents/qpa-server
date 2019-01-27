@@ -30,8 +30,6 @@ export class SessionInvite implements DBEntity {
 interface BasicSessionData {
   hash: string
   userId: string
-  userAgent: string
-  ipAddress: Array<number>
 }
 
 export type Session = BasicSessionData & {
@@ -41,8 +39,6 @@ export type Session = BasicSessionData & {
 
 export type SessionRequest = DBEntity & {
   hash: string
-  userAgent: string
-  ipAddress: Array<number>
 }
 
 export default class SessionManager {
@@ -53,7 +49,11 @@ export default class SessionManager {
     this.repository = repository
   }
 
-  inviteUser = async (user: User): Promise<SessionInvite> => {
+  inviteUser = async (email: string): Promise<SessionInvite> => {
+    const user = await this.repository.getUser({ email });
+    if (!user) {
+      throw new Error('Could not find user for this email');
+    }
     const invite = new SessionInvite(user)
     try {
       const persistedInvite = await this.repository.saveSessionInvite(invite)
@@ -94,8 +94,6 @@ export default class SessionManager {
         ctime: Date.now(),
         isValid: true,
         hash: generateHash(),
-        userAgent: sessionRequest.userAgent,
-        ipAddress: sessionRequest.ipAddress,
       }
       const persistedSession = await this.repository.createSession(session)
       return Promise.resolve(persistedSession)
