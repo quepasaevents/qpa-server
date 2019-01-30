@@ -35,7 +35,7 @@ export default class MongoRepository implements Repository {
 
   async connect() {
     console.log('Will connect to mongo db')
-    this.client = await MongoClient.connect('mongodb://localhost', { useNewUrlParser: true })
+    this.client = await MongoClient.connect('mongodb://localhost', {useNewUrlParser: true})
     this.db = this.client.db(this.dbName)
     this.c = {
       users: this.db.collection<OIDable<User>>('users'),
@@ -52,7 +52,10 @@ export default class MongoRepository implements Repository {
       console.error(message)
       return Promise.reject(new Error(message))
     }
-    const dbSession = this.client.startSession()
+    const dbSession = await this.client.startSession()
+    dbSession.startTransaction()
+    let excpetionToThrowBack: Error | null = null
+
     try {
       const existingUser = await this.c.users.findOne({
         $or: [
@@ -63,21 +66,26 @@ export default class MongoRepository implements Repository {
 
       if (existingUser) {
         await dbSession.abortTransaction()
-        const message = `Error creating new user: already exists. ${JSON.stringify(existingUser)}`
-        throw new Error(message)
+        const message = 'Error creating new user: already exists'
+        excpetionToThrowBack = new Error(message)
+        throw excpetionToThrowBack
+      }
+      const insertResult = await this.c.users.insertOne(userProperties as OIDable<User>)
+
+      if (insertResult.result.ok !== 1) {
+        await dbSession.abortTransaction()
+        excpetionToThrowBack = new Error(`Error inserting user ${userProperties}`)
       } else {
-        const insertResult = await this.c.users.insertOne(userProperties as OIDable<User>)
-        if (insertResult.result.ok !== 1) {
-          await dbSession.abortTransaction()
-          throw new Error(`Error inserting user ${userProperties}`)
-        } else {
-          await dbSession.commitTransaction()
-        }
+        await dbSession.commitTransaction()
       }
     } finally {
       if (dbSession.inTransaction()) {
         dbSession.abortTransaction()
       }
+    }
+
+    if (excpetionToThrowBack) {
+      throw excpetionToThrowBack
     }
 
     const retrievedUser = await this.c.users.findOne({username: userProperties.username, email: userProperties.email})

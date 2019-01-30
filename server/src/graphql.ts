@@ -6,7 +6,9 @@ import EventManager from "./event";
 import {ApolloServer} from 'apollo-server';
 import {makeExecutableSchema} from "graphql-tools";
 import EventsResolvers from './Events/eventsResolvers'
-import { importSchema } from 'graphql-import';
+import {importSchema} from 'graphql-import';
+import AuthResolvers from "./Auth/authResolvers";
+import {auth} from "google-auth-library";
 
 const typeDefs = importSchema(__dirname + '/schema.graphql');
 
@@ -35,17 +37,23 @@ export default class GraphQLInterface {
 
   start = () => {
     const eventsResolvers = new EventsResolvers({repository: this.repository, calendarManager: this.calendarManager})
-
+    const authResolvers = new AuthResolvers({
+      repository: this.repository,
+      sessionManager: this.sessionManager,
+      userManager: this.userManager
+    })
     const schema = makeExecutableSchema({
       typeDefs,
       resolvers: {
         Query: {
           ...this.resolvers.Query,
-          ...eventsResolvers.Query
+          ...eventsResolvers.Query,
+          ...authResolvers.Query
         },
         Mutation: {
           ...this.resolvers.Mutation,
-          ...eventsResolvers.Mutation
+          ...eventsResolvers.Mutation,
+          ...authResolvers.Mutation
         }
       },
     });
@@ -57,11 +65,8 @@ export default class GraphQLInterface {
   }
 
   resolvers = {
-    Query: {
-    },
-    Mutation: {
-
-    }
+    Query: {},
+    Mutation: {}
   };
 }
 

@@ -1,5 +1,5 @@
 import {Repository} from "../repository";
-import { User } from "../types";
+import {User} from "../types";
 import UserManager from "../user";
 import SessionManager from "../session";
 
@@ -20,18 +20,15 @@ export default class AuthResolvers {
     this.sessionManager = sessionManager;
   }
 
-  Query = {
-
-  }
+  Query = {}
 
   Mutation = {
     signup: async (_, req, context, info) => {
-      const {username, email, firstName, lastName} = req;
+      const {username, email, firstName, lastName} = req.input;
       let newUser: User = null
-      try {
-        newUser = await this.userManager.createUser({username, email, firstName, lastName})
-      } catch (e) {
-        console.error('Caught error when creating user for input', req.input);
+      newUser = await this.userManager.createUser({username, email, firstName, lastName})
+      if (!newUser) {
+        throw new Error("New user was not created for request" + JSON.stringify(req))
       }
       return !!newUser
     },
