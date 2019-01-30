@@ -35,7 +35,7 @@ export default class MongoRepository implements Repository {
 
   async connect() {
     console.log('Will connect to mongo db')
-    this.client = await MongoClient.connect('mongodb://localhost')
+    this.client = await MongoClient.connect('mongodb://localhost', { useNewUrlParser: true })
     this.db = this.client.db(this.dbName)
     this.c = {
       users: this.db.collection<OIDable<User>>('users'),
@@ -81,7 +81,7 @@ export default class MongoRepository implements Repository {
     }
 
     const retrievedUser = await this.c.users.findOne({username: userProperties.username, email: userProperties.email})
-    return transformId(retrievedUser)
+    return transformId(retrievedUser) as User
   }
 
   async saveSessionInvite(invite: SessionInvite) {
@@ -93,7 +93,7 @@ export default class MongoRepository implements Repository {
 
   async getSessionInvite(hash: string): Promise<SessionInvite | null> {
     const result = await this.c.sessionInvites.findOne({hash})
-    return transformId(result)
+    return transformId(result) as SessionInvite
   }
 
   async createSession(session: Session): Promise<Session> {
@@ -114,12 +114,12 @@ export default class MongoRepository implements Repository {
     }
 
     const result = await this.c.sessions.findOne({hash: session.hash});
-    return transformId(result)
+    return transformId(result) as Session
   }
 
   async getSession(hash: string): Promise<Session> {
     const result = await this.c.sessions.findOne({hash})
-    return transformId(result)
+    return transformId(result) as Session
   }
 
   async getUser(userKeys: UserKeys): Promise<User> {
@@ -129,12 +129,12 @@ export default class MongoRepository implements Repository {
         {id: userKeys.username},
       ]
     })
-    return transformId(result)
+    return transformId(result) as User
   }
 
   async getUserById(id: string): Promise<User> {
     const result = await this.c.sessions.findOne({id})
-    return transformId(result)
+    return transformId(result) as User
   }
 
   async createEvent(event: CalendarEvent): Promise<CalendarEvent> {
@@ -144,7 +144,7 @@ export default class MongoRepository implements Repository {
     }
     return transformId(await this.c.events.findOne({
       _id: insertResult.insertedId
-    }))
+    })) as CalendarEvent
   }
 
   async updateEvent(event: CalendarEvent): Promise<CalendarEvent> {
@@ -156,11 +156,11 @@ export default class MongoRepository implements Repository {
       throw new Error(`Error updating event ${event.id}`)
     }
     const result = await this.c.events.findOne({_id: event.id})
-    return transformId(result)
+    return transformId(result) as CalendarEvent
   }
 
   async getEvent(id: string): Promise<CalendarEvent> {
-    return transformId(await this.c.events.findOne({_id: id}))
+    return transformId(await this.c.events.findOne({_id: id})) as CalendarEvent
   }
 
 }

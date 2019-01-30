@@ -1,0 +1,106 @@
+type Event {
+    id: ID
+    owner: User!
+    info: [EventInformation]
+    time: EventTime
+    status: EventStatus!
+    contact: [EventContactPerson!]
+    location: Location
+}
+
+type Location {
+    address: String
+    name: String
+    coordinate: GeoCoordinate
+}
+
+type GeoCoordinate {
+    lat: Float
+    lng: Float
+}
+
+type EventTime {
+    timeZone: TimeZone
+    start: Timestamp
+    end: Timestamp
+    recurrence: String
+    exceptions: String
+}
+
+# in RFC3339 e.g. 2002-10-02T10:00:00-05:00 or 2002-10-02T15:00:00Z
+scalar Timestamp
+
+# IANA Timezone e.g. "Europe/Zurich"
+scalar TimeZone
+
+#  "confirmed" | "tentative" | "cancelled"
+scalar EventStatus
+
+# e.g. 'de', 'en', etc'
+scalar Language
+
+# Event information for presentation
+type EventInformation {
+    language: String!
+    title: String!
+    description: String
+}
+
+type EventContactPerson {
+    name: String!
+    languages: [Language!]
+    contact: Contact
+}
+
+type Contact {
+    email: String
+    phone: String
+}
+
+type Query {
+    events: [Event]
+}
+
+input EventTimeInput {
+    timeZone: TimeZone
+    status: EventStatus
+    start: Timestamp
+    end: Timestamp
+}
+
+input EventContactInput {
+    email: String
+    phone: String
+}
+
+input EventInformationInput {
+    language: String!
+    title: String!
+    description: String
+}
+
+input GeoCoordinateInput {
+    lat: Float
+    lng: Float
+}
+
+input EventLocationInput {
+    address: String
+    name: String
+    coordinate: GeoCoordinateInput
+}
+
+input EventMetaInput {
+    tags: [String]
+}
+
+input EventInput {
+    time: EventTimeInput
+    info: [EventInformationInput]
+    location: EventLocationInput
+    meta: EventMetaInput
+}
+
+type Mutation {
+    createEvent(input: EventInput): Event
+}

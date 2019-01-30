@@ -11,6 +11,7 @@ import {
   events as eventsHandler,
   setDependencies as setEventsHandlerDependencies
 } from './eventHandlers';
+
 import {gcal as gcalConfig, projectId} from './config'
 import UserManager from "./user";
 import SessionManager from "./session";

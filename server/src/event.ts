@@ -10,61 +10,6 @@ const Joi = JoiBase
   .extend(JoiTimezone)
   .extend(JoiPhoneNumber)
 
-const eventSchema = gql`
-    type Event {
-        id: ID
-        owner: User!
-        info: [EventInformation]
-    }
-    # Event information for presentation
-    type EventInformation {
-        
-    }
-    
-    input TimeInput {
-        # in format  "yyyy-mm-dd" for all-day event
-        date: String
-        # in RFC3339 e.g. 2002-10-02T10:00:00-05:00 or 2002-10-02T15:00:00Z
-        dateTime: String
-        # IANA Timezone e.g. "Europe/Zurich"
-        timeZone: string
-    }
-    input EventTimeInput {
-        timeZone: String
-        #  "confirmed" | "tentative" | "cancelled"
-        status: String
-        start: TimeInput
-        end: TimeInput
-    }
-    input EventContactInput {
-        email: String
-        phone: String
-    }
-    input EventInformationInput {
-        language: String
-        title: String
-        contact: EventContactInput
-    }
-    input GeoCoordinateInput {
-        lat: Float
-        lng: Float
-    }
-    input EventLocationInput {
-        address: String
-        name: String
-        coordinate: GeoCoordinateInput
-    }
-    input EventMetaInput {
-        tags: [String]
-    }
-    input CreateEventInput {
-        time: EventTimeInput
-        info: [EventInformationInput]
-        location: EventLocationInput
-        meta: EventMetaInput
-    }
-`
-
 const EventTimingSchema = Joi.any()
 
 export const UserEventSchema: JoiBase.Schema = Joi.object().keys({
