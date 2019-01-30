@@ -30,6 +30,12 @@ export default class AuthResolvers {
       if (!newUser) {
         throw new Error("New user was not created for request" + JSON.stringify(req))
       }
+
+      try {
+        this.sessionManager.inviteUser(newUser.email)
+      } catch (e) {
+        console.error('Error sending invitation', e)
+      }
       return !!newUser
     },
     signin: async (_, {hash}, context, info) => {
