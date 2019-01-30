@@ -106,7 +106,7 @@ export default class MongoRepository implements Repository {
 
   async createSession(session: Session): Promise<Session> {
     const dbSession = await this.client.startSession()
-
+    dbSession.startTransaction()
     const existingSession = await this.c.sessions.findOne({hash: session.hash})
     if (existingSession) {
       dbSession.abortTransaction()
@@ -141,7 +141,7 @@ export default class MongoRepository implements Repository {
   }
 
   async getUserById(id: string): Promise<User> {
-    const result = await this.c.sessions.findOne({id})
+    const result = await this.c.users.findOne({_id: new ObjectID(id)})
     return transformId(result) as User
   }
 

@@ -38,12 +38,12 @@ export default class AuthResolvers {
       }
       return !!newUser
     },
-    signin: async (_, {hash}, context, info) => {
-      const session = await this.sessionManager.initiateSession({hash});
+    signin: async (_, req, context, info) => {
+      const session = await this.sessionManager.initiateSession(req.input.hash);
       if (!session || !session.isValid) {
         throw new Error('Could not find session invite')
       }
-      // Client has to set session token
+
       return session;
     },
     requestInvite: async (_, {email}, context, info) => {

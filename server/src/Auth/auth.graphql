@@ -6,6 +6,7 @@ type User {
 
 type UserSession {
     hash: String!
+    user: User!
 }
 
 input SignupInput {

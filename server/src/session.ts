@@ -82,12 +82,19 @@ export default class SessionManager {
 
   }
 
-  initiateSession = async (sessionRequest: SessionRequest): Promise<Session> => {
-    const sessionInvite: SessionInvite = await this.repository.getSessionInvite(sessionRequest.hash)
+  initiateSession = async (inviteHash: string): Promise<Session> => {
+    const sessionInvite: SessionInvite = await this.repository.getSessionInvite(inviteHash)
+    if (!sessionInvite) {
+      throw new Error(`Could not find invite with hash ${inviteHash}`)
+    }
     if (sessionInvite.timeValidated) {
       throw new SessionAlreadyValidatedError()
     }
     const matchingUser: User = await this.repository.getUserById(sessionInvite.userId)
+    if (!matchingUser) {
+      console.error(`Invite hash ${inviteHash} could not find related userId ${sessionInvite.userId}`)
+      throw new Error('Cannot find related user to this invite')
+    }
     if (matchingUser.id === sessionInvite.userId) {
       const session: Session = {
         userId: matchingUser.id,
