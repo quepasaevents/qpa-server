@@ -3,7 +3,7 @@
 const randomstring = require('random-string')
 import {sendEmail} from './post_office'
 import {domain} from './config'
-import { Repository } from './repository'
+import Repository from './repository'
 import {DBEntity, User} from "./types";
 
 export class SessionAlreadyValidatedError extends Error {}

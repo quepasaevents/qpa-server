@@ -1,12 +1,3 @@
-import {
-  setDependencies as setUserHandlerDependencies,
-} from './userHandlers'
-
-import {
-  events as eventsHandler,
-  setDependencies as setEventsHandlerDependencies
-} from './eventHandlers';
-
 import {gcal as gcalConfig, projectId} from "./config";
 import UserManager from "./user";
 import SessionManager from "./session";
@@ -28,13 +19,6 @@ async function start() {
     gcalConfig: gcalConfig
   })
   const eventManager = new EventManager({calendarManager, eventsRepository})
-
-  setUserHandlerDependencies({
-    userManager, sessionManager
-  })
-  setEventsHandlerDependencies({
-    sessionManager, calendarManager, eventManager
-  })
 
   const gql = new GraphQLInterface({
     repository,

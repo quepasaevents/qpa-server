@@ -3,13 +3,6 @@ import {User} from "../types";
 import UserManager from "../user";
 import SessionManager from "../session";
 
-interface AuthQueryResolvers {
-}
-
-
-interface AuthMutationResolvers {
-}
-
 export default class AuthResolvers {
   userManager: UserManager
   repository: Repository
