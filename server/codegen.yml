@@ -2,9 +2,6 @@ schema: src/schema.graphql
 overwrite: true
 generates:
   ./src/types.gen.d.ts:
-    config:
-      noNamespace: true
-      fieldResolverNamePrefix: Field
     plugins:
       - typescript-common
       - typescript-server

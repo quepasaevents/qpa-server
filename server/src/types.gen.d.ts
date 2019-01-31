@@ -255,17 +255,17 @@ export type DirectiveResolverFn<TResult, TArgs = {}, TContext = {}> = (
 
 export namespace QueryResolvers {
   export interface Resolvers<Context = {}, TypeParent = {}> {
-    me?: FieldMeResolver<Maybe<User>, TypeParent, Context>;
+    me?: MeResolver<Maybe<User>, TypeParent, Context>;
 
-    events?: FieldEventsResolver<Maybe<(Maybe<Event>)[]>, TypeParent, Context>;
+    events?: EventsResolver<Maybe<(Maybe<Event>)[]>, TypeParent, Context>;
   }
 
-  export type FieldMeResolver<
-    R = Maybe<User>,
-    Parent = {},
-    Context = {}
-  > = Resolver<R, Parent, Context>;
-  export type FieldEventsResolver<
+  export type MeResolver<R = Maybe<User>, Parent = {}, Context = {}> = Resolver<
+    R,
+    Parent,
+    Context
+  >;
+  export type EventsResolver<
     R = Maybe<(Maybe<Event>)[]>,
     Parent = {},
     Context = {}
@@ -277,86 +277,82 @@ export namespace QueryResolvers {
 
 export namespace UserResolvers {
   export interface Resolvers<Context = {}, TypeParent = User> {
-    name?: FieldNameResolver<string, TypeParent, Context>;
+    name?: NameResolver<string, TypeParent, Context>;
 
-    username?: FieldUsernameResolver<string, TypeParent, Context>;
+    username?: UsernameResolver<string, TypeParent, Context>;
 
-    id?: FieldIdResolver<string, TypeParent, Context>;
+    id?: IdResolver<string, TypeParent, Context>;
   }
 
-  export type FieldNameResolver<
+  export type NameResolver<R = string, Parent = User, Context = {}> = Resolver<
+    R,
+    Parent,
+    Context
+  >;
+  export type UsernameResolver<
     R = string,
     Parent = User,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldUsernameResolver<
-    R = string,
-    Parent = User,
-    Context = {}
-  > = Resolver<R, Parent, Context>;
-  export type FieldIdResolver<
-    R = string,
-    Parent = User,
-    Context = {}
-  > = Resolver<R, Parent, Context>;
+  export type IdResolver<R = string, Parent = User, Context = {}> = Resolver<
+    R,
+    Parent,
+    Context
+  >;
 }
 
 export namespace EventResolvers {
   export interface Resolvers<Context = {}, TypeParent = Event> {
-    id?: FieldIdResolver<Maybe<string>, TypeParent, Context>;
+    id?: IdResolver<Maybe<string>, TypeParent, Context>;
 
-    owner?: FieldOwnerResolver<User, TypeParent, Context>;
+    owner?: OwnerResolver<User, TypeParent, Context>;
 
-    info?: FieldInfoResolver<
+    info?: InfoResolver<
       Maybe<(Maybe<EventInformation>)[]>,
       TypeParent,
       Context
     >;
 
-    time?: FieldTimeResolver<Maybe<EventTime>, TypeParent, Context>;
+    time?: TimeResolver<Maybe<EventTime>, TypeParent, Context>;
 
-    status?: FieldStatusResolver<EventStatus, TypeParent, Context>;
+    status?: StatusResolver<EventStatus, TypeParent, Context>;
 
-    contact?: FieldContactResolver<
-      Maybe<EventContactPerson[]>,
-      TypeParent,
-      Context
-    >;
+    contact?: ContactResolver<Maybe<EventContactPerson[]>, TypeParent, Context>;
 
-    location?: FieldLocationResolver<Maybe<Location>, TypeParent, Context>;
+    location?: LocationResolver<Maybe<Location>, TypeParent, Context>;
   }
 
-  export type FieldIdResolver<
+  export type IdResolver<
     R = Maybe<string>,
     Parent = Event,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldOwnerResolver<
-    R = User,
-    Parent = Event,
-    Context = {}
-  > = Resolver<R, Parent, Context>;
-  export type FieldInfoResolver<
+  export type OwnerResolver<R = User, Parent = Event, Context = {}> = Resolver<
+    R,
+    Parent,
+    Context
+  >;
+  export type InfoResolver<
     R = Maybe<(Maybe<EventInformation>)[]>,
     Parent = Event,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldTimeResolver<
+  export type TimeResolver<
     R = Maybe<EventTime>,
     Parent = Event,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldStatusResolver<
+  export type StatusResolver<
     R = EventStatus,
     Parent = Event,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldContactResolver<
+  export type ContactResolver<
     R = Maybe<EventContactPerson[]>,
     Parent = Event,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldLocationResolver<
+  export type LocationResolver<
     R = Maybe<Location>,
     Parent = Event,
     Context = {}
@@ -365,24 +361,24 @@ export namespace EventResolvers {
 
 export namespace EventInformationResolvers {
   export interface Resolvers<Context = {}, TypeParent = EventInformation> {
-    language?: FieldLanguageResolver<string, TypeParent, Context>;
+    language?: LanguageResolver<string, TypeParent, Context>;
 
-    title?: FieldTitleResolver<string, TypeParent, Context>;
+    title?: TitleResolver<string, TypeParent, Context>;
 
-    description?: FieldDescriptionResolver<Maybe<string>, TypeParent, Context>;
+    description?: DescriptionResolver<Maybe<string>, TypeParent, Context>;
   }
 
-  export type FieldLanguageResolver<
+  export type LanguageResolver<
     R = string,
     Parent = EventInformation,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldTitleResolver<
+  export type TitleResolver<
     R = string,
     Parent = EventInformation,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldDescriptionResolver<
+  export type DescriptionResolver<
     R = Maybe<string>,
     Parent = EventInformation,
     Context = {}
@@ -391,38 +387,38 @@ export namespace EventInformationResolvers {
 
 export namespace EventTimeResolvers {
   export interface Resolvers<Context = {}, TypeParent = EventTime> {
-    timeZone?: FieldTimeZoneResolver<Maybe<TimeZone>, TypeParent, Context>;
+    timeZone?: TimeZoneResolver<Maybe<TimeZone>, TypeParent, Context>;
 
-    start?: FieldStartResolver<Maybe<Timestamp>, TypeParent, Context>;
+    start?: StartResolver<Maybe<Timestamp>, TypeParent, Context>;
 
-    end?: FieldEndResolver<Maybe<Timestamp>, TypeParent, Context>;
+    end?: EndResolver<Maybe<Timestamp>, TypeParent, Context>;
 
-    recurrence?: FieldRecurrenceResolver<Maybe<string>, TypeParent, Context>;
+    recurrence?: RecurrenceResolver<Maybe<string>, TypeParent, Context>;
 
-    exceptions?: FieldExceptionsResolver<Maybe<string>, TypeParent, Context>;
+    exceptions?: ExceptionsResolver<Maybe<string>, TypeParent, Context>;
   }
 
-  export type FieldTimeZoneResolver<
+  export type TimeZoneResolver<
     R = Maybe<TimeZone>,
     Parent = EventTime,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldStartResolver<
+  export type StartResolver<
     R = Maybe<Timestamp>,
     Parent = EventTime,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldEndResolver<
+  export type EndResolver<
     R = Maybe<Timestamp>,
     Parent = EventTime,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldRecurrenceResolver<
+  export type RecurrenceResolver<
     R = Maybe<string>,
     Parent = EventTime,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldExceptionsResolver<
+  export type ExceptionsResolver<
     R = Maybe<string>,
     Parent = EventTime,
     Context = {}
@@ -431,24 +427,24 @@ export namespace EventTimeResolvers {
 
 export namespace EventContactPersonResolvers {
   export interface Resolvers<Context = {}, TypeParent = EventContactPerson> {
-    name?: FieldNameResolver<string, TypeParent, Context>;
+    name?: NameResolver<string, TypeParent, Context>;
 
-    languages?: FieldLanguagesResolver<Maybe<Language[]>, TypeParent, Context>;
+    languages?: LanguagesResolver<Maybe<Language[]>, TypeParent, Context>;
 
-    contact?: FieldContactResolver<Maybe<Contact>, TypeParent, Context>;
+    contact?: ContactResolver<Maybe<Contact>, TypeParent, Context>;
   }
 
-  export type FieldNameResolver<
+  export type NameResolver<
     R = string,
     Parent = EventContactPerson,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldLanguagesResolver<
+  export type LanguagesResolver<
     R = Maybe<Language[]>,
     Parent = EventContactPerson,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldContactResolver<
+  export type ContactResolver<
     R = Maybe<Contact>,
     Parent = EventContactPerson,
     Context = {}
@@ -457,17 +453,17 @@ export namespace EventContactPersonResolvers {
 
 export namespace ContactResolvers {
   export interface Resolvers<Context = {}, TypeParent = Contact> {
-    email?: FieldEmailResolver<Maybe<string>, TypeParent, Context>;
+    email?: EmailResolver<Maybe<string>, TypeParent, Context>;
 
-    phone?: FieldPhoneResolver<Maybe<string>, TypeParent, Context>;
+    phone?: PhoneResolver<Maybe<string>, TypeParent, Context>;
   }
 
-  export type FieldEmailResolver<
+  export type EmailResolver<
     R = Maybe<string>,
     Parent = Contact,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldPhoneResolver<
+  export type PhoneResolver<
     R = Maybe<string>,
     Parent = Contact,
     Context = {}
@@ -476,28 +472,24 @@ export namespace ContactResolvers {
 
 export namespace LocationResolvers {
   export interface Resolvers<Context = {}, TypeParent = Location> {
-    address?: FieldAddressResolver<Maybe<string>, TypeParent, Context>;
+    address?: AddressResolver<Maybe<string>, TypeParent, Context>;
 
-    name?: FieldNameResolver<Maybe<string>, TypeParent, Context>;
+    name?: NameResolver<Maybe<string>, TypeParent, Context>;
 
-    coordinate?: FieldCoordinateResolver<
-      Maybe<GeoCoordinate>,
-      TypeParent,
-      Context
-    >;
+    coordinate?: CoordinateResolver<Maybe<GeoCoordinate>, TypeParent, Context>;
   }
 
-  export type FieldAddressResolver<
+  export type AddressResolver<
     R = Maybe<string>,
     Parent = Location,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldNameResolver<
+  export type NameResolver<
     R = Maybe<string>,
     Parent = Location,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldCoordinateResolver<
+  export type CoordinateResolver<
     R = Maybe<GeoCoordinate>,
     Parent = Location,
     Context = {}
@@ -506,17 +498,17 @@ export namespace LocationResolvers {
 
 export namespace GeoCoordinateResolvers {
   export interface Resolvers<Context = {}, TypeParent = GeoCoordinate> {
-    lat?: FieldLatResolver<Maybe<number>, TypeParent, Context>;
+    lat?: LatResolver<Maybe<number>, TypeParent, Context>;
 
-    lng?: FieldLngResolver<Maybe<number>, TypeParent, Context>;
+    lng?: LngResolver<Maybe<number>, TypeParent, Context>;
   }
 
-  export type FieldLatResolver<
+  export type LatResolver<
     R = Maybe<number>,
     Parent = GeoCoordinate,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldLngResolver<
+  export type LngResolver<
     R = Maybe<number>,
     Parent = GeoCoordinate,
     Context = {}
@@ -525,25 +517,26 @@ export namespace GeoCoordinateResolvers {
 
 export namespace MutationResolvers {
   export interface Resolvers<Context = {}, TypeParent = {}> {
-    signup?: FieldSignupResolver<boolean, TypeParent, Context>;
+    signup?: SignupResolver<boolean, TypeParent, Context>;
 
-    signin?: FieldSigninResolver<UserSession, TypeParent, Context>;
+    signin?: SigninResolver<UserSession, TypeParent, Context>;
 
-    requestInvite?: FieldRequestInviteResolver<boolean, TypeParent, Context>;
+    requestInvite?: RequestInviteResolver<boolean, TypeParent, Context>;
 
-    createEvent?: FieldCreateEventResolver<Maybe<Event>, TypeParent, Context>;
+    createEvent?: CreateEventResolver<Maybe<Event>, TypeParent, Context>;
   }
 
-  export type FieldSignupResolver<
-    R = boolean,
-    Parent = {},
-    Context = {}
-  > = Resolver<R, Parent, Context, SignupArgs>;
+  export type SignupResolver<R = boolean, Parent = {}, Context = {}> = Resolver<
+    R,
+    Parent,
+    Context,
+    SignupArgs
+  >;
   export interface SignupArgs {
     input?: Maybe<SignupInput>;
   }
 
-  export type FieldSigninResolver<
+  export type SigninResolver<
     R = UserSession,
     Parent = {},
     Context = {}
@@ -552,7 +545,7 @@ export namespace MutationResolvers {
     input?: Maybe<SigninInput>;
   }
 
-  export type FieldRequestInviteResolver<
+  export type RequestInviteResolver<
     R = boolean,
     Parent = {},
     Context = {}
@@ -561,7 +554,7 @@ export namespace MutationResolvers {
     input?: Maybe<RequestInviteInput>;
   }
 
-  export type FieldCreateEventResolver<
+  export type CreateEventResolver<
     R = Maybe<Event>,
     Parent = {},
     Context = {}
@@ -573,17 +566,17 @@ export namespace MutationResolvers {
 
 export namespace UserSessionResolvers {
   export interface Resolvers<Context = {}, TypeParent = UserSession> {
-    hash?: FieldHashResolver<string, TypeParent, Context>;
+    hash?: HashResolver<string, TypeParent, Context>;
 
-    user?: FieldUserResolver<User, TypeParent, Context>;
+    user?: UserResolver<User, TypeParent, Context>;
   }
 
-  export type FieldHashResolver<
+  export type HashResolver<
     R = string,
     Parent = UserSession,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type FieldUserResolver<
+  export type UserResolver<
     R = User,
     Parent = UserSession,
     Context = {}
