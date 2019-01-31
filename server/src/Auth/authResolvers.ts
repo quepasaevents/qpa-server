@@ -2,6 +2,10 @@ import Repository from "../repository";
 import {User} from "../types";
 import UserManager from "../user";
 import SessionManager from "../session";
+import {MutationResolvers, QueryResolvers} from "../types.gen";
+import SignupArgs = MutationResolvers.SignupArgs;
+import SigninArgs = MutationResolvers.SigninArgs;
+import RequestInviteArgs = MutationResolvers.RequestInviteArgs;
 
 export default class AuthResolvers {
   userManager: UserManager
@@ -13,10 +17,12 @@ export default class AuthResolvers {
     this.sessionManager = sessionManager;
   }
 
-  Query = {}
+  Query = {
+
+  }
 
   Mutation = {
-    signup: async (_, req, context, info) => {
+    signup: async (_, req: SignupArgs, context, info) => {
       const {username, email, firstName, lastName} = req.input;
       let newUser: User = null
       newUser = await this.userManager.createUser({username, email, firstName, lastName})
@@ -31,7 +37,7 @@ export default class AuthResolvers {
       }
       return !!newUser
     },
-    signin: async (_, req, context, info) => {
+    signin: async (_, req: SigninArgs, context, info) => {
       const session = await this.sessionManager.initiateSession(req.input.hash);
       if (!session || !session.isValid) {
         throw new Error('Could not find session invite')
@@ -39,8 +45,8 @@ export default class AuthResolvers {
 
       return session;
     },
-    requestInvite: async (_, {email}, context, info) => {
-      const invite = await this.sessionManager.inviteUser(email)
+    requestInvite: async (_, req: RequestInviteArgs, context, info) => {
+      const invite = await this.sessionManager.inviteUser(req.input.email)
       if (!invite) {
         throw new Error('Invitation failed')
       }
