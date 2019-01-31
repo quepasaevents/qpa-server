@@ -1,8 +1,8 @@
-import {Repository} from "./repository";
+import Repository from "./repository";
 import UserManager from "./user";
 import SessionManager from "./session";
-import CalendarManager from "./calendar";
-import EventManager from "./event";
+import CalendarManager from "./Calendar/CalendarManager";
+import EventManager from "./Events/EventManager";
 import {ApolloServer} from 'apollo-server';
 import {makeExecutableSchema} from "graphql-tools";
 import EventsResolvers from './Events/eventsResolvers'
@@ -36,7 +36,10 @@ export default class GraphQLInterface {
   }
 
   start = () => {
-    const eventsResolvers = new EventsResolvers({repository: this.repository, calendarManager: this.calendarManager})
+    const eventsResolvers = new EventsResolvers({
+      eventManager: this.eventManager,
+      calendarManager: this.calendarManager
+    })
     const authResolvers = new AuthResolvers({
       repository: this.repository,
       sessionManager: this.sessionManager,

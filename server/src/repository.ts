@@ -2,10 +2,10 @@ import {MongoClient, Db, Collection, ObjectID} from 'mongodb';
 import {CalendarEvent, DBEntity, IDable, User, UserKeys, UserProperties} from "./types";
 import {Session, SessionInvite} from "./session";
 
-interface MongoEntity<T> extends OIDable<T> {
+export interface MongoEntity<T> extends OIDable<T> {
 }
 
-function transformId<T extends DBEntity>(mongoInstance?: MongoEntity<T>): T {
+export function transformId<T extends DBEntity>(mongoInstance?: MongoEntity<T>): T {
   if (!mongoInstance) {
     return null
   }
@@ -13,21 +13,22 @@ function transformId<T extends DBEntity>(mongoInstance?: MongoEntity<T>): T {
   return {...entityProps, id: _id.toString()} as T;
 }
 
-interface OIDable<T> {
+export interface OIDable<T> {
   _id?: ObjectID
+}
+
+export interface Collections {
+  users: Collection<OIDable<User>>,
+  sessions: Collection<OIDable<Session>>,
+  sessionInvites: Collection<OIDable<SessionInvite>>
+  events: Collection<OIDable<CalendarEvent>>
 }
 
 export default class Repository {
   client: MongoClient
   dbName: string
   db: Db
-  public c: {
-    users: Collection<OIDable<User>>,
-    sessions: Collection<OIDable<Session>>,
-    sessionInvites: Collection<OIDable<SessionInvite>>
-    events: Collection<OIDable<CalendarEvent>>
-  }
-
+  public c: Collections
   constructor(projectId: string) {
     this.dbName = projectId
   }
@@ -142,32 +143,6 @@ export default class Repository {
   async getUserById(id: string): Promise<User> {
     const result = await this.c.users.findOne({_id: new ObjectID(id)})
     return transformId(result) as User
-  }
-
-  async createEvent(event: CalendarEvent): Promise<CalendarEvent> {
-    const insertResult = await this.c.events.insertOne(event as OIDable<CalendarEvent>)
-    if (insertResult.result.ok !== 1) {
-      throw new Error(`Could new insert event ${JSON.stringify(event)}`)
-    }
-    return transformId(await this.c.events.findOne({
-      _id: insertResult.insertedId
-    })) as CalendarEvent
-  }
-
-  async updateEvent(event: CalendarEvent): Promise<CalendarEvent> {
-    const {id, ...strippedFromId} = event;
-    const updateResult = await this.c.events.updateOne({
-      _id: event.id
-    }, strippedFromId as OIDable<CalendarEvent>)
-    if (updateResult.result.ok !== 1) {
-      throw new Error(`Error updating event ${event.id}`)
-    }
-    const result = await this.c.events.findOne({_id: event.id})
-    return transformId(result) as CalendarEvent
-  }
-
-  async getEvent(id: string): Promise<CalendarEvent> {
-    return transformId(await this.c.events.findOne({_id: id})) as CalendarEvent
   }
 
 }

@@ -57,8 +57,12 @@ type Contact {
     phone: String
 }
 
+input EventsQueryFilter {
+    count: Int
+}
+
 type Query {
-    events: [Event]
+    events(filter: EventsQueryFilter): [Event]
 }
 
 input EventTimeInput {

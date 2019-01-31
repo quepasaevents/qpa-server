@@ -1,7 +1,7 @@
-import {Repository} from "../repository";
-import CalendarManager from "../calendar";
 import {CalendarEvent} from "../types";
-import EventsManager from './EventsManager'
+import EventManager from './EventManager'
+import CalendarManager from "../Calendar/CalendarManager";
+
 interface EventsQueryResolvers {
   events: (req: any) => Promise<CalendarEvent[]>
 }
@@ -15,18 +15,17 @@ interface EventsMutationResolvers {
 }
 
 export default class EventsResolvers {
-  repository: Repository
+  eventManager: EventManager
   calendarManager: CalendarManager
-  eventsManager: EventsManager
 
-  constructor({repository, calendarManager}) {
-    this.repository = repository;
-    this.eventsManager = new EventsManager({repository})
+  constructor({eventManager, calendarManager}: {eventManager: EventManager, calendarManager: CalendarManager}) {
+    this.eventManager = eventManager;
+    this.calendarManager = calendarManager;
   }
 
   Query = {
     events: async (req) => {
-      return this.calendarManager.listEvents()
+      return this.eventManager.listEvents({})
     },
   }
 

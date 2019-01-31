@@ -1,8 +1,9 @@
 import {auth} from 'google-auth-library';
-import { Repository } from "./repository";
+import Repository from "../repository";
 import {OAuth2Client} from "google-auth-library/build/src/auth/oauth2client";
 import {atob} from 'atob';
-import {CalendarEvent} from "./types";
+import {CalendarEvent} from "../types";
+import {EventsRepository} from "../Events/EventsRepository";
 
 type GCalConfig = {
   calendarId: string
@@ -10,15 +11,15 @@ type GCalConfig = {
   clientEmail: string
 }
 export default class CalendarManager {
-  repository: Repository
+  eventsRepository: EventsRepository
   gcalConfig: GCalConfig
   gcalBaseURL: string
 
   constructor(options: {
-    repository: Repository,
+    eventsRepository: EventsRepository,
     gcalConfig: GCalConfig,
   }) {
-    this.repository = options.repository
+    this.eventsRepository = options.eventsRepository
     this.gcalConfig = options.gcalConfig
     this.gcalBaseURL = `https://www.googleapis.com/calendar/v3/calendars/${options.gcalConfig.calendarId}`
   }
@@ -43,7 +44,6 @@ export default class CalendarManager {
         summary: 'primary events calendar'
       }
     });
-    console.log('res', res.data)
     return res.data
   }
 
@@ -76,7 +76,7 @@ export default class CalendarManager {
       const dbId = gCalEvent.extendedProperties.private.eventId;
       dbIdToGCalEvents[dbId] = gCalEvent
       eventsDBPromises.push(
-        this.repository.getEvent(dbId)
+        this.eventsRepository.getEvent(dbId)
           .catch(e => {
             console.warn(`Error fetching DB event ${dbId}, will skip this one`, e)
             return null;
@@ -94,7 +94,6 @@ export default class CalendarManager {
   }
 
   createEvent = async (event: CalendarEvent): Promise<String> => {
-    console.log('Will try and create calendar event for', JSON.stringify(event))
     if (!event.id || !event.timing) {
       throw new Error('Event doesn\'t have id or timing data')
     }

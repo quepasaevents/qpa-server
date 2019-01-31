@@ -1,10 +1,5 @@
-import express from 'express';
 import {
-  isUserAvailable as isUserAvailableHandler,
-  signup as signupHandler,
-  signin as signinHandler,
   setDependencies as setUserHandlerDependencies,
-  postSession as postSessionHandler,
 } from './userHandlers'
 
 import {
@@ -12,25 +7,27 @@ import {
   setDependencies as setEventsHandlerDependencies
 } from './eventHandlers';
 
-import {gcal as gcalConfig, projectId} from './config'
+import {gcal as gcalConfig, projectId} from "./config";
 import UserManager from "./user";
 import SessionManager from "./session";
-import MongoRepository from './mongorepo'
-import Calendar from "./calendar";
-import EventManager from "./event";
+import Repository from './repository'
+import Calendar from "./Calendar/CalendarManager";
+import EventManager from "./Events/EventManager";
 import GraphQLInterface from "./graphql";
+import {EventsRepository} from "./Events/EventsRepository";
 
 async function start() {
-  const repository = new MongoRepository(projectId)
+  const repository = new Repository(projectId)
   await repository.connect()
 
   const userManager = new UserManager(repository)
   const sessionManager = new SessionManager(repository)
+  const eventsRepository = new EventsRepository({repository})
   const calendarManager = new Calendar({
-    repository,
+    eventsRepository: eventsRepository,
     gcalConfig: gcalConfig
   })
-  const eventManager = new EventManager(calendarManager, repository)
+  const eventManager = new EventManager({calendarManager, eventsRepository})
 
   setUserHandlerDependencies({
     userManager, sessionManager

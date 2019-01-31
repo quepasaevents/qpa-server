@@ -1,4 +1,4 @@
-import {Repository} from "../repository";
+import Repository from "../repository";
 import {User} from "../types";
 import UserManager from "../user";
 import SessionManager from "../session";
