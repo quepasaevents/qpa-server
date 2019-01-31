@@ -1,7 +1,7 @@
 import {Repository} from "../repository";
 import CalendarManager from "../calendar";
 import {CalendarEvent} from "../types";
-
+import EventsManager from './EventsManager'
 interface EventsQueryResolvers {
   events: (req: any) => Promise<CalendarEvent[]>
 }
@@ -17,10 +17,11 @@ interface EventsMutationResolvers {
 export default class EventsResolvers {
   repository: Repository
   calendarManager: CalendarManager
+  eventsManager: EventsManager
 
   constructor({repository, calendarManager}) {
     this.repository = repository;
-    this.calendarManager = calendarManager
+    this.eventsManager = new EventsManager({repository})
   }
 
   Query = {
