@@ -1,8 +1,8 @@
 import {auth} from 'google-auth-library';
 import {OAuth2Client} from "google-auth-library/build/src/auth/oauth2client";
 import {atob} from 'atob';
-import {CalendarEvent} from "../types";
 import {EventsRepository} from "../Events/EventsRepository";
+import {CalendarEvent} from "../@types";
 
 type GCalConfig = {
   calendarId: string
@@ -93,11 +93,11 @@ export default class CalendarManager {
   }
 
   createEvent = async (event: CalendarEvent): Promise<String> => {
-    if (!event.id || !event.timing) {
-      throw new Error('Event doesn\'t have id or timing data')
+    if (!event.id) {
+      throw new Error('Event doesn\'t have id')
     }
     const calEvent = {
-      ...event.timing,
+      // ...event.timing,
       extendedProperties: {
         private: {
           eventId: event.id

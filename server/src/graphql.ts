@@ -1,6 +1,6 @@
 import Repository from "./repository";
 import UserManager from "./user";
-import SessionManager from "./session";
+import SessionManager from "./auth/SessionManager";
 import CalendarManager from "./Calendar/CalendarManager";
 import EventManager from "./Events/EventManager";
 import {ApolloServer} from 'apollo-server';
@@ -8,9 +8,7 @@ import {makeExecutableSchema} from "graphql-tools";
 import EventsResolvers from './Events/eventsResolvers'
 import {importSchema} from 'graphql-import';
 import AuthResolvers from "./Auth/authResolvers";
-import {auth} from "google-auth-library";
-
-const typeDefs = importSchema(__dirname + '/schema.graphql');
+import { DIRECTIVES } from 'graphql-codegen-typescript-mongodb';
 
 interface Dependencies {
   repository: Repository,
@@ -45,8 +43,15 @@ export default class GraphQLInterface {
       sessionManager: this.sessionManager,
       userManager: this.userManager
     })
+
+    const typeDefs = importSchema(__dirname + '/schema.graphql');
+    console.log('typeDefs', typeDefs)
+
     const schema = makeExecutableSchema({
-      typeDefs,
+      typeDefs: [
+        DIRECTIVES,
+        ...typeDefs
+      ],
       resolvers: {
         Query: {
           ...this.resolvers.Query,

@@ -1,19 +1,20 @@
 import Repository from './repository'
-import {User, UserKeys, UserProperties} from './types'
+import {SignupInput, User, UserDbObject} from "./@types";
+import AuthRepository from "./Auth/AuthRepository";
 
 export default class UserManager {
-  repository: Repository
+  authRepository: AuthRepository
 
-  constructor(repository: Repository) {
-    this.repository = repository
+  constructor(authRepository: AuthRepository) {
+    this.authRepository = authRepository
   }
 
-  getUser = async (keys: UserKeys) => {
-    return await this.repository.getUser(keys)
+  getUser = async (keys) => {
+    return await this.authRepository.getUser(keys)
   }
 
-  createUser = async (user: UserProperties): Promise<User> => {
-    return this.repository.createUser(user)
+  createUser = async (user: SignupInput): Promise<UserDbObject> => {
+    return this.authRepository.createUser(user)
   }
 
 }

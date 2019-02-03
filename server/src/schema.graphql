@@ -1,3 +1,159 @@
-# import Query.*, Mutation.* from 'Auth/auth.graphql'
-# import Query.*, Mutation.* from 'Events/events.graphql'
+type User @entity {
+    firstName: String! @column
+    lastName: String @column
+    username: String! @column
+    email: String! @column
+    id: ID! @id
+}
 
+scalar Date
+
+type UserSession @entity {
+    hash: String! @column
+    user: User! @link
+    ctime: Date! @column
+    isValid: Boolean! @column
+}
+
+input SignupInput {
+    email: String!
+    username: String!
+    firstName: String!
+    lastName: String
+}
+
+input SigninInput {
+    hash: String!
+}
+
+input RequestInviteInput {
+    email: String!
+}
+
+# ------
+# Events
+# ------
+
+
+type CalendarEvent @entity{
+    id: ID! @id
+    owner: User! @link
+    info: [EventInformation] @embedded
+    time: EventTime @embedded
+    status: EventStatus! @column
+    contact: [EventContactPerson!] @embedded
+    location: Location @column
+}
+
+type Location {
+    address: String @embedded
+    name: String @embedded
+    coordinate: GeoCoordinate @embedded
+}
+
+type GeoCoordinate @entity {
+    lat: Float @column
+    lng: Float @column
+}
+
+type EventTime @entity {
+    timeZone: TimeZone @column
+    start: Timestamp @column
+    end: Timestamp @column
+    recurrence: String @column
+    exceptions: String @column
+}
+
+# in RFC3339 e.g. 2002-10-02T10:00:00-05:00 or 2002-10-02T15:00:00Z
+scalar Timestamp
+
+# IANA Timezone e.g. "Europe/Zurich"
+scalar TimeZone
+
+#  "confirmed" | "tentative" | "cancelled"
+scalar EventStatus
+
+# e.g. 'de', 'en', etc'
+scalar Language
+
+# Event information for presentation
+type EventInformation @entity {
+    language: String! @column
+    title: String! @column
+    description: String @column
+}
+
+type EventContactPerson @entity {
+    name: String! @column
+    languages: [Language!] @column
+    contact: Contact @embedded
+}
+
+type Contact @entity {
+    email: String @column
+    phone: String @column
+}
+
+input EventsQueryFilter {
+    count: Int
+}
+
+input EventTimeInput {
+    timeZone: TimeZone
+    status: EventStatus
+    start: Timestamp
+    end: Timestamp
+}
+
+input EventContactInput {
+    email: String
+    phone: String
+}
+
+input EventInformationInput {
+    language: String!
+    title: String!
+    description: String
+}
+
+input GeoCoordinateInput {
+    lat: Float
+    lng: Float
+}
+
+input EventLocationInput {
+    address: String
+    name: String
+    coordinate: GeoCoordinateInput
+}
+
+input EventMetaInput {
+    tags: [String]
+}
+
+input CreateEventInput {
+    time: EventTimeInput
+    info: [EventInformationInput]
+    location: EventLocationInput
+    meta: EventMetaInput
+}
+
+type Mutation {
+    # Auth
+    signup(input: SignupInput): Boolean!
+    signin(input: SigninInput): UserSession!
+    requestInvite(input: RequestInviteInput): Boolean!
+
+    # Event
+    createEvent(input: CreateEventInput): CalendarEvent
+
+}
+
+
+type Query {
+    # Auth
+    me: User
+
+    # Event
+    events(filter: EventsQueryFilter): [CalendarEvent]
+}

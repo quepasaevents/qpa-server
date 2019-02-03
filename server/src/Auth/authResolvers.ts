@@ -1,8 +1,7 @@
 import Repository from "../repository";
-import {User} from "../types";
 import UserManager from "../user";
-import SessionManager from "../session";
-import {MutationResolvers, QueryResolvers} from "../types.gen";
+import SessionManager from "./SessionManager";
+import {MutationResolvers, User, UserDbObject} from "../@types";
 import SignupArgs = MutationResolvers.SignupArgs;
 import SigninArgs = MutationResolvers.SigninArgs;
 import RequestInviteArgs = MutationResolvers.RequestInviteArgs;
@@ -22,16 +21,14 @@ export default class AuthResolvers {
   }
 
   Mutation = {
-    signup: async (_, req: SignupArgs, context, info) => {
-      const {username, email, firstName, lastName} = req.input;
-      let newUser: User = null
-      newUser = await this.userManager.createUser({username, email, firstName, lastName})
+    signup: async (_, args: SignupArgs, context, info) => {
+      const newUser = await this.userManager.createUser(args.input)
       if (!newUser) {
-        throw new Error("New user was not created for request" + JSON.stringify(req))
+        throw new Error("New user was not created for request" + JSON.stringify(args))
       }
 
       try {
-        this.sessionManager.inviteUser(newUser.email)
+        await this.sessionManager.inviteUser(newUser.email)
       } catch (e) {
         console.error('Error sending invitation', e)
       }

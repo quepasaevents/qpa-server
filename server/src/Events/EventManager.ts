@@ -1,6 +1,6 @@
 import {EventsRepository} from './EventsRepository'
-import {CalendarEvent} from "../types";
 import CalendarManager from "../Calendar/CalendarManager";
+import {CalendarEvent, CreateEventInput} from "../@types";
 
 export interface EventsListFilter {
   tags?: {
@@ -22,7 +22,7 @@ export default class EventManager {
     this.calendarManager = calendarManager;
   }
 
-  async createEvent(eventDetails: CalendarEvent): Promise<CalendarEvent> {
+  async createEvent(eventDetails: CreateEventInput): Promise<CalendarEvent> {
     let dbEvent
     try {
       dbEvent = await this.eventsRepository.createEvent(eventDetails)
@@ -34,20 +34,6 @@ export default class EventManager {
     if (!(dbEvent && dbEvent.id)) {
       console.error('Could not get persisted event from the database')
       return null
-    }
-
-    let calEventId
-    try {
-      calEventId = await this.calendarManager.createEvent(dbEvent)
-    } catch (e) {
-      console.error('Error saving event with calendar API', e)
-    }
-
-    if (!calEventId) {
-      console.warn(`Could not persist event on calendar. Event id: ${dbEvent.id}`)
-    } else {
-      dbEvent.gcalEntryId = calEventId
-      await this.eventsRepository.updateEvent(dbEvent)
     }
 
     return dbEvent;

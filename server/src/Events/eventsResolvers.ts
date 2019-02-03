@@ -1,18 +1,8 @@
-import {CalendarEvent} from "../types";
 import EventManager from './EventManager'
 import CalendarManager from "../Calendar/CalendarManager";
-
-interface EventsQueryResolvers {
-  events: (req: any) => Promise<CalendarEvent[]>
-}
-
-type CreateEventInput = {
-
-}
-
-interface EventsMutationResolvers {
-  createEvent: (_, input: CreateEventInput) => Promise<CalendarEvent>
-}
+import CreateEventResolver = MutationResolvers.CreateEventResolver;
+import {MutationResolvers} from "../@types";
+import CreateEventArgs = MutationResolvers.CreateEventArgs;
 
 export default class EventsResolvers {
   eventManager: EventManager
@@ -29,9 +19,12 @@ export default class EventsResolvers {
     },
   }
 
-  Mutation = {
-    createEvent: async (_, input) => {
-      return 1
+  Mutation: {
+    createEvent: CreateEventResolver
+  } = {
+    createEvent: async (_, args: CreateEventArgs) => {
+      const event = await this.eventManager.createEvent(args.input)
+      return event
     }
   }
 }

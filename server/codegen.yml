@@ -1,8 +1,10 @@
 schema: src/schema.graphql
 overwrite: true
 generates:
-  ./src/types.gen.d.ts:
+  ./src/@types/index.d.ts:
     plugins:
+      - add: // tslint:disable
       - typescript-common
       - typescript-server
+      - typescript-mongodb
       - typescript-resolvers
