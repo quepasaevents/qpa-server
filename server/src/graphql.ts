@@ -45,13 +45,9 @@ export default class GraphQLInterface {
     })
 
     const typeDefs = importSchema(__dirname + '/schema.graphql');
-    console.log('typeDefs', typeDefs)
 
     const schema = makeExecutableSchema({
-      typeDefs: [
-        DIRECTIVES,
-        ...typeDefs
-      ],
+      typeDefs,
       resolvers: {
         Query: {
           ...this.resolvers.Query,

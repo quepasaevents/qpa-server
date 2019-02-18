@@ -22,7 +22,8 @@ export default class EventsResolvers {
   Mutation: {
     createEvent: CreateEventResolver
   } = {
-    createEvent: async (_, args: CreateEventArgs) => {
+    createEvent: async (_, args: CreateEventArgs, context, info) => {
+      console.warn('To Do: Event owner is not verified!')
       const event = await this.eventManager.createEvent(args.input)
       return event
     }

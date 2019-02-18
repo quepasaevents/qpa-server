@@ -17,7 +17,7 @@ export interface OIDable<T> {
 }
 
 export interface Collections {
-  events: Collection<OIDable<CalendarEventDbObject>>
+  events: Collection<CalendarEventDbObject>
 }
 
 export default class Repository {

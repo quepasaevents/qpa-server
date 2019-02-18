@@ -1,5 +1,6 @@
 import Repository, {transformId, OIDable, Collections} from "../repository";
-import {CalendarEvent, CreateEventInput} from "../@types";
+import {CalendarEvent, CalendarEventDbObject, CreateEventInput} from "../@types";
+import {EventsListFilter} from "./EventManager";
 
 class EventsRepository {
   repository: Repository
@@ -10,8 +11,8 @@ class EventsRepository {
     this.c = repository.c;
   }
 
-  async createEvent(event: CreateEventInput): Promise<CalendarEvent> {
-    const insertResult = await this.c.events.insertOne(event as OIDable<CalendarEvent>)
+  async createEvent(event: CreateEventInput): Promise<CalendarEventDbObject> {
+    const insertResult = await this.c.events.insertOne(event as any as CalendarEventDbObject)
     if (insertResult.result.ok !== 1) {
       throw new Error(`Could new insert event ${JSON.stringify(event)}`)
     }
@@ -20,11 +21,12 @@ class EventsRepository {
     })
   }
 
-  async updateEvent(event: CalendarEvent): Promise<CalendarEvent> {
-    const {id, ...strippedFromId} = event;
+  async updateEvent(event: CalendarEvent): Promise<CalendarEventDbObject> {
+    const {id, owner, ...strippedFromId} = event;
+
     const updateResult = await this.c.events.updateOne({
       _id: event.id
-    }, strippedFromId as OIDable<CalendarEvent>)
+    }, strippedFromId as CalendarEventDbObject)
     if (updateResult.result.ok !== 1) {
       throw new Error(`Error updating event ${event.id}`)
     }
@@ -33,6 +35,10 @@ class EventsRepository {
 
   async getEvent(id: string): Promise<CalendarEvent> {
     return this.c.events.findOne({_id: id})
+  }
+
+  async getEvents(filter: EventsListFilter): Promise<CalendarEventDbObject[]> {
+    return this.c.events.find({}).limit(filter.limit).toArray()
   }
 
 }

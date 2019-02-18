@@ -1,6 +1,6 @@
 import {EventsRepository} from './EventsRepository'
 import CalendarManager from "../Calendar/CalendarManager";
-import {CalendarEvent, CreateEventInput} from "../@types";
+import {CalendarEvent, CalendarEventDbObject, CreateEventInput} from "../@types";
 
 export interface EventsListFilter {
   tags?: {
@@ -9,7 +9,7 @@ export interface EventsListFilter {
   }
   earliest?: Date
   latest?: Date
-  count?: number
+  limit?: number
   skip?: number
 }
 
@@ -28,7 +28,7 @@ export default class EventManager {
       dbEvent = await this.eventsRepository.createEvent(eventDetails)
       console.log('Event created on the db', JSON.stringify(dbEvent))
     } catch (e) {
-      console.error('Error while persisting new event', e)
+      console.error('Error while persisting new event:', e)
     }
 
     if (!(dbEvent && dbEvent.id)) {
@@ -39,9 +39,7 @@ export default class EventManager {
     return dbEvent;
   }
 
-  async listEvents(filter: EventsListFilter): Promise<CalendarEvent[]> {
-    console.warn('Not implemented')
-    return []
+  async listEvents(filter: EventsListFilter): Promise<CalendarEventDbObject[]> {
+    return this.eventsRepository.getEvents(filter)
   }
-
 }
