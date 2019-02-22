@@ -1,7 +1,7 @@
 import EventManager from './EventManager'
 import CalendarManager from "../Calendar/CalendarManager";
 import CreateEventResolver = MutationResolvers.CreateEventResolver;
-import {MutationResolvers} from "../@types";
+import {CalendarEventResolvers, MutationResolvers} from "../@types";
 import CreateEventArgs = MutationResolvers.CreateEventArgs;
 
 export default class EventsResolvers {
@@ -17,6 +17,12 @@ export default class EventsResolvers {
     events: async (req) => {
       return this.eventManager.listEvents({})
     },
+  }
+
+  Event = {
+    owner: async (event, args, context, info) => {
+
+    }
   }
 
   Mutation: {

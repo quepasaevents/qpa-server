@@ -2,7 +2,7 @@
 export type Maybe<T> = T | null;
 
 export interface EventsQueryFilter {
-  count?: Maybe<number>;
+  limit?: Maybe<number>;
 }
 
 export interface SignupInput {
@@ -24,6 +24,8 @@ export interface RequestInviteInput {
 }
 
 export interface CreateEventInput {
+  owner: string;
+
   time?: Maybe<EventTimeInput>;
 
   info?: Maybe<(Maybe<EventInformationInput>)[]>;
@@ -31,7 +33,10 @@ export interface CreateEventInput {
   location?: Maybe<EventLocationInput>;
 
   meta?: Maybe<EventMetaInput>;
-  owner: string
+
+  status: string;
+
+  contact: EventContactPersonInput[];
 }
 
 export interface EventTimeInput {
@@ -68,6 +73,14 @@ export interface GeoCoordinateInput {
 
 export interface EventMetaInput {
   tags?: Maybe<(Maybe<string>)[]>;
+}
+
+export interface EventContactPersonInput {
+  name: string;
+
+  languages?: Maybe<Language[]>;
+
+  contact?: Maybe<Contact>;
 }
 
 export interface EventContactInput {
@@ -128,7 +141,7 @@ export interface CalendarEvent {
 
   owner: User;
 
-  info: EventInformation[];
+  info: (Maybe<EventInformation>)[];
 
   time: EventTime;
 
@@ -227,6 +240,8 @@ export interface RequestInviteMutationArgs {
 }
 export interface CreateEventMutationArgs {
   input?: Maybe<CreateEventInput>;
+
+  foo?: Maybe<string>;
 }
 
 import { ObjectID } from "mongodb";
@@ -242,11 +257,11 @@ export interface UserDbObject {
 export interface CalendarEventDbObject {
   _id: ObjectID;
   owner: ObjectID;
-  info: Maybe<(Maybe<EventInformationDbObject>)[]>;
-  time: Maybe<EventTimeDbObject>;
+  info: (Maybe<EventInformationDbObject>)[];
+  time: EventTime;
   status: EventStatus;
-  contact: Maybe<EventContactPersonDbObject[]>;
-  location: Maybe<Location>;
+  contact: EventContactPersonDbObject[];
+  location: LocationDbObject;
 }
 
 export interface EventInformationDbObject {
@@ -255,28 +270,10 @@ export interface EventInformationDbObject {
   description: Maybe<string>;
 }
 
-export interface EventTimeDbObject {
-  timeZone: Maybe<TimeZone>;
-  start: Maybe<Timestamp>;
-  end: Maybe<Timestamp>;
-  recurrence: Maybe<string>;
-  exceptions: Maybe<string>;
-}
-
 export interface EventContactPersonDbObject {
   name: string;
-  languages: Maybe<Language[]>;
-  contact: Maybe<ContactDbObject>;
-}
-
-export interface ContactDbObject {
-  email: Maybe<string>;
-  phone: Maybe<string>;
-}
-
-export interface GeoCoordinateDbObject {
-  lat: Maybe<number>;
-  lng: Maybe<number>;
+  languages: Maybe<LanguageDbObject[]>;
+  contact: Maybe<Contact>;
 }
 
 export interface UserSessionDbObject {
@@ -413,19 +410,15 @@ export namespace CalendarEventResolvers {
 
     owner?: OwnerResolver<User, TypeParent, Context>;
 
-    info?: InfoResolver<
-      Maybe<(Maybe<EventInformation>)[]>,
-      TypeParent,
-      Context
-    >;
+    info?: InfoResolver<(Maybe<EventInformation>)[], TypeParent, Context>;
 
-    time?: TimeResolver<Maybe<EventTime>, TypeParent, Context>;
+    time?: TimeResolver<EventTime, TypeParent, Context>;
 
     status?: StatusResolver<EventStatus, TypeParent, Context>;
 
-    contact?: ContactResolver<Maybe<EventContactPerson[]>, TypeParent, Context>;
+    contact?: ContactResolver<EventContactPerson[], TypeParent, Context>;
 
-    location?: LocationResolver<Maybe<Location>, TypeParent, Context>;
+    location?: LocationResolver<Location, TypeParent, Context>;
   }
 
   export type IdResolver<
@@ -439,12 +432,12 @@ export namespace CalendarEventResolvers {
     Context = {}
   > = Resolver<R, Parent, Context>;
   export type InfoResolver<
-    R = Maybe<(Maybe<EventInformation>)[]>,
+    R = (Maybe<EventInformation>)[],
     Parent = CalendarEvent,
     Context = {}
   > = Resolver<R, Parent, Context>;
   export type TimeResolver<
-    R = Maybe<EventTime>,
+    R = EventTime,
     Parent = CalendarEvent,
     Context = {}
   > = Resolver<R, Parent, Context>;
@@ -454,12 +447,12 @@ export namespace CalendarEventResolvers {
     Context = {}
   > = Resolver<R, Parent, Context>;
   export type ContactResolver<
-    R = Maybe<EventContactPerson[]>,
+    R = EventContactPerson[],
     Parent = CalendarEvent,
     Context = {}
   > = Resolver<R, Parent, Context>;
   export type LocationResolver<
-    R = Maybe<Location>,
+    R = Location,
     Parent = CalendarEvent,
     Context = {}
   > = Resolver<R, Parent, Context>;
@@ -672,6 +665,8 @@ export namespace MutationResolvers {
   > = Resolver<R, Parent, Context, CreateEventArgs>;
   export interface CreateEventArgs {
     input?: Maybe<CreateEventInput>;
+
+    foo?: Maybe<string>;
   }
 }
 

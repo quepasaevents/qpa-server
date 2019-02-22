@@ -9,6 +9,7 @@ import EventsResolvers from './Events/eventsResolvers'
 import {importSchema} from 'graphql-import';
 import AuthResolvers from "./Auth/authResolvers";
 import { DIRECTIVES } from 'graphql-codegen-typescript-mongodb';
+import {readFileSync} from "fs";
 
 interface Dependencies {
   repository: Repository,
@@ -44,10 +45,13 @@ export default class GraphQLInterface {
       userManager: this.userManager
     })
 
-    const typeDefs = importSchema(__dirname + '/schema.graphql');
+    const typeDefs = readFileSync(__dirname + '/schema.graphql', 'utf8');
 
     const schema = makeExecutableSchema({
-      typeDefs,
+      typeDefs: [
+        DIRECTIVES,
+        typeDefs
+      ],
       resolvers: {
         Query: {
           ...this.resolvers.Query,

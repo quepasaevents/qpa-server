@@ -1,18 +1,18 @@
-type User  {
-    firstName: String!
-    lastName: String
-    username: String!
-    email: String!
-    id: ID!
+type User @entity {
+    firstName: String! @column
+    lastName: String @column
+    username: String! @column
+    email: String! @column
+    id: ID! @id
 }
 
 scalar Date
 
-type UserSession  {
-    hash: String!
-    user: User!
-    ctime: Date!
-    isValid: Boolean!
+type UserSession @entity {
+    hash: String! @column
+    user: User! @link
+    ctime: Date! @column
+    isValid: Boolean! @column
 }
 
 input SignupInput {
@@ -35,14 +35,14 @@ input RequestInviteInput {
 # ------
 
 
-type CalendarEvent {
-    id: ID!
-    owner: User!
-    info: [EventInformation]!
-    time: EventTime!
-    status: EventStatus!
-    contact: [EventContactPerson!]!
-    location: Location!
+type CalendarEvent @entity {
+    id: ID! @id
+    owner: User! @link
+    info: [EventInformation]! @embedded
+    time: EventTime! @column
+    status: EventStatus! @column
+    contact: [EventContactPerson!]! @embedded
+    location: Location! @embedded
 }
 
 type Location {
@@ -77,19 +77,19 @@ scalar EventStatus
 scalar Language
 
 # Event information for presentation
-type EventInformation  {
-    language: String!
-    title: String!
-    description: String
+type EventInformation  @entity {
+    language: String! @column
+    title: String! @column
+    description: String @column
 }
 
-type EventContactPerson  {
-    name: String!
-    languages: [Language!]
-    contact: Contact
+type EventContactPerson @entity {
+    name: String! @column
+    languages: [Language!] @embedded
+    contact: Contact @column
 }
 
-type Contact  {
+type Contact {
     email: String
     phone: String
 }
@@ -131,6 +131,12 @@ input EventMetaInput {
     tags: [String]
 }
 
+input EventContactPersonInput  {
+    name: String!
+    languages: [Language!]
+    contact: EventContactInput
+}
+
 input CreateEventInput {
     owner: ID!
     time: EventTimeInput
@@ -138,7 +144,7 @@ input CreateEventInput {
     location: EventLocationInput
     meta: EventMetaInput
     status: String!
-    contact: [ContactPerson!]!
+    contact: [EventContactPersonInput!]!
 }
 
 type Mutation {
