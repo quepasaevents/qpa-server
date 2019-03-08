@@ -1,19 +1,12 @@
-import Repository from "../repository";
-import UserManager from "../user";
-import SessionManager from "./SessionManager";
-import {MutationResolvers, User, UserDbObject} from "../@types";
-import SignupArgs = MutationResolvers.SignupArgs;
-import SigninArgs = MutationResolvers.SigninArgs;
-import RequestInviteArgs = MutationResolvers.RequestInviteArgs;
+import SessionManager from "./SessionManager"
+import {User} from "./User.entity"
+
 
 export default class AuthResolvers {
-  userManager: UserManager
-  repository: Repository
   sessionManager: SessionManager
 
-  constructor({repository, userManager, sessionManager}) {
-    this.userManager = repository;
-    this.sessionManager = sessionManager;
+  constructor({sessionManager}) {
+    this.sessionManager = sessionManager
   }
 
   Query = {
@@ -21,32 +14,57 @@ export default class AuthResolvers {
   }
 
   Mutation = {
-    signup: async (_, args: SignupArgs, context, info) => {
-      const newUser = await this.userManager.createUser(args.input)
-      if (!newUser) {
-        throw new Error("New user was not created for request" + JSON.stringify(args))
+    signup: async (_, args: GQL.ISignupOnMutationArguments, context, info) => {
+      const errors = []
+      if (await User.findOne({email: args.input.email})) {
+        errors.push({
+          path: "email",
+          message: "Email taken"
+        })
+      }
+      if (await User.findOne({username: args.input.username})) {
+        errors.push({
+          path: "username",
+          message: "Username taken"
+        })
+      }
+
+      if (errors.length) {
+        return errors
+      }
+
+      const newUser = new User()
+      newUser.firstName = args.input.firstName
+      newUser.lastName = args.input.lastName
+      newUser.email = args.input.email
+      newUser.username = args.input.username
+      await newUser.save()
+
+      if (!newUser.id) {
+        throw new Error("Could not create user")
       }
 
       try {
-        await this.sessionManager.inviteUser(newUser.email)
+        await this.sessionManager.inviteUser(newUser)
       } catch (e) {
         console.error('Error sending invitation', e)
       }
-      return !!newUser
+      return null
     },
-    signin: async (_, req: SigninArgs, context, info) => {
-      const session = await this.sessionManager.initiateSession(req.input.hash);
+    signin: async (_, req, context, info) => {
+      const session = await this.sessionManager.initiateSession(req.input.hash)
       if (!session || !session.isValid) {
         throw new Error('Could not find session invite')
       }
 
-      return session;
+      return session
     },
-    requestInvite: async (_, req: RequestInviteArgs, context, info) => {
-      const invite = await this.sessionManager.inviteUser(req.input.email)
-      if (!invite) {
-        throw new Error('Invitation failed')
+    requestInvite: async (_, req: GQL.IRequestInviteOnMutationArguments, context, info) => {
+      const user = await User.findOne({email: req.input.email})
+      if (user) {
+        this.sessionManager.inviteUser(user)
       }
+
       return true
     },
   }

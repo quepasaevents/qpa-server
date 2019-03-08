@@ -1,8 +1,7 @@
-import {auth} from 'google-auth-library';
-import {OAuth2Client} from "google-auth-library/build/src/auth/oauth2client";
-import {atob} from 'atob';
-import {EventsRepository} from "../Events/EventsRepository";
-import {CalendarEvent} from "../@types";
+import {auth} from 'google-auth-library'
+import {OAuth2Client} from "google-auth-library/build/src/auth/oauth2client"
+import {atob} from 'atob'
+import { Event } from './Event.entity'
 
 type GCalConfig = {
   calendarId: string
@@ -10,15 +9,12 @@ type GCalConfig = {
   clientEmail: string
 }
 export default class CalendarManager {
-  eventsRepository: EventsRepository
   gcalConfig: GCalConfig
   gcalBaseURL: string
 
   constructor(options: {
-    eventsRepository: EventsRepository,
     gcalConfig: GCalConfig,
   }) {
-    this.eventsRepository = options.eventsRepository
     this.gcalConfig = options.gcalConfig
     this.gcalBaseURL = `https://www.googleapis.com/calendar/v3/calendars/${options.gcalConfig.calendarId}`
   }
@@ -27,11 +23,11 @@ export default class CalendarManager {
     const client: any = auth.fromJSON({
       private_key: atob(this.gcalConfig.privateKeyBase64),
       client_email: this.gcalConfig.clientEmail
-    });
+    })
 
-    client.scopes = ['https://www.googleapis.com/auth/calendar'];
+    client.scopes = ['https://www.googleapis.com/auth/calendar']
     await client.authorize()
-    return client as OAuth2Client;
+    return client as OAuth2Client
   }
 
   createPrimaryCalendar = async () => {
@@ -42,7 +38,7 @@ export default class CalendarManager {
       data: {
         summary: 'primary events calendar'
       }
-    });
+    })
     return res.data
   }
 
@@ -50,8 +46,8 @@ export default class CalendarManager {
     const client = await this.getClient()
     const res = await client.request({
       url: 'https://www.googleapis.com/calendar/v3/users/me/calendarList'
-    });
-    return (res.data as any).items;
+    })
+    return (res.data as any).items
   }
 
   listEvents = async () => {
@@ -64,7 +60,7 @@ export default class CalendarManager {
       })
     } catch (e) {
       console.error('Error fetching events', e)
-      throw e;
+      throw e
     }
 
 
@@ -72,16 +68,16 @@ export default class CalendarManager {
     const dbIdToGCalEvents = {}
 
     eventsResponse.data.items.forEach(gCalEvent => {
-      const dbId = gCalEvent.extendedProperties.private.eventId;
+      const dbId = gCalEvent.extendedProperties.private.eventId
       dbIdToGCalEvents[dbId] = gCalEvent
       eventsDBPromises.push(
-        this.eventsRepository.getEvent(dbId)
+        Event.findOne(dbId)
           .catch(e => {
             console.warn(`Error fetching DB event ${dbId}, will skip this one`, e)
-            return null;
+            return null
           })
       )
-    });
+    })
 
     const allEvents = await Promise.all(eventsDBPromises)
     const result = allEvents.filter(Boolean).map(dbEvent => ({
@@ -92,7 +88,7 @@ export default class CalendarManager {
     return result
   }
 
-  createEvent = async (event: CalendarEvent): Promise<String> => {
+  createEvent = async (event: Event): Promise<String> => {
     if (!event.id) {
       throw new Error('Event doesn\'t have id')
     }

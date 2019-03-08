@@ -1,6 +1,4 @@
-import {CalendarEventRequest} from "../types";
-
-const event: CalendarEventRequest = {
+const event = {
   "contactPhone": "+34655700372",
   "contactEmail": "rastro@example.copm",
   "locationAddress": "By the river",

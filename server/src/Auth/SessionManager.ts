@@ -1,12 +1,11 @@
 // Free API to get location from IP: http://freegeoip.net/json/149.11.144.50
 
-import {User, UserDbObject, UserSession, UserSessionDbObject} from "../@types";
-
+import {User} from "./User.entity"
+import * as uuid from 'uuid/v4'
 const randomstring = require('random-string')
 import {sendEmail} from '../post_office'
 import {domain} from '../config'
-import {ObjectID} from "mongodb";
-import AuthRepository from "./AuthRepository";
+import {Session, SessionInvite} from "./Session.entity"
 
 export class SessionAlreadyValidatedError extends Error {}
 
@@ -16,45 +15,32 @@ const generateHash = () => randomstring({
   special: false
 })
 
-export class SessionInvite {
-  hash: string
-  userId: string
-  timeValidated?: number
-
-  constructor(user: User) {
-    this.hash = generateHash()
-    this.userId = user.id
-    this.timeValidated = null
+const generateUniqueInviteHash = () => {
+  const hash = generateHash()
+  const existingSession = SessionInvite.findOne({hash: hash})
+  if (existingSession) {
+    return generateUniqueInviteHash()
+  } else {
+    return hash
+  }
+}
+const generateUniqueSessionHash = () => {
+  const hash = generateHash()
+  const existingSession = Session.findOne({hash: hash})
+  if (existingSession) {
+    return generateUniqueInviteHash()
+  } else {
+    return hash
   }
 }
 
 
 export default class SessionManager {
-
-  authRepository: AuthRepository
-
-  constructor(authRepository: AuthRepository) {
-    this.authRepository = authRepository
-  }
-
-  inviteUser = async (email: string): Promise<SessionInvite> => {
-    const user = await this.authRepository.getUser({ email });
-    if (!user) {
-      throw new Error('Could not find user for this email');
-    }
-    const { _id, ...userProps } = user;
-    const invite = new SessionInvite({
-      id: _id.toString(),
-      ...userProps
-    });
-
-    try {
-      const persistedInvite = await this.authRepository.saveSessionInvite(invite)
-      console.log(`Invite persisted for user ${user.username}`, persistedInvite)
-    } catch (e) {
-      console.error('Failed to save invite', invite)
-      throw e;
-    }
+  inviteUser = async (user: User): Promise<SessionInvite> => {
+    const invite = new SessionInvite()
+    invite.user = user
+    invite.hash = await generateUniqueInviteHash()
+    await invite.save()
 
     return new Promise(async (resolve: (SessionInvite) => void, reject)=>{
       try {
@@ -75,36 +61,21 @@ export default class SessionManager {
 
   }
 
-  initiateSession = async (inviteHash: string): Promise<UserSessionDbObject> => {
-    const sessionInvite: SessionInvite = await this.authRepository.getSessionInvite(inviteHash)
+  initiateSession = async (inviteHash: string): Promise<Session> => {
+    const sessionInvite: SessionInvite = await SessionInvite.findOne({hash: inviteHash})
     if (!sessionInvite) {
       throw new Error(`Could not find invite with hash ${inviteHash}`)
     }
     if (sessionInvite.timeValidated) {
       throw new SessionAlreadyValidatedError()
     }
-    const matchingUser: UserDbObject = await this.authRepository.getUserById(sessionInvite.userId)
-    if (!matchingUser) {
-      console.error(`Invite hash ${inviteHash} could not find related userId ${sessionInvite.userId}`)
-      throw new Error('Cannot find related user to this invite')
-    }
-    if (matchingUser._id.equals(sessionInvite.userId)) {
-      const session: UserSessionDbObject = {
-        user: matchingUser._id,
-        ctime: Date.now(),
-        isValid: true,
-        hash: generateHash(),
-      }
-      const persistedSession = await this.authRepository.createSession(session)
-      return Promise.resolve(persistedSession)
-    } else {
-      console.warn(`user ids didn't match. userId: ${matchingUser._id}. sessionUserId: ${sessionInvite.userId}`)
-      return Promise.resolve(null)
-    }
-  }
+    const session = new Session()
+    session.user = sessionInvite.user
+    session.isValid = true
+    session.hash = generateUniqueSessionHash()
+    await session.save()
 
-  getSession = async(sessionHash: string): Promise<UserSessionDbObject> => {
-    return await this.authRepository.getSession(sessionHash)
+    return session
   }
 }
 

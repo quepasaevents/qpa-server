@@ -1,37 +1,29 @@
-import EventManager from './EventManager'
-import CalendarManager from "../Calendar/CalendarManager";
-import CreateEventResolver = MutationResolvers.CreateEventResolver;
-import {CalendarEventResolvers, MutationResolvers} from "../@types";
-import CreateEventArgs = MutationResolvers.CreateEventArgs;
+import {Event} from "../Calendar/Event.entity"
+import {ResolverMap} from "../@types/graphql-utils"
 
-export default class EventsResolvers {
-  eventManager: EventManager
-  calendarManager: CalendarManager
+const resolvers: ResolverMap = {
 
-  constructor({eventManager, calendarManager}: {eventManager: EventManager, calendarManager: CalendarManager}) {
-    this.eventManager = eventManager;
-    this.calendarManager = calendarManager;
-  }
-
-  Query = {
-    events: async (req) => {
-      return this.eventManager.listEvents({})
+  Query: {
+    events: async (_, req: GQL.IEventsOnQueryArguments, context, info) => {
+      return Event.find({
+        take: req.filter.limit
+      })
     },
-  }
+  },
 
-  Event = {
-    owner: async (event, args, context, info) => {
-
+  Event: {
+    owner: async (event: Event, args, context, info) => {
+      return event.owner
     }
-  }
+  },
 
   Mutation: {
-    createEvent: CreateEventResolver
-  } = {
-    createEvent: async (_, args: CreateEventArgs, context, info) => {
-      console.warn('To Do: Event owner is not verified!')
-      const event = await this.eventManager.createEvent(args.input)
-      return event
+    createEvent: async (_, { input }: GQL.ICreateEventOnMutationArguments, context, info) => {
+      const event = new Event()
+      event.owner = context.session.user
+      return null
     }
-  }
+  },
 }
+
+export default resolvers
