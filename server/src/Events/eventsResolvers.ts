@@ -3,7 +3,6 @@ import {ResolverMap} from "../@types/graphql-utils"
 import {GQL} from "../@types"
 
 const resolvers: ResolverMap = {
-
   Query: {
     events: async (_, req: GQL.IEventsOnQueryArguments, context, info) => {
       return Event.find({

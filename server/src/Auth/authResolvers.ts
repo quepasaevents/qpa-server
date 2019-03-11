@@ -25,7 +25,6 @@ export default class AuthResolvers {
     signup: async (_, args: GQL.ISignupOnMutationArguments, context, info) => {
       const errors = []
       const userExists = await User.findOne({email: args.input.email})
-      console.log('userExists', userExists)
       if (userExists) {
         errors.push({
           path: "email",

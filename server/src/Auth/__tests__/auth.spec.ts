@@ -15,7 +15,10 @@ let connection: Connection = null
 
 describe('Authentication', () => {
   beforeAll(async () => {
-    connection = await createConnection(testConfig)
+    connection = await createConnection({
+      ...testConfig,
+      logging: null
+    })
   })
 
   beforeEach(async () => {

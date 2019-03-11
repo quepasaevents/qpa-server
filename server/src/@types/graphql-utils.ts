@@ -1,8 +1,7 @@
 import {Session} from "../Auth/Session.entity"
 
 export interface Context {
-  url: string
-  session: Session
+  session?: Session
   req: Express.Request
 }
 

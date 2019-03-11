@@ -7,6 +7,8 @@ import {importSchema} from 'graphql-import'
 import AuthResolvers from "./Auth/authResolvers"
 import {Connection} from "typeorm"
 import {PostOffice, sendEmail} from "./post_office";
+import {Session} from "./Auth/Session.entity";
+import {Context} from "./@types/graphql-utils";
 
 interface Dependencies {
   typeormConnection: Connection
@@ -43,10 +45,19 @@ export const createServer = async (dependencies: Dependencies) => {
       },
       UserSession: {
         ...authResolvers.UserSession
-
       }
     },
   })
 
-  return new ApolloServer({schema})
+  return new ApolloServer({
+    schema,
+    context: async (a) => {
+      const ctx: Context = {
+        req: a.req
+      }
+      if (a.req && a.req.headers.authentication) {
+        ctx.session = await Session.findOne({hash: a.req.headers.authentication as string})
+      }
+    }
+  })
 }
