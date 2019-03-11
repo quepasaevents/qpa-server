@@ -77,4 +77,10 @@ export default class AuthResolvers {
       return true
     },
   }
+
+  UserSession = {
+    user: async (userSession, req, context, info) => {
+      return userSession.user
+    }
+  }
 }

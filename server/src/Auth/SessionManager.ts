@@ -19,14 +19,14 @@ const generateUniqueInviteHash = async () => {
   const hash = generateHash()
   const existingSession = await SessionInvite.findOne({hash: hash})
   if (existingSession) {
-    return generateUniqueInviteHash()
+    return await generateUniqueInviteHash()
   } else {
     return hash
   }
 }
-const generateUniqueSessionHash = () => {
+const generateUniqueSessionHash = async () => {
   const hash = generateHash()
-  const existingSession = Session.findOne({hash: hash})
+  const existingSession = await Session.findOne({hash: hash})
   if (existingSession) {
     return generateUniqueInviteHash()
   } else {
@@ -70,17 +70,20 @@ export default class SessionManager {
   }
 
   initiateSession = async (inviteHash: string): Promise<Session> => {
-    const sessionInvite: SessionInvite = await SessionInvite.findOne({hash: inviteHash})
+    const sessionInvite: SessionInvite = await SessionInvite.findOne({hash: inviteHash}, {
+      relations: ['user']
+    })
     if (!sessionInvite) {
       throw new Error(`Could not find invite with hash ${inviteHash}`)
     }
     if (sessionInvite.timeValidated) {
       throw new SessionAlreadyValidatedError()
     }
+    await sessionInvite.user
     const session = new Session()
     session.user = sessionInvite.user
     session.isValid = true
-    session.hash = generateUniqueSessionHash()
+    session.hash = await generateUniqueSessionHash()
     await session.save()
 
     return session

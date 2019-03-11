@@ -40,6 +40,10 @@ export const createServer = async (dependencies: Dependencies) => {
         ...resolvers.Mutation,
         ...EventsResolvers.Mutation,
         ...authResolvers.Mutation
+      },
+      UserSession: {
+        ...authResolvers.UserSession
+
       }
     },
   })

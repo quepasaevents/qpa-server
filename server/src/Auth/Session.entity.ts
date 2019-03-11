@@ -1,4 +1,4 @@
-import {BaseEntity, Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn} from 'typeorm'
+import {BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn} from 'typeorm'
 import {User} from "./User.entity"
 import * as uuid4 from 'uuid/v4'
 
@@ -6,6 +6,8 @@ import * as uuid4 from 'uuid/v4'
 export class Session extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: string
+
+  @JoinColumn()
   @ManyToOne(type => User, (user: User) => user.sessionInvites)
   user: User
 
@@ -23,6 +25,7 @@ export class SessionInvite extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: string
 
+  @JoinColumn()
   @ManyToOne(type => User, (user: User) => user.sessionInvites)
   user: User
 
