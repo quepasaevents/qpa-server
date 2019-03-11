@@ -39,11 +39,14 @@ describe('Sign up', () => {
                   email: "test@username.com",
                   name: "Test Name",
                   username: "testuser"
-              })
-          }
+              }) {
+                  path
+                  message
+              }
+          } 
       `
     })
-    expect(res.data.signup).toBeTruthy()
+    expect(res.data.signup).toBeNull()
     expect(sendEmailMock.mock.calls).toHaveLength(1)
     const dbUser = await User.findOne({name: "Test Name"})
     expect(dbUser.email).toEqual("test@username.com")
@@ -65,10 +68,16 @@ describe('Sign up', () => {
                   email: "existing@email.com",
                   name: "Different Name",
                   username: "differentusername"
-              })
+              }) {
+                  path
+                  message
+              }
           }
       `
     })
-    expect(res.data.signup).toBeFalsy()
+    const errors = res.data.signup
+    expect(errors.length).toBeGreaterThan(0)
+    const emailError = errors.find(err => err.path === 'email')
+    expect(emailError).toBeDefined()
   })
 })

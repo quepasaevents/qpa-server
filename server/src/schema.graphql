@@ -149,9 +149,10 @@ type Error {
     path: String!
     message: String!
 }
+
 type Mutation {
     # Auth
-    signup(input: SignupInput): Boolean
+    signup(input: SignupInput): [Error]
     signin(input: SigninInput): UserSession!
     requestInvite(input: RequestInviteInput): Boolean!
 

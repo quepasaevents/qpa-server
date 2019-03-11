@@ -56,9 +56,9 @@ export default class AuthResolvers {
       try {
         await this.sessionManager.inviteUser(newUser)
       } catch (e) {
-        return false
+        throw e
       }
-      return true
+      return null
     },
     signin: async (_, req, context, info) => {
       const session = await this.sessionManager.initiateSession(req.input.hash)
