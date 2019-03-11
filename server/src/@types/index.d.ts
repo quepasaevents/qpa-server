@@ -1,7 +1,7 @@
 // tslint:disable
 // graphql typescript definitions
 
-declare namespace GQL {
+export namespace GQL {
   interface IGraphQLResponseRoot {
     data?: IQuery | IMutation;
     errors?: Array<IGraphQLResponseError>;
@@ -32,8 +32,7 @@ declare namespace GQL {
 
   interface IUser {
     __typename: 'User';
-    firstName: string;
-    lastName: string | null;
+    name: string;
     username: string;
     email: string;
     id: string;
@@ -124,8 +123,7 @@ declare namespace GQL {
   interface ISignupInput {
     email: string;
     username: string;
-    firstName: string;
-    lastName?: string | null;
+    name: string;
   }
 
   interface ISigninInput {

@@ -1,5 +1,6 @@
 import {Event} from "../Calendar/Event.entity"
 import {ResolverMap} from "../@types/graphql-utils"
+import {GQL} from "../@types"
 
 const resolvers: ResolverMap = {
 

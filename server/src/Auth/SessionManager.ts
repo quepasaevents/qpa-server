@@ -3,7 +3,7 @@
 import {User} from "./User.entity"
 import * as uuid from 'uuid/v4'
 const randomstring = require('random-string')
-import {sendEmail} from '../post_office'
+import {PostOffice} from '../post_office'
 import {domain} from '../config'
 import {Session, SessionInvite} from "./Session.entity"
 
@@ -15,9 +15,9 @@ const generateHash = () => randomstring({
   special: false
 })
 
-const generateUniqueInviteHash = () => {
+const generateUniqueInviteHash = async () => {
   const hash = generateHash()
-  const existingSession = SessionInvite.findOne({hash: hash})
+  const existingSession = await SessionInvite.findOne({hash: hash})
   if (existingSession) {
     return generateUniqueInviteHash()
   } else {
@@ -34,8 +34,16 @@ const generateUniqueSessionHash = () => {
   }
 }
 
+interface Dependencies {
+  sendEmail: PostOffice
+}
 
 export default class SessionManager {
+  sendEmail: PostOffice
+
+  constructor(deps: Dependencies) {
+    this.sendEmail = deps.sendEmail
+  }
   inviteUser = async (user: User): Promise<SessionInvite> => {
     const invite = new SessionInvite()
     invite.user = user
@@ -44,7 +52,7 @@ export default class SessionManager {
 
     return new Promise(async (resolve: (SessionInvite) => void, reject)=>{
       try {
-        await sendEmail({
+        await this.sendEmail({
           to: user.email,
           from: `signin@${domain}`,
           text: `Follow this link to start a session: https://${domain}/login/${invite.hash}`,

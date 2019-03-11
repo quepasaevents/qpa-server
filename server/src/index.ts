@@ -1,12 +1,17 @@
-import GraphQLInterface from "./graphql"
-import SessionManager from "./Auth/SessionManager"
+import { createServer } from "./graphql"
+import typeormConfig from '../ormconfig'
+import {createConnection} from "typeorm"
+import { sendEmail} from "./post_office"
 
 async function start() {
-  const gql = new GraphQLInterface({
-    sessionManager: new SessionManager()
+  const server = await createServer({
+    typeormConnection: await createConnection(typeormConfig),
+    sendEmail,
   })
-  gql.start()
-
+  server.listen().then(({url}) => {
+    console.log(`🚀  Server ready at ${url}`)
+  })
+  return server
 }
 
 start()

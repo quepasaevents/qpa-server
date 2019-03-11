@@ -23,7 +23,7 @@ class EventContactPerson extends BaseEntity {
 export class EventTime extends BaseEntity {
   @CreateDateColumn()
   timeZone: string
-  @Column({type: "datetime"})
+  @Column({type: "time with time zone"})
   start: Date
   @Column()
   end: Date

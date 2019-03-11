@@ -8,25 +8,19 @@ import {
 import { Event } from "../Calendar/Event.entity"
 import {SessionInvite} from "./Session.entity"
 
-@Entity()
+@Entity("app_user")
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: string
 
   @Column()
-  firstName: string
-
-  @Column()
-  lastName: string
+  name: string
 
   @Column()
   username: string
 
   @Column()
   email: string
-
-  @Column()
-  age: number
 
   @OneToMany(type => Event, event => event.owner)
   events: Event[]

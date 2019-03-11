@@ -1,6 +1,5 @@
 type User {
-    firstName: String!
-    lastName: String
+    name: String!
     username: String!
     email: String!
     id: ID!
@@ -18,8 +17,7 @@ type UserSession {
 input SignupInput {
     email: String!
     username: String!
-    firstName: String!
-    lastName: String
+    name: String!
 }
 
 input SigninInput {
@@ -147,9 +145,13 @@ input CreateEventInput {
     contact: [EventContactPersonInput!]!
 }
 
+type Error {
+    path: String!
+    message: String!
+}
 type Mutation {
     # Auth
-    signup(input: SignupInput): Boolean!
+    signup(input: SignupInput): Boolean
     signin(input: SigninInput): UserSession!
     requestInvite(input: RequestInviteInput): Boolean!
 

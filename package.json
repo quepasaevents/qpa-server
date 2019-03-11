@@ -6,6 +6,9 @@
   "repository": "git@gitlab.com:amiiit/gcf-auth.git",
   "author": "Amit Jakubowicz <a.jakubowicz@travelaudience.com>",
   "license": "MIT",
+  "resolutions": {
+    "@types/node": "11.11.0"
+  },
   "workspaces": [
     "packages/*",
     "webapp",

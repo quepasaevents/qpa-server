@@ -10,14 +10,15 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "types": ["node", "jest"]
   },
   "compileOnSave": true,
   "include": [
     "src"
   ],
   "files": [
-    "./src/@types/index.d.ts"
+    "src/@types/index.d.ts", "../node_modules/@types/node/ts3.2/index.d.ts"
   ],
   "exclude": [
     "**/*.spec.ts", "node_modules", "__tests__"

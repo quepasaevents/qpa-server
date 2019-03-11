@@ -1,12 +1,20 @@
 import SessionManager from "./SessionManager"
 import {User} from "./User.entity"
+import {GQL} from "../@types"
+import {PostOffice} from "../post_office";
 
-
+interface Dependencies {
+  sendEmail: PostOffice
+}
 export default class AuthResolvers {
   sessionManager: SessionManager
+  sendEmail: PostOffice
 
-  constructor({sessionManager}) {
-    this.sessionManager = sessionManager
+  constructor(deps: Dependencies) {
+    this.sessionManager = new SessionManager({
+      sendEmail: deps.sendEmail
+    })
+    this.sendEmail = deps.sendEmail
   }
 
   Query = {
@@ -16,7 +24,9 @@ export default class AuthResolvers {
   Mutation = {
     signup: async (_, args: GQL.ISignupOnMutationArguments, context, info) => {
       const errors = []
-      if (await User.findOne({email: args.input.email})) {
+      const userExists = await User.findOne({email: args.input.email})
+      console.log('userExists', userExists)
+      if (userExists) {
         errors.push({
           path: "email",
           message: "Email taken"
@@ -34,8 +44,7 @@ export default class AuthResolvers {
       }
 
       const newUser = new User()
-      newUser.firstName = args.input.firstName
-      newUser.lastName = args.input.lastName
+      newUser.name = args.input.name
       newUser.email = args.input.email
       newUser.username = args.input.username
       await newUser.save()
@@ -47,9 +56,9 @@ export default class AuthResolvers {
       try {
         await this.sessionManager.inviteUser(newUser)
       } catch (e) {
-        console.error('Error sending invitation', e)
+        return false
       }
-      return null
+      return true
     },
     signin: async (_, req, context, info) => {
       const session = await this.sessionManager.initiateSession(req.input.hash)

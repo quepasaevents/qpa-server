@@ -4,6 +4,8 @@ import * as uuid4 from 'uuid/v4'
 
 @Entity()
 export class Session extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: string
   @ManyToOne(type => User, (user: User) => user.sessionInvites)
   user: User
 
@@ -13,6 +15,7 @@ export class Session extends BaseEntity {
   @Column()
   hash: string
 }
+
 
 @Entity()
 export class SessionInvite extends BaseEntity {
@@ -30,4 +33,3 @@ export class SessionInvite extends BaseEntity {
   timeValidated?: Date
 
 }
-

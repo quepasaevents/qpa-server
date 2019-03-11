@@ -5,54 +5,44 @@ import {makeExecutableSchema} from "graphql-tools"
 import EventsResolvers from './Events/eventsResolvers'
 import {importSchema} from 'graphql-import'
 import AuthResolvers from "./Auth/authResolvers"
+import {Connection} from "typeorm"
+import {PostOffice, sendEmail} from "./post_office";
 
 interface Dependencies {
-  sessionManager: SessionManager,
+  typeormConnection: Connection
+  sendEmail: PostOffice
 }
 
-export default class GraphQLInterface {
-  sessionManager: SessionManager
+const resolvers = {
+  Query: {},
+  Mutation: {}
+}
 
-  constructor(dependencies: Dependencies) {
-    this.sessionManager = dependencies.sessionManager
-  }
+export const createServer = async (dependencies: Dependencies) => {
 
-  start = () => {
+  const authResolvers = new AuthResolvers({
+    sendEmail: dependencies.sendEmail
+  })
 
-    const authResolvers = new AuthResolvers({
-      sessionManager: this.sessionManager,
-    })
+  const typeDefs = importSchema(__dirname + '/schema.graphql')
 
-    const typeDefs = importSchema(__dirname + '/schema.graphql')
-
-    const schema = makeExecutableSchema({
-      typeDefs: [
-        typeDefs
-      ],
-      resolvers: {
-        Query: {
-          ...this.resolvers.Query,
-          ...EventsResolvers.Query,
-          ...authResolvers.Query
-        },
-        Mutation: {
-          ...this.resolvers.Mutation,
-          ...EventsResolvers.Mutation,
-          ...authResolvers.Mutation
-        }
+  const schema = makeExecutableSchema({
+    typeDefs: [
+      typeDefs
+    ],
+    resolvers: {
+      Query: {
+        ...resolvers.Query,
+        ...EventsResolvers.Query,
+        ...authResolvers.Query
       },
-    })
+      Mutation: {
+        ...resolvers.Mutation,
+        ...EventsResolvers.Mutation,
+        ...authResolvers.Mutation
+      }
+    },
+  })
 
-    const server = new ApolloServer({schema})
-    server.listen().then(({url}) => {
-      console.log(`🚀  Server ready at ${url}`)
-    })
-  }
-
-  resolvers = {
-    Query: {},
-    Mutation: {}
-  }
+  return new ApolloServer({schema})
 }
-
-
