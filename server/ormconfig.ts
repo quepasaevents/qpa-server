@@ -8,7 +8,6 @@ const config: ConnectionOptions = {
   database: process.env.POSTGRES_DB || 'qpa',
   entities: ["src/**/*.entity.ts"],
   synchronize: true,
-  logging: "all"
 }
 
 export const testConfig: ConnectionOptions = {
