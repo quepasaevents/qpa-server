@@ -15,22 +15,38 @@ class EventLocation extends BaseEntity {
 
 }
 
-@Entity()
-class EventContactPerson extends BaseEntity {
+class Contact {
+  @Column()
+  email?: string
 
+  @Column()
+  phone?: string
 }
 
-export class EventTime extends BaseEntity {
+@Entity()
+class EventContactPerson {
+  @Column()
+  name: string
+
+  // todo: check pg support for arrays
+  // @Column({type: "array"})
+  // languages: string[]
+
+  @Column()
+  contact: Contact
+}
+
+export class EventTime {
   @CreateDateColumn()
   timeZone: string
   @Column({type: "time with time zone"})
   start: Date
-  @Column()
+  @Column({type: "time with time zone"})
   end: Date
   @Column()
-  recurrence: String
+  recurrence?: String
   @Column()
-  exceptions: String
+  exceptions?: String
 }
 
 export class EventInformation {
@@ -58,8 +74,9 @@ export class Event extends BaseEntity {
   @Column()
   status: string
 
-  @Column(type => EventContactPerson)
-  contact: EventContactPerson[]
+  // todo: check pg support for arrays
+  // @Column(type => EventContactPerson)
+  // contact: EventContactPerson[]
 
   @Column(type => EventLocation)
   location: EventLocation
