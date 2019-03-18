@@ -5,16 +5,16 @@ import {PostOffice} from "../../post_office"
 import {createTestClient} from "apollo-server-testing"
 import {User} from "../../Auth/User.entity"
 import {Session} from "../../Auth/Session.entity"
-import {Event, EventInformation} from "../../Calendar/Event.entity";
-import {useReducer} from "react";
+import {Event, EventInformation} from "../../Calendar/Event.entity"
+import gql from "graphql-tag"
 
 let testClient
 let connection: Connection = null
 let sendEmailMock
 
-describe('Evenst resolver', () => {
+describe('Events resolver', () => {
   beforeAll(async () => {
-    connection = await createConnection({
+    return connection = await createConnection({
       ...testConfig,
     })
   })
@@ -26,10 +26,14 @@ describe('Evenst resolver', () => {
       typeormConnection: connection,
       sendEmail: sendEmailMock as PostOffice
     })
-    testClient = await createTestClient(server as any)
+    return testClient = await createTestClient(server as any)
   })
 
-  it('Create Event', async () => {
+  afterAll(async () => {
+    await connection.close()
+  })
+
+  it('Create Event', async (done) => {
     const owner = new User()
     owner.name = "Kite Flyer"
     owner.username = 'kites_are_us'
@@ -54,6 +58,31 @@ describe('Evenst resolver', () => {
       end: new Date("2019-10-10T14:00Z"),
     }
     event.status = "Scheduled"
-    event.save()
+    await event.save()
+    expect(await Event.count()).toEqual(1)
+
+    const res = await testClient.query({
+      query: gql`
+        query {
+            events(filter: {limit: 10}) {
+                id
+                info {
+                   title
+                    description
+                }
+                status
+                time {
+                    timeZone
+                    start
+                    end
+                }
+            }
+        }
+      `
+    })
+    expect(res.errors).toBeUndefined()
+    expect(res.data).toBeDefined()
+    expect(res.data.events).toHaveLength(1)
+    done()
   })
 })

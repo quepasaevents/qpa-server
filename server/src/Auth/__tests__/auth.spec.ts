@@ -31,6 +31,9 @@ describe('Authentication', () => {
     testClient = await createTestClient(server as any)
   })
 
+  afterAll(async () => {
+    await connection.close()
+  })
 
   it('Sign up of new user', async () => {
     const { mutate } = testClient

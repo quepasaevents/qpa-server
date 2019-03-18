@@ -36,7 +36,7 @@ input RequestInviteInput {
 type CalendarEvent {
     id: ID!
     owner: User!
-    info: [EventInformation]!
+    info: EventInformation!
     time: EventTime!
     status: EventStatus!
     contact: [EventContactPerson!]!
@@ -76,7 +76,6 @@ scalar Language
 
 # Event information for presentation
 type EventInformation  {
-    language: String!
     title: String!
     description: String
 }
@@ -167,5 +166,5 @@ type Query {
     me: User
 
     # Event
-    events(filter: EventsQueryFilter): [CalendarEvent]
+    events(filter: EventsQueryFilter!): [CalendarEvent]
 }

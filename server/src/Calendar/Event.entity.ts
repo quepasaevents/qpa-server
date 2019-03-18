@@ -39,13 +39,13 @@ class EventContactPerson {
 export class EventTime {
   @CreateDateColumn()
   timeZone: string
-  @Column({type: "time with time zone"})
+  @Column({type: "time"})
   start: Date
-  @Column({type: "time with time zone"})
+  @Column({type: "time"})
   end: Date
-  @Column()
+  @Column({nullable: true})
   recurrence?: String
-  @Column()
+  @Column({nullable: true})
   exceptions?: String
 }
 
