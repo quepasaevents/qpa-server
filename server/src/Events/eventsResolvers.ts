@@ -6,7 +6,8 @@ const resolvers: ResolverMap = {
   Query: {
     events: async (_, req: GQL.IEventsOnQueryArguments, context, info) => {
       return Event.find({
-        take: req.filter.limit
+        take: req.filter.limit,
+        where: (req.filter && req.filter.owner) ? `"ownerId"='${req.filter.owner}'` : null
       })
     },
   },

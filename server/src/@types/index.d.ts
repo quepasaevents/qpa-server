@@ -27,7 +27,7 @@ export namespace GQL {
   }
 
   interface IEventsOnQueryArguments {
-    filter?: IEventsQueryFilter | null;
+    filter: IEventsQueryFilter;
   }
 
   interface IUser {
@@ -40,13 +40,14 @@ export namespace GQL {
 
   interface IEventsQueryFilter {
     limit?: number | null;
+    owner?: string | null;
   }
 
   interface ICalendarEvent {
     __typename: 'CalendarEvent';
     id: string;
     owner: IUser;
-    info: Array<IEventInformation | null>;
+    info: IEventInformation;
     time: IEventTime;
     status: any;
     contact: Array<IEventContactPerson>;
@@ -55,7 +56,6 @@ export namespace GQL {
 
   interface IEventInformation {
     __typename: 'EventInformation';
-    language: string;
     title: string;
     description: string | null;
   }
@@ -97,7 +97,7 @@ export namespace GQL {
 
   interface IMutation {
     __typename: 'Mutation';
-    signup: boolean;
+    signup: Array<IError | null> | null;
     signin: IUserSession;
     requestInvite: boolean;
     createEvent: ICalendarEvent | null;
@@ -124,6 +124,12 @@ export namespace GQL {
     email: string;
     username: string;
     name: string;
+  }
+
+  interface IError {
+    __typename: 'Error';
+    path: string;
+    message: string;
   }
 
   interface ISigninInput {

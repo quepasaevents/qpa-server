@@ -10,7 +10,7 @@ import {SessionInvite} from "./Session.entity"
 
 @Entity("app_user")
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id: string
 
   @Column()

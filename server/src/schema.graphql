@@ -93,6 +93,7 @@ type Contact {
 
 input EventsQueryFilter {
     limit: Int
+    owner: ID
 }
 
 input EventTimeInput {

@@ -6,7 +6,7 @@ import {
   OneToMany,
   OneToOne,
   ManyToOne,
-  CreateDateColumn
+  CreateDateColumn, JoinColumn
 } from "typeorm"
 import {User} from "../Auth/User.entity"
 
@@ -63,6 +63,7 @@ export class Event extends BaseEntity {
   id: number
 
   @ManyToOne(type => User, user => user.events)
+  @JoinColumn()
   owner: User
 
   @Column(type => EventInformation)

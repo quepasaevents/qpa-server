@@ -12,6 +12,62 @@ let testClient
 let connection: Connection = null
 let sendEmailMock
 
+const createKiteflyingEvent = async () => {
+  const owner = new User()
+  owner.name = "Kite Flyer"
+  owner.username = 'kites_are_us'
+  owner.email = "info@kites.com"
+  await owner.save()
+
+  const session = new Session()
+  session.user = owner
+  session.hash = 'kite_owners_auth_hash'
+  session.isValid = true
+  await session.save()
+
+  const event = new Event()
+  event.owner = owner
+  event.info = {
+    title: "Kite Flying Test Event",
+    description: "Description for test event starting at 3pm"
+  }
+  event.time = {
+    timeZone: 'Europe/Madrid',
+    start: new Date("2019-10-10T13:00Z"),
+    end: new Date("2019-10-10T14:00Z"),
+  }
+  event.status = "Scheduled"
+  return await event.save()
+}
+
+const createKinttingEvent = async () => {
+  const owner = new User()
+  owner.name = "Knitty User"
+  owner.username = 'kintting_is_fun'
+  owner.email = "info@knitting.com"
+  await owner.save()
+
+  const session = new Session()
+  session.user = owner
+  session.hash = 'knitty_owners_auth_hash'
+  session.isValid = true
+  await session.save()
+
+  const event = new Event()
+  event.owner = owner
+  event.info = {
+    title: "Knitting Test Event",
+    description: "Description for test event starting at 3pm"
+  }
+  event.time = {
+    timeZone: 'Europe/Madrid',
+    start: new Date("2019-10-10T14:00Z"),
+    end: new Date("2019-10-10T15:00Z"),
+  }
+  event.status = "Scheduled"
+  return await event.save()
+}
+
 describe('Events resolver', () => {
   beforeAll(async () => {
     return connection = await createConnection({
@@ -33,34 +89,9 @@ describe('Events resolver', () => {
     await connection.close()
   })
 
-  it('Create Event', async (done) => {
-    const owner = new User()
-    owner.name = "Kite Flyer"
-    owner.username = 'kites_are_us'
-    owner.email = "info@kites.com"
-    await owner.save()
-
-    const session = new Session()
-    session.user = owner
-    session.hash = 'kite_owners_auth_hash'
-    session.isValid = true
-    await session.save()
-
-    const event = new Event()
-    event.owner = owner
-    event.info = {
-      title: "Test event",
-      description: "Description for test event starting at 3pm"
-    }
-    event.time = {
-      timeZone: 'Europe/Madrid',
-      start: new Date("2019-10-10T13:00Z"),
-      end: new Date("2019-10-10T14:00Z"),
-    }
-    event.status = "Scheduled"
-    await event.save()
+  it('Create Kiteflying Event', async (done) => {
+    await createKiteflyingEvent()
     expect(await Event.count()).toEqual(1)
-
     const res = await testClient.query({
       query: gql`
         query {
@@ -83,6 +114,39 @@ describe('Events resolver', () => {
     expect(res.errors).toBeUndefined()
     expect(res.data).toBeDefined()
     expect(res.data.events).toHaveLength(1)
+    done()
+  })
+
+  it('Create knitting event', async (done) => {
+    await createKinttingEvent()
+    const kinttingUser = await User.findOne({username: "kintting_is_fun"})
+    console.log('kinttingUser', kinttingUser.id)
+    const res = await testClient.query({
+      query: gql`
+          query GetEvent($ownerId: ID!){
+              events(filter: {limit: 10, owner: $ownerId}) {
+                  id
+                  info {
+                      title
+                      description
+                  }
+                  status
+                  time {
+                      timeZone
+                      start
+                      end
+                  }
+              }
+          }
+      `,
+      variables: {
+        ownerId: kinttingUser.id
+      }
+    })
+    expect(res.errors).toBeUndefined()
+    expect(res.data).toBeDefined()
+    expect(res.data.events).toHaveLength(1)
+    expect(res.data.events[0].info.title).toEqual("Knitting Test Event")
     done()
   })
 })
