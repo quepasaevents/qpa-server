@@ -5,6 +5,7 @@ import {PostOffice} from "../post_office";
 
 interface Dependencies {
   sendEmail: PostOffice
+  emailTargetDomain: string
 }
 export default class AuthResolvers {
   sessionManager: SessionManager
@@ -12,7 +13,8 @@ export default class AuthResolvers {
 
   constructor(deps: Dependencies) {
     this.sessionManager = new SessionManager({
-      sendEmail: deps.sendEmail
+      sendEmail: deps.sendEmail,
+      emailTargetDomain: deps.emailTargetDomain
     })
     this.sendEmail = deps.sendEmail
   }

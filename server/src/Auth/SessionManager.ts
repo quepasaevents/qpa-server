@@ -1,10 +1,8 @@
 // Free API to get location from IP: http://freegeoip.net/json/149.11.144.50
 
 import {User} from "./User.entity"
-import * as uuid from 'uuid/v4'
 const randomstring = require('random-string')
 import {PostOffice} from '../post_office'
-import {domain} from '../config'
 import {Session, SessionInvite} from "./Session.entity"
 
 export class SessionAlreadyValidatedError extends Error {}
@@ -36,13 +34,16 @@ const generateUniqueSessionHash = async () => {
 
 interface Dependencies {
   sendEmail: PostOffice
+  emailTargetDomain: string
 }
 
 export default class SessionManager {
   sendEmail: PostOffice
+  emailTargetDomain: string
 
   constructor(deps: Dependencies) {
     this.sendEmail = deps.sendEmail
+    this.emailTargetDomain = deps.emailTargetDomain
   }
   inviteUser = async (user: User): Promise<SessionInvite> => {
     const invite = new SessionInvite()
@@ -54,8 +55,8 @@ export default class SessionManager {
       try {
         await this.sendEmail({
           to: user.email,
-          from: `signin@${domain}`,
-          text: `Follow this link to start a session: https://${domain}/login/${invite.hash}`,
+          from: `signin@${this.emailTargetDomain}`,
+          text: `Follow this link to start a session: https://${this.emailTargetDomain}/login/${invite.hash}`,
           subject: 'Invitation for session'
         })
         resolve(invite)
