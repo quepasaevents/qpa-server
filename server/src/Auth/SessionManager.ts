@@ -87,6 +87,9 @@ export default class SessionManager {
     session.hash = await generateUniqueSessionHash()
     await session.save()
 
+    sessionInvite.timeValidated = new Date()
+    await sessionInvite.save()
+
     return session
   }
 }

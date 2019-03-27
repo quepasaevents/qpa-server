@@ -26,7 +26,8 @@ describe('Authentication', () => {
 
     const server = await createServer({
       typeormConnection: connection,
-      sendEmail: sendEmailMock as PostOffice
+      sendEmail: sendEmailMock as PostOffice,
+      domain: 'example.com'
     })
     testClient = await createTestClient(server as any)
   })
@@ -57,7 +58,7 @@ describe('Authentication', () => {
     expect(dbUser.email).toEqual("test@username.com")
   })
 
-  it('Sign up with already existing email should fail', async () => {
+  it('Sign up with already existing email should fail', async (done) => {
     const existingUser = new User()
     existingUser.email = "existing@email.com"
     existingUser.name = "Existing User"
@@ -82,9 +83,10 @@ describe('Authentication', () => {
     expect(errors.length).toBeGreaterThan(0)
     const emailError = errors.find(err => err.path === 'email')
     expect(emailError).toBeDefined()
+    done()
   })
 
-  it('Sign in', async () => {
+  it('Sign in', async (done) => {
     const user = new User()
     user.name = 'Signin Testuser'
     user.username = 'signintestuser'
@@ -124,5 +126,7 @@ describe('Authentication', () => {
     expect(res.data.signin.user.username).toBe('signintestuser')
     expect(res.data.signin.hash).toBeDefined()
     expect(res.data.signin.isValid).toBeTruthy()
+    done()
   })
+
 })

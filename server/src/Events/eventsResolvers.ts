@@ -21,7 +21,7 @@ const resolvers: ResolverMap = {
   Mutation: {
     createEvent: async (_, { input }: GQL.ICreateEventOnMutationArguments, context, info) => {
       const event = new Event()
-      event.owner = context.session.user
+      event.owner = context.user
       return null
     }
   },

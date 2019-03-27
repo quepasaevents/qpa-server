@@ -11,6 +11,8 @@ import {Context} from "./@types/graphql-utils"
 interface Dependencies {
   typeormConnection: Connection
   sendEmail: PostOffice
+  domain?: string
+  customContext?: Context
 }
 
 const resolvers = {
@@ -22,7 +24,7 @@ export const createServer = async (dependencies: Dependencies) => {
 
   const authResolvers = new AuthResolvers({
     sendEmail: dependencies.sendEmail,
-    emailTargetDomain: 'www.example.com',
+    emailTargetDomain: dependencies.domain,
   })
 
   const typeDefs = importSchema(__dirname + '/schema.graphql')
@@ -50,13 +52,19 @@ export const createServer = async (dependencies: Dependencies) => {
 
   return new ApolloServer({
     schema,
-    context: async (a) => {
+    context: dependencies.customContext ? dependencies.customContext : async (a) => {
       const ctx: Context = {
         req: a.req
       }
       if (a.req && a.req.headers.authentication) {
-        ctx.session = await Session.findOne({hash: a.req.headers.authentication as string})
+        const session = await Session.findOne({hash: a.req.headers.authentication as string})
+        console.log('session!!!', session)
+        console.log('await',await session.user)
+        if (session) {
+          ctx.user = session.user
+        }
       }
+      return ctx
     }
   })
 }

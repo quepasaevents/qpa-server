@@ -7,8 +7,7 @@ export class Session extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: string
 
-  @JoinColumn()
-  @ManyToOne(type => User, (user: User) => user.sessionInvites)
+  @ManyToOne(type => User, (user: User) => user.sessions)
   user: User
 
   @Column()
@@ -25,7 +24,6 @@ export class SessionInvite extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: string
 
-  @JoinColumn()
   @ManyToOne(type => User, (user: User) => user.sessionInvites)
   user: User
 

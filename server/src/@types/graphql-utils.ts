@@ -1,8 +1,8 @@
-import {Session} from "../Auth/Session.entity"
+import {User} from "../Auth/User.entity"
 
 export interface Context {
-  session?: Session
-  req: Express.Request
+  user?: User
+  req?: Express.Request
 }
 
 export type GQLResolver = (

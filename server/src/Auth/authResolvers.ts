@@ -1,11 +1,11 @@
-import SessionManager from "./SessionManager"
-import {User} from "./User.entity"
-import {GQL} from "../@types"
-import {PostOffice} from "../post_office";
+import SessionManager, { SessionAlreadyValidatedError } from "./SessionManager"
+import { User } from "./User.entity"
+import { GQL } from "../@types"
+import { PostOffice } from "../post_office"
 
 interface Dependencies {
   sendEmail: PostOffice
-  emailTargetDomain: string
+  emailTargetDomain?: string
 }
 export default class AuthResolvers {
   sessionManager: SessionManager
@@ -20,20 +20,22 @@ export default class AuthResolvers {
   }
 
   Query = {
-
+    me: async (_, req, context, info) => {
+      return context.user
+    }
   }
 
   Mutation = {
     signup: async (_, args: GQL.ISignupOnMutationArguments, context, info) => {
       const errors = []
-      const userExists = await User.findOne({email: args.input.email})
+      const userExists = await User.findOne({ email: args.input.email })
       if (userExists) {
         errors.push({
           path: "email",
           message: "Email taken"
         })
       }
-      if (await User.findOne({username: args.input.username})) {
+      if (await User.findOne({ username: args.input.username })) {
         errors.push({
           path: "username",
           message: "Username taken"
@@ -62,21 +64,31 @@ export default class AuthResolvers {
       return null
     },
     signin: async (_, req, context, info) => {
-      const session = await this.sessionManager.initiateSession(req.input.hash)
+      let session
+      try {
+        session = await this.sessionManager.initiateSession(req.input.hash)
+      } catch (e) {
+          console.log(e)
+      }
       if (!session || !session.isValid) {
-        throw new Error('Could not find session invite')
+        throw new Error("Could not find session invite or invite is invalid.")
       }
 
       return session
     },
-    requestInvite: async (_, req: GQL.IRequestInviteOnMutationArguments, context, info) => {
-      const user = await User.findOne({email: req.input.email})
+    requestInvite: async (
+      _,
+      req: GQL.IRequestInviteOnMutationArguments,
+      context,
+      info
+    ) => {
+      const user = await User.findOne({ email: req.input.email })
       if (user) {
         this.sessionManager.inviteUser(user)
       }
 
       return true
-    },
+    }
   }
 
   UserSession = {

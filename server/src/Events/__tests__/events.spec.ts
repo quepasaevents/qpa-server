@@ -80,7 +80,7 @@ describe('Events resolver', () => {
 
     const server = await createServer({
       typeormConnection: connection,
-      sendEmail: sendEmailMock as PostOffice
+      sendEmail: sendEmailMock as PostOffice,
     })
     return testClient = await createTestClient(server as any)
   })
@@ -120,7 +120,6 @@ describe('Events resolver', () => {
   it('Create knitting event', async (done) => {
     await createKinttingEvent()
     const kinttingUser = await User.findOne({username: "kintting_is_fun"})
-    console.log('kinttingUser', kinttingUser.id)
     const res = await testClient.query({
       query: gql`
           query GetEvent($ownerId: ID!){

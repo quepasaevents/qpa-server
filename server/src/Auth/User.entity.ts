@@ -3,10 +3,10 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  OneToMany, JoinColumn
+  OneToMany, JoinColumn, CreateDateColumn
 } from "typeorm"
 import { Event } from "../Calendar/Event.entity"
-import {SessionInvite} from "./Session.entity"
+import {Session, SessionInvite} from "./Session.entity"
 
 @Entity("app_user")
 export class User extends BaseEntity {
@@ -26,7 +26,12 @@ export class User extends BaseEntity {
   @OneToMany(type => Event, event => event.owner)
   events: Event[]
 
-  @JoinColumn()
+  @OneToMany(type => Session, session => session.user)
+  sessions: Session[]
+
   @OneToMany(type => SessionInvite, invite => invite.user)
   sessionInvites: SessionInvite[]
+
+  @CreateDateColumn()
+  created: Date
 }
