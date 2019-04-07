@@ -1,11 +1,11 @@
-import {testConfig} from "../../../ormconfig"
-import {Connection, createConnection} from "typeorm"
-import {createServer} from "../../graphql"
-import {PostOffice} from "../../post_office"
-import {createTestClient} from "apollo-server-testing"
-import {User} from "../../Auth/User.entity"
-import {Session} from "../../Auth/Session.entity"
-import {Event, EventInformation} from "../../Calendar/Event.entity"
+import { testConfig } from "../../../ormconfig"
+import { Connection, createConnection } from "typeorm"
+import { createServer } from "../../graphql"
+import { PostOffice } from "../../post_office"
+import { createTestClient } from "apollo-server-testing"
+import { User } from "../../Auth/User.entity"
+import { Session } from "../../Auth/Session.entity"
+import { Event, EventInformation } from "../../Calendar/Event.entity"
 import gql from "graphql-tag"
 
 let testClient
@@ -15,13 +15,13 @@ let sendEmailMock
 const createKiteflyingEvent = async () => {
   const owner = new User()
   owner.name = "Kite Flyer"
-  owner.username = 'kites_are_us'
+  owner.username = "kites_are_us"
   owner.email = "info@kites.com"
   await owner.save()
 
   const session = new Session()
   session.user = owner
-  session.hash = 'kite_owners_auth_hash'
+  session.hash = "kite_owners_auth_hash"
   session.isValid = true
   await session.save()
 
@@ -32,9 +32,9 @@ const createKiteflyingEvent = async () => {
     description: "Description for test event starting at 3pm"
   }
   event.time = {
-    timeZone: 'Europe/Madrid',
-    start: new Date("2019-10-10T13:00Z"),
-    end: new Date("2019-10-10T14:00Z"),
+    timeZone: "Europe/Madrid",
+    start: "2019-10-10T13:00",
+    end: "2019-10-10T14:00"
   }
   event.status = "Scheduled"
   return await event.save()
@@ -43,13 +43,13 @@ const createKiteflyingEvent = async () => {
 const createKinttingEvent = async () => {
   const owner = new User()
   owner.name = "Knitty User"
-  owner.username = 'kintting_is_fun'
+  owner.username = "kintting_is_fun"
   owner.email = "info@knitting.com"
   await owner.save()
 
   const session = new Session()
   session.user = owner
-  session.hash = 'knitty_owners_auth_hash'
+  session.hash = "knitty_owners_auth_hash"
   session.isValid = true
   await session.save()
 
@@ -60,19 +60,20 @@ const createKinttingEvent = async () => {
     description: "Description for test event starting at 3pm"
   }
   event.time = {
-    timeZone: 'Europe/Madrid',
-    start: new Date("2019-10-10T14:00Z"),
-    end: new Date("2019-10-10T15:00Z"),
+    timeZone: "Europe/Madrid",
+    start: "2019-10-10T14:00",
+    end: "2019-10-10T15:00"
   }
   event.status = "Scheduled"
-  return await event.save()
+  return await event.updateOccurrences().save()
 }
 
-describe('Events resolver', () => {
+describe("Events resolver", () => {
   beforeAll(async () => {
-    return connection = await createConnection({
-      ...testConfig,
-    })
+    return (connection = await createConnection({
+      ...testConfig
+    }))
+
   })
 
   beforeEach(async () => {
@@ -80,34 +81,34 @@ describe('Events resolver', () => {
 
     const server = await createServer({
       typeormConnection: connection,
-      sendEmail: sendEmailMock as PostOffice,
+      sendEmail: sendEmailMock as PostOffice
     })
-    return testClient = await createTestClient(server as any)
+    return (testClient = await createTestClient(server as any))
   })
 
   afterAll(async () => {
     await connection.close()
   })
 
-  it('Create Kiteflying Event', async (done) => {
+  it("Create Kiteflying Event", async done => {
     await createKiteflyingEvent()
     expect(await Event.count()).toEqual(1)
     const res = await testClient.query({
       query: gql`
         query {
-            events(filter: {limit: 10}) {
-                id
-                info {
-                   title
-                    description
-                }
-                status
-                time {
-                    timeZone
-                    start
-                    end
-                }
+          events(filter: { limit: 10 }) {
+            id
+            info {
+              title
+              description
             }
+            status
+            time {
+              timeZone
+              start
+              end
+            }
+          }
         }
       `
     })
@@ -117,26 +118,26 @@ describe('Events resolver', () => {
     done()
   })
 
-  it('Create knitting event', async (done) => {
-    await createKinttingEvent()
-    const kinttingUser = await User.findOne({username: "kintting_is_fun"})
+  it("Create knitting event", async done => {
+    const knittingEvent = await createKinttingEvent()
+    const kinttingUser = await User.findOne({ username: "kintting_is_fun" })
     const res = await testClient.query({
       query: gql`
-          query GetEvent($ownerId: ID!){
-              events(filter: {limit: 10, owner: $ownerId}) {
-                  id
-                  info {
-                      title
-                      description
-                  }
-                  status
-                  time {
-                      timeZone
-                      start
-                      end
-                  }
-              }
+        query GetEvent($ownerId: ID!) {
+          events(filter: { limit: 10, owner: $ownerId }) {
+            id
+            info {
+              title
+              description
+            }
+            status
+            time {
+              timeZone
+              start
+              end
+            }
           }
+        }
       `,
       variables: {
         ownerId: kinttingUser.id

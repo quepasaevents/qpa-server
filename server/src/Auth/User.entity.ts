@@ -22,7 +22,6 @@ export class User extends BaseEntity {
   @Column()
   email: string
 
-  @JoinColumn()
   @OneToMany(type => Event, event => event.owner)
   events: Event[]
 

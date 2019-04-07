@@ -27,11 +27,13 @@
     "joi-phone-number": "^2.0.12",
     "joi-timezone": "^2.0.0",
     "jsonwebtoken": "^8.2.1",
+    "luxon": "^1.12.0",
     "mailgun-js": "^0.22.0",
     "node-pre-gyp": "^0.12.0",
     "pg": "^7.8.2",
     "random-string": "^0.2.0",
     "randomstring": "^1.1.5",
+    "rrule": "^2.6.0",
     "superagent": "^3.8.3",
     "typeorm": "^0.2.14",
     "uuid": "^3.3.2",
@@ -41,6 +43,7 @@
     "@types/gapi.client.calendar": "^3.0.0",
     "@types/jest": "^24.0.9",
     "@types/joi": "^13.0.8",
+    "@types/luxon": "^1.11.1",
     "@types/node": "^11.11.0",
     "@types/uuid": "^3.4.4",
     "gql2ts": "^1.10.1",
@@ -60,7 +63,7 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
-    "testRegex": "(.*\\.(test|spec))\\.(jsx?|tsx?)$",
+    "testMatch":  ["**/*.spec.ts"],
     "moduleFileExtensions": [
       "ts",
       "tsx",

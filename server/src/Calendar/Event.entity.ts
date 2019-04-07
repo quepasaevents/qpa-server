@@ -6,9 +6,26 @@ import {
   OneToMany,
   OneToOne,
   ManyToOne,
-  CreateDateColumn, JoinColumn
+  CreateDateColumn,
+  JoinColumn,
+  AfterUpdate,
+  AfterInsert,
+  BeforeInsert,
+  BeforeUpdate,
+  TransactionManager,
+  EntityManager,
+  Transaction
 } from "typeorm"
 import {User} from "../Auth/User.entity"
+import { DateTime } from 'luxon'
+
+const toUTC = (isoTime: string, ianaTZ: string) => {
+  const parsed = DateTime.fromISO(isoTime, {zone: ianaTZ})
+  if (parsed.invalidReason) {
+    throw new Error(`${parsed.invalidReason}: ${isoTime} with time-zone: ${ianaTZ}`)
+  }
+  return parsed.toUTC().toISO()
+}
 
 @Entity()
 class EventLocation extends BaseEntity {
@@ -37,16 +54,20 @@ class EventContactPerson {
 }
 
 export class EventTime {
-  @CreateDateColumn()
+  @Column()
   timeZone: string
-  @Column({type: "time"})
-  start: Date
-  @Column({type: "time"})
-  end: Date
+
+  @Column({type: "timestamp without time zone"})
+  start: string
+
+  @Column({type: "timestamp without time zone"})
+  end: string
+
   @Column({nullable: true})
-  recurrence?: String
+  recurrence?: string
+
   @Column({nullable: true})
-  exceptions?: String
+  exceptions?: string
 }
 
 export class EventInformation {
@@ -59,12 +80,14 @@ export class EventInformation {
 @Entity()
 export class Event extends BaseEntity {
 
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id: number
 
   @ManyToOne(type => User, user => user.events)
-  @JoinColumn()
   owner: User
+
+  @OneToMany(type => EventOccurrence, occurrence => occurrence.event, { cascade: true })
+  occurrences: EventOccurrence[]
 
   @Column(type => EventInformation)
   info: EventInformation
@@ -72,7 +95,9 @@ export class Event extends BaseEntity {
   @Column(type => EventTime)
   time: EventTime
 
-  @Column()
+  @Column({
+    default: 'confirmed'
+  })
   status: string
 
   // todo: check pg support for arrays
@@ -81,5 +106,44 @@ export class Event extends BaseEntity {
 
   @Column(type => EventLocation)
   location: EventLocation
+
+  updateOccurrences() {
+    const occurrences: EventOccurrence[] = []
+    if (!this.time.recurrence) {
+      const singleOccurrence = new EventOccurrence()
+      singleOccurrence.event = this
+      singleOccurrence.timeZone = this.time.timeZone
+      singleOccurrence.start = this.time.start
+      singleOccurrence.end = this.time.end
+      singleOccurrence.utcStart = toUTC(this.time.start, this.time.timeZone)
+      singleOccurrence.utcEnd = toUTC(this.time.end, this.time.timeZone)
+      this.occurrences = [singleOccurrence]
+    }
+    return this
+  }
+}
+
+@Entity()
+export class EventOccurrence extends BaseEntity {
+  @PrimaryGeneratedColumn("uuid")
+  id: number
+
+  @ManyToOne(type => Event, event => event.occurrences)
+  event: Event
+
+  @Column({type: "timestamp without time zone"})
+  start: string
+
+  @Column({type: "timestamptz"})
+  utcStart: string
+
+  @Column({type: "timestamp without time zone"})
+  end: string
+
+  @Column({type: "timestamptz"})
+  utcEnd: string
+
+  @Column()
+  timeZone: string
 
 }

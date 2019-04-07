@@ -366,15 +366,30 @@
   resolved "https://registry.yarnpkg.com/@types/long/-/long-4.0.0.tgz#719551d2352d301ac8b81db732acb6bdc28dbdef"
   integrity sha512-1w52Nyx4Gq47uuu0EVcsHBxZFJgurQ+rTKS3qMHxR1GY2T8c2AJYd6vZoZ9q1rupaDjU0yT+Jc2XTyXkjeMA+Q==
 
+"@types/luxon@^1.11.1":
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/@types/luxon/-/luxon-1.11.1.tgz#819d730cf8ada52bec9c4a1d94347d1250f22c5d"
+  integrity sha512-XBHQ7rzpOHyJudEQcMyoT67Np61FTb6S2jWqWQER/U7H2NAS+dpC8wv5T+6ygV5g/yJQdaojQbsJQiweool0Aw==
+
 "@types/mime@*":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-2.0.1.tgz#dc488842312a7f075149312905b5e3c0b054c79d"
   integrity sha512-FwI9gX75FgVBJ7ywgnq/P7tw+/o1GUbtP0KzbtusLigAOgIgNISRK0ZPl4qertvXSIE8YbsVJueQ90cDt9YYyw==
 
-"@types/node@*", "@types/node@11.11.0", "@types/node@^10.1.0", "@types/node@^11.11.0", "@types/node@^8.0.7":
+"@types/node@*", "@types/node@^11.11.0":
   version "11.11.0"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-11.11.0.tgz#070e9ce7c90e727aca0e0c14e470f9a93ffe9390"
   integrity sha512-D5Rt+HXgEywr3RQJcGlZUCTCx1qVbCZpVk3/tOOA6spLNZdGm8BU+zRgdRYDoF1pO3RuXLxADzMrF903JlQXqg==
+
+"@types/node@^10.1.0":
+  version "10.14.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.4.tgz#1c586b991457cbb58fef51bc4e0cfcfa347714b5"
+  integrity sha512-DT25xX/YgyPKiHFOpNuANIQIVvYEwCWXgK2jYYwqgaMrYE6+tq+DtmMwlD3drl6DJbUwtlIDnn0d7tIn/EbXBg==
+
+"@types/node@^8.0.7":
+  version "8.10.45"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.45.tgz#4c49ba34106bc7dced77ff6bae8eb6543cde8351"
+  integrity sha512-tGVTbA+i3qfXsLbq9rEq/hezaHY55QxQLeXQL2ejNgFAxxrgu8eMmYIOsRcl7hN1uTLVsKOOYacV/rcJM3sfgQ==
 
 "@types/prettier@1.15.2":
   version "1.15.2"
@@ -4495,6 +4510,11 @@ lru-cache@^5.0.0:
   dependencies:
     yallist "^3.0.2"
 
+luxon@^1.12.0, luxon@^1.3.3:
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.12.0.tgz#d02d53c8d8aaebe6b4c00ba1ce1be3913546b2e7"
+  integrity sha512-enPnPIHd5ZnZT0vpj9Xv8aq4j0yueAkhnh4xUKUHpqlgSm1r/8s6xTMjfyp2ugOWP7zivqJqgVTkW+rpHed61w==
+
 mailgun-js@^0.22.0:
   version "0.22.0"
   resolved "https://registry.yarnpkg.com/mailgun-js/-/mailgun-js-0.22.0.tgz#128942b5e47a364a470791608852bf68c96b3a05"
@@ -5983,6 +6003,13 @@ rimraf@^2.5.4, rimraf@^2.6.1:
   integrity sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==
   dependencies:
     glob "^7.1.3"
+
+rrule@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/rrule/-/rrule-2.6.0.tgz#7aeefe89273e4796d1fabf03051d5e1d68169502"
+  integrity sha512-TRigkTJtG7Y1yOjNSKvFvVmvj/PzRZLR8lLcPW9GASOlaoqoL1J0kNuUV9I3LuZc7qFT+QB2NbxSLL9d33/ylg==
+  optionalDependencies:
+    luxon "^1.3.3"
 
 rsvp@^3.3.3:
   version "3.6.2"
