@@ -16,21 +16,22 @@ import {
   EntityManager,
   Transaction
 } from "typeorm"
-import {User} from "../Auth/User.entity"
-import { DateTime } from 'luxon'
+import { User } from "../Auth/User.entity"
+import { DateTime } from "luxon"
+import { rrulestr } from "rrule"
 
 const toUTC = (isoTime: string, ianaTZ: string) => {
-  const parsed = DateTime.fromISO(isoTime, {zone: ianaTZ})
+  const parsed = DateTime.fromISO(isoTime, { zone: ianaTZ })
   if (parsed.invalidReason) {
-    throw new Error(`${parsed.invalidReason}: ${isoTime} with time-zone: ${ianaTZ}`)
+    throw new Error(
+      `${parsed.invalidReason}: ${isoTime} with time-zone: ${ianaTZ}`
+    )
   }
   return parsed.toUTC().toISO()
 }
 
 @Entity()
-class EventLocation extends BaseEntity {
-
-}
+class EventLocation extends BaseEntity {}
 
 class Contact {
   @Column()
@@ -57,16 +58,16 @@ export class EventTime {
   @Column()
   timeZone: string
 
-  @Column({type: "timestamp without time zone"})
+  @Column({ type: "timestamp without time zone" })
   start: string
 
-  @Column({type: "timestamp without time zone"})
+  @Column({ type: "timestamp without time zone" })
   end: string
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   recurrence?: string
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   exceptions?: string
 }
 
@@ -79,14 +80,15 @@ export class EventInformation {
 
 @Entity()
 export class Event extends BaseEntity {
-
   @PrimaryGeneratedColumn("uuid")
   id: number
 
   @ManyToOne(type => User, user => user.events)
   owner: User
 
-  @OneToMany(type => EventOccurrence, occurrence => occurrence.event, { cascade: true })
+  @OneToMany(type => EventOccurrence, occurrence => occurrence.event, {
+    cascade: true
+  })
   occurrences: EventOccurrence[]
 
   @Column(type => EventInformation)
@@ -96,7 +98,7 @@ export class Event extends BaseEntity {
   time: EventTime
 
   @Column({
-    default: 'confirmed'
+    default: "confirmed"
   })
   status: string
 
@@ -108,7 +110,6 @@ export class Event extends BaseEntity {
   location: EventLocation
 
   updateOccurrences() {
-    const occurrences: EventOccurrence[] = []
     if (!this.time.recurrence) {
       const singleOccurrence = new EventOccurrence()
       singleOccurrence.event = this
@@ -118,6 +119,22 @@ export class Event extends BaseEntity {
       singleOccurrence.utcStart = toUTC(this.time.start, this.time.timeZone)
       singleOccurrence.utcEnd = toUTC(this.time.end, this.time.timeZone)
       this.occurrences = [singleOccurrence]
+    } else {
+      const ruleSet = rrulestr(this.time.recurrence)
+      const allDates = ruleSet.all()
+
+      this.occurrences = allDates
+        .map(occurenceDate => {
+          const occ = new EventOccurrence()
+          occ.timeZone = this.time.timeZone
+          occ.start = this.time.start
+          occ.end = this.time.end
+          occ.utcStart = toUTC(this.time.start, this.time.timeZone)
+          occ.utcEnd = toUTC(this.time.end, this.time.timeZone)
+          occ.event = this
+          return occ
+        })
+
     }
     return this
   }
@@ -131,19 +148,18 @@ export class EventOccurrence extends BaseEntity {
   @ManyToOne(type => Event, event => event.occurrences)
   event: Event
 
-  @Column({type: "timestamp without time zone"})
+  @Column({ type: "timestamp without time zone" })
   start: string
 
-  @Column({type: "timestamptz"})
+  @Column({ type: "timestamptz" })
   utcStart: string
 
-  @Column({type: "timestamp without time zone"})
+  @Column({ type: "timestamp without time zone" })
   end: string
 
-  @Column({type: "timestamptz"})
+  @Column({ type: "timestamptz" })
   utcEnd: string
 
   @Column()
   timeZone: string
-
 }
