@@ -58,8 +58,6 @@ export const createServer = async (dependencies: Dependencies) => {
       }
       if (a.req && a.req.headers.authentication) {
         const session = await Session.findOne({hash: a.req.headers.authentication as string})
-        console.log('session!!!', session)
-        console.log('await',await session.user)
         if (session) {
           ctx.user = session.user
         }

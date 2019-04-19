@@ -149,4 +149,8 @@ describe("Events resolver", () => {
     expect(res.data.events[0].info.title).toEqual("Knitting Test Event")
     done()
   })
+
+  it('Get events by user', async done => {
+
+  })
 })

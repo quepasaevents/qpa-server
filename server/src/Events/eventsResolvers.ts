@@ -1,5 +1,5 @@
 import {Event} from "../Calendar/Event.entity"
-import {ResolverMap} from "../@types/graphql-utils"
+import {Context, ResolverMap} from "../@types/graphql-utils"
 import {GQL} from "../@types"
 
 const resolvers: ResolverMap = {
@@ -19,7 +19,10 @@ const resolvers: ResolverMap = {
   },
 
   Mutation: {
-    createEvent: async (_, { input }: GQL.ICreateEventOnMutationArguments, context, info) => {
+    createEvent: async (_, { input }: GQL.ICreateEventOnMutationArguments, context: Context, info) => {
+      if (!context.user) {
+        throw Error('not authenticated')
+      }
       const event = new Event()
       event.owner = context.user
       return null

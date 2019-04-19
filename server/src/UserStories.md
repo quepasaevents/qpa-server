@@ -4,7 +4,7 @@ Abbreviations:
 
 ## Mile Stone I (MVP)
 ### Event Owner specific user stories 
--[ ] As an event owner I would like to be able to log in using my email, so that I can manage my events
+-[x] As an event owner I would like to be able to log in using my email, so that I can manage my events
 -[ ] As an event owner I would like to see an overview of my events
 -[ ] As an event owner I would like to be able to create a simple event
 -[ ] As an event owner I would like to be able to update any event that I own
