@@ -1,6 +1,5 @@
 import SessionManager, { SessionAlreadyValidatedError } from "./SessionManager"
 import { User } from "./User.entity"
-import { GQL } from "../@types"
 import { PostOffice } from "../post_office"
 
 interface Dependencies {

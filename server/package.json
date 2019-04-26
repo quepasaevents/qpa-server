@@ -4,7 +4,7 @@
     "codegen": "gql2ts ./src/schema.graphql -o ./src/@types/index.d.ts",
     "lint": "tslint --project tsconfig.json",
     "build": "tsc --version && tsc",
-    "start": "nodemon --exec ts-node src/index.ts",
+    "start": "nodemon --exec ts-node --files src/index.ts",
     "test": "jest --runInBand"
   },
   "main": "lib/index.js",

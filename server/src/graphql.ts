@@ -62,6 +62,7 @@ export const createServer = async (dependencies: Dependencies) => {
           ctx.user = session.user
         }
       }
+
       return ctx
     }
   })

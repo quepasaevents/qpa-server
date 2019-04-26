@@ -7,7 +7,7 @@ export class Session extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: string
 
-  @ManyToOne(type => User, (user: User) => user.sessions)
+  @ManyToOne(type => User, (user: User) => user.sessions, { eager: true})
   user: User
 
   @Column()

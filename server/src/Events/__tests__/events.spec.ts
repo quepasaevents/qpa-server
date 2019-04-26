@@ -73,7 +73,6 @@ describe("Events resolver", () => {
     return (connection = await createConnection({
       ...testConfig
     }))
-
   })
 
   beforeEach(async () => {
@@ -150,7 +149,4 @@ describe("Events resolver", () => {
     done()
   })
 
-  it('Get events by user', async done => {
-
-  })
 })

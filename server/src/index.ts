@@ -5,6 +5,7 @@ import { sendEmail} from "./post_office"
 import * as config from './config'
 
 async function start() {
+  console.log(`Starting with db: ${typeormConfig.database}`)
   const server = await createServer({
     typeormConnection: await createConnection(typeormConfig),
     sendEmail,

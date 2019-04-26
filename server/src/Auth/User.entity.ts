@@ -26,7 +26,7 @@ export class User extends BaseEntity {
   events: Event[]
 
   @OneToMany(type => Session, session => session.user)
-  sessions: Session[]
+  sessions: Promise<Session[]>
 
   @OneToMany(type => SessionInvite, invite => invite.user)
   sessionInvites: SessionInvite[]

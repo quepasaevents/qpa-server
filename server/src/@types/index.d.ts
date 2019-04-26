@@ -1,7 +1,7 @@
 // tslint:disable
 // graphql typescript definitions
 
-export namespace GQL {
+declare namespace GQL {
   interface IGraphQLResponseRoot {
     data?: IQuery | IMutation;
     errors?: Array<IGraphQLResponseError>;
@@ -24,10 +24,15 @@ export namespace GQL {
     __typename: 'Query';
     me: IUser | null;
     events: Array<ICalendarEvent | null> | null;
+    occurrences: Array<IEventOccurrence | null> | null;
   }
 
   interface IEventsOnQueryArguments {
     filter: IEventsQueryFilter;
+  }
+
+  interface IOccurrencesOnQueryArguments {
+    filter: IOccurrencesQueryFilter;
   }
 
   interface IUser {
@@ -39,8 +44,11 @@ export namespace GQL {
   }
 
   interface IEventsQueryFilter {
-    limit?: number | null;
     owner?: string | null;
+    limit?: number | null;
+    from?: any | null;
+    to?: any | null;
+    categories?: Array<any | null> | null;
   }
 
   interface ICalendarEvent {
@@ -52,6 +60,7 @@ export namespace GQL {
     status: any;
     contact: Array<IEventContactPerson>;
     location: ILocation;
+    occurrences: Array<IEventOccurrence | null> | null;
   }
 
   interface IEventInformation {
@@ -95,6 +104,25 @@ export namespace GQL {
     lng: number | null;
   }
 
+  interface IEventOccurrence {
+    __typename: 'EventOccurrence';
+    id: string;
+    event: ICalendarEvent;
+    start: string;
+    utcStart: string;
+    end: string;
+    utcEnd: string;
+    timeZone: string;
+  }
+
+  interface IOccurrencesQueryFilter {
+    from?: any | null;
+    to?: any | null;
+    timeZone?: any | null;
+    categories?: Array<any | null> | null;
+    limit?: number | null;
+  }
+
   interface IMutation {
     __typename: 'Mutation';
     signup: Array<IError | null> | null;
@@ -116,8 +144,7 @@ export namespace GQL {
   }
 
   interface ICreateEventOnMutationArguments {
-    input?: ICreateEventInput | null;
-    foo?: string | null;
+    input: ICreateEventInput;
   }
 
   interface ISignupInput {
@@ -159,10 +186,10 @@ export namespace GQL {
   }
 
   interface IEventTimeInput {
-    timeZone?: any | null;
-    status?: any | null;
-    start?: any | null;
-    end?: any | null;
+    timeZone: any;
+    start: any;
+    end: any;
+    recurrence?: string | null;
   }
 
   interface IEventInformationInput {

@@ -41,6 +41,17 @@ type CalendarEvent {
     status: EventStatus!
     contact: [EventContactPerson!]!
     location: Location!
+    occurrences: [EventOccurrence]
+}
+
+type EventOccurrence {
+    id: ID!
+    event: CalendarEvent!
+    start: String!
+    utcStart: String!
+    end: String!
+    utcEnd: String!
+    timeZone: String!
 }
 
 type Location {
@@ -91,16 +102,29 @@ type Contact {
     phone: String
 }
 
+scalar Category
+
 input EventsQueryFilter {
-    limit: Int
     owner: ID
+    limit: Int
+    from: Timestamp
+    to: Timestamp
+    categories: [Category]
+}
+
+input OccurrencesQueryFilter {
+    from: Timestamp
+    to: Timestamp
+    timeZone: TimeZone
+    categories: [Category]
+    limit: Int
 }
 
 input EventTimeInput {
-    timeZone: TimeZone
-    status: EventStatus
-    start: Timestamp
-    end: Timestamp
+    timeZone: TimeZone!
+    start: Timestamp!
+    end: Timestamp!
+    recurrence: String
 }
 
 input EventContactInput {
@@ -157,7 +181,7 @@ type Mutation {
     requestInvite(input: RequestInviteInput): Boolean!
 
     # Event
-    createEvent(input: CreateEventInput, foo: String): CalendarEvent
+    createEvent(input: CreateEventInput!): CalendarEvent
 
 }
 
@@ -168,4 +192,5 @@ type Query {
 
     # Event
     events(filter: EventsQueryFilter!): [CalendarEvent]
+    occurrences(filter: OccurrencesQueryFilter!): [EventOccurrence]
 }
