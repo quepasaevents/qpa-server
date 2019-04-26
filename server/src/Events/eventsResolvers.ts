@@ -63,7 +63,9 @@ const resolvers: ResolverMap = {
         start: input.time.start,
         end: input.time.end
       }
-      return null
+      event.updateOccurrences()
+      await event.save()
+      return event
     }
   }
 }
