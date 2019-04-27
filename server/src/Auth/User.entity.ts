@@ -3,7 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  OneToMany, JoinColumn, CreateDateColumn
+  OneToMany, CreateDateColumn
 } from "typeorm"
 import { Event } from "../Calendar/Event.entity"
 import {Session, SessionInvite} from "./Session.entity"
@@ -23,13 +23,13 @@ export class User extends BaseEntity {
   email: string
 
   @OneToMany(type => Event, event => event.owner)
-  events: Event[]
+  events: Promise<Event[]>
 
   @OneToMany(type => Session, session => session.user)
   sessions: Promise<Session[]>
 
   @OneToMany(type => SessionInvite, invite => invite.user)
-  sessionInvites: SessionInvite[]
+  sessionInvites: Promise<SessionInvite[]>
 
   @CreateDateColumn()
   created: Date

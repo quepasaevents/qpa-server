@@ -55,7 +55,7 @@ declare namespace GQL {
     __typename: 'CalendarEvent';
     id: string;
     owner: IUser;
-    info: IEventInformation;
+    info: Array<IEventInformation | null>;
     time: IEventTime;
     status: any;
     contact: Array<IEventContactPerson>;
@@ -65,6 +65,7 @@ declare namespace GQL {
 
   interface IEventInformation {
     __typename: 'EventInformation';
+    language: string;
     title: string;
     description: string | null;
   }

@@ -5,8 +5,6 @@ import {
   BaseEntity,
   OneToMany,
   ManyToOne,
-  BeforeInsert,
- PrimaryColumn
 } from "typeorm"
 import { User } from "../Auth/User.entity"
 import { DateTime } from "luxon"
@@ -74,10 +72,12 @@ export class Event extends BaseEntity {
   @OneToMany(type => EventOccurrence, occurrence => occurrence.event, {
     cascade: true
   })
-  occurrences: EventOccurrence[]
+  occurrences: Promise<EventOccurrence[]>
 
-  @OneToMany(type => EventInformation, eventInfo => eventInfo.event)
-  info: EventInformation[]
+  @OneToMany(type => EventInformation, eventInfo => eventInfo.event, {
+    cascade: true
+  })
+  info: Promise<EventInformation[]>
 
   @Column(type => EventTime)
   time: EventTime
@@ -103,25 +103,22 @@ export class Event extends BaseEntity {
       singleOccurrence.end = this.time.end
       singleOccurrence.utcStart = toUTC(this.time.start, this.time.timeZone)
       singleOccurrence.utcEnd = toUTC(this.time.end, this.time.timeZone)
-      this.occurrences = [singleOccurrence]
+      this.occurrences = Promise.resolve([singleOccurrence])
     } else {
       const ruleSet = rrulestr(this.time.recurrence)
-      const allDates = ruleSet.all(
-        (occurenceDate, i) => i < 30
-      )
+      const allDates = ruleSet.all((occurenceDate, i) => i < 30)
 
-      this.occurrences = allDates
-        .map(occurenceDate => {
-          const occ = new EventOccurrence()
-          occ.timeZone = this.time.timeZone
-          occ.start = this.time.start
-          occ.end = this.time.end
-          occ.utcStart = toUTC(this.time.start, this.time.timeZone)
-          occ.utcEnd = toUTC(this.time.end, this.time.timeZone)
-          occ.event = this
-          return occ
-        })
-
+      const occurrences = allDates.map(occurenceDate => {
+        const occ = new EventOccurrence()
+        occ.timeZone = this.time.timeZone
+        occ.start = this.time.start
+        occ.end = this.time.end
+        occ.utcStart = toUTC(this.time.start, this.time.timeZone)
+        occ.utcEnd = toUTC(this.time.end, this.time.timeZone)
+        occ.event = this
+        return occ
+      })
+      this.occurrences = Promise.resolve(occurrences)
     }
     return this
   }
@@ -129,23 +126,17 @@ export class Event extends BaseEntity {
 
 @Entity()
 export class EventInformation {
-  @PrimaryColumn()
-  eventIdAndLang: string
+  @PrimaryGeneratedColumn("uuid")
+  id: string
   @Column()
   language: string
   @Column()
   title: string
-  @Column()
+  @Column({ nullable: true })
   description: string
   @ManyToOne(type => Event, event => event.info)
   event: Event
-
-  @BeforeInsert()
-  updatePrimaryColumn() {
-    this.eventIdAndLang = `${this.event.id}_${this.language}`
-  }
 }
-
 
 @Entity()
 export class EventOccurrence extends BaseEntity {

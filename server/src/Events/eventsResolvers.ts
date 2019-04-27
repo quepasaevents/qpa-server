@@ -34,6 +34,10 @@ const resolvers: ResolverMap = {
   Event: {
     owner: async (event: Event, args, context, info) => {
       return event.owner
+    },
+    info: async (event: Event) => {
+      console.log("event.info", await event.info)
+      return event.info
     }
   },
 
@@ -49,14 +53,16 @@ const resolvers: ResolverMap = {
       }
       const event = new Event()
       event.owner = context.user
-      event.info = input.info.map(infoInput => {
-        const eventInformation = new EventInformation()
-        eventInformation.language = infoInput.language
-        eventInformation.title = infoInput.title
-        eventInformation.description = infoInput.description
-        eventInformation.event = event
-        return eventInformation
-      })
+      event.info = Promise.resolve(
+        input.info.map(infoInput => {
+          const eventInformation = new EventInformation()
+          eventInformation.language = infoInput.language
+          eventInformation.title = infoInput.title
+          eventInformation.description = infoInput.description
+          eventInformation.event = event
+          return eventInformation
+        })
+      )
       event.time = {
         recurrence: input.time.recurrence,
         timeZone: input.time.timeZone,
