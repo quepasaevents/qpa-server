@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "jsx": "react",
+    "module": "commonjs",
+    "lib": [
+      "dom",
+      "es7",
+      "esnext.asynciterable"
+    ]
+  },
+  "exclude": [
+    ".*/__tests__/.*", "node_modules"
+  ]
+}

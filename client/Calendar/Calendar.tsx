@@ -24,7 +24,9 @@ const Calendar = () => (
         return error.message
       }
 
-      return data.events.map(event => <Event event={event} />)
+      return data.events.map(event => <Event key={event.id} event={event} />)
     }}
   </EventsQuery>
 )
+
+export default Calendar

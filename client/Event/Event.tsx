@@ -11,10 +11,18 @@ const Event = (props: Props) => {
   const localInfo = props.language
     ? props.event.info.find(info => info.language === props.language)
     : props.event.info[0]
+
   return (
     <div>
-      <h1> {localInfo.title} </h1>
-      <p> {localInfo.description} </p>
+      {
+        localInfo ? (
+          <React.Fragment>
+            <h1> {localInfo.title} </h1>
+            <p> {localInfo.description} </p>
+          </React.Fragment>
+        ) : 'Info not available'
+      }
+
     </div>
   )
 }

@@ -27,7 +27,7 @@ export const createServer = async (dependencies: Dependencies) => {
     emailTargetDomain: dependencies.domain,
   })
 
-  const typeDefs = importSchema(__dirname + '/schema.graphql')
+  const typeDefs = importSchema(__dirname + '/../../schema.graphql')
 
   const schema = makeExecutableSchema({
     typeDefs: [

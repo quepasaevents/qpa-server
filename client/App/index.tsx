@@ -4,7 +4,7 @@ import App from './App'
 
 const appWrapper = document.createElement('div')
 document.body.appendChild(appWrapper)
-console.log('appWrapper', appWrapper)
+
 ReactDOM.render(<App />, appWrapper)
 
 export default App

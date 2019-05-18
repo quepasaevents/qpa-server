@@ -7,7 +7,6 @@ const config: ConnectionOptions = {
   port: Number(process.env.POSTGRES_PORT || 5432),
   database: process.env.POSTGRES_DB || 'qpa-dev',
   entities: ["src/**/*.entity.ts"],
-  synchronize: true,
   logging: true
 }
 
