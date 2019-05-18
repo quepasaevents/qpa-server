@@ -34,4 +34,14 @@ describe('rrule recurrence cases', () => {
     expect(occurrences[0].toISOString()).toEqual('2019-03-04T14:00:00.000Z')
   })
 
+  it('with offset', () => {
+    const rruleSet = rrulestr('DTSTART;TZID=America/New_York:20190304T020000\nRRULE:FREQ=WEEKLY;BYDAY=MO;INTERVAL=1;UNTIL=20210325T230000Z')
+    const occurrences = rruleSet.all()
+    expect(occurrences[0].toISOString()).toEqual('2019-03-04T14:00:00.000Z')
+    expect(occurrences[1].toISOString()).toEqual('2019-03-11T14:00:00.000Z')
+    expect(occurrences[2].toISOString()).toEqual('2019-03-18T14:00:00.000Z')
+    expect(occurrences[3].toISOString()).toEqual('2019-03-25T14:00:00.000Z')
+    expect(occurrences).toHaveLength(4)
+  })
+
 })

@@ -1,6 +1,6 @@
 import {User} from "../../Auth/User.entity"
 import {Session} from "../../Auth/Session.entity"
-import {Event, toUTC} from "../../Calendar/Event.entity"
+import {Event, EventInformation, toUTC} from "../../Calendar/Event.entity"
 import {Frequency, RRule} from 'rrule'
 import {testConfig} from "../../../ormconfig"
 import {Connection, createConnection} from "typeorm"
@@ -33,18 +33,23 @@ describe('Occurrences', async () => {
 
     const event = new Event()
     event.owner = owner
-    event.info = {
-      title: "Recurring event once a week",
-      description: "Event happening every monday at 13:00"
-    }
+
+    const info = new EventInformation()
+    info.language = "en"
+    info.title = "Recurring event once a week"
+    info.description = "Event happening every monday at 13:00"
+    info.event = event
+
+    event.info = Promise.resolve([info])
+
     event.time = {
       timeZone: "Europe/Madrid",
-      start: "2019-03-01T13:00",
-      end: "2019-03-01T14:00",
+      start: new Date("2019-03-01T13:00Z"),
+      end: new Date("2019-03-01T14:00Z"),
       recurrence: new RRule({
         freq: Frequency.WEEKLY,
         interval: 1,
-        dtstart: new Date(toUTC("2019-03-01T13:00", "Europe/Madrid"))
+        dtstart: new Date(toUTC(new Date("2019-03-01T13:00Z"), "Europe/Madrid"))
       }).toString()
     }
     event.status = "Scheduled"

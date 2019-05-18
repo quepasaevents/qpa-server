@@ -13,5 +13,13 @@
     "packages/*",
     "webapp",
     "server"
-  ]
+  ],
+  "scripts": {
+    "codegen": "gql2ts ./schema.graphql -o ./@types/graphql.d.ts"
+  },
+  "dependencies": {
+    "gql2ts": "^1.10.1",
+    "typescript": "^3.4.5"
+
+  }
 }

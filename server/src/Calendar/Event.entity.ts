@@ -6,22 +6,31 @@ import {
   OneToMany,
   ManyToOne,
 } from "typeorm"
-import { User } from "../Auth/User.entity"
-import { DateTime } from "luxon"
-import { rrulestr } from "rrule"
+import {User} from "../Auth/User.entity"
+import {DateTime} from "luxon"
+import {rrulestr} from "rrule"
 
-export const toUTC = (isoTime: string, ianaTZ: string): string => {
-  const parsed = DateTime.fromISO(isoTime, { zone: ianaTZ })
+export const toUTC = (isoTime: string, ianaTZ: string): DateTime => {
+  const parsed = DateTime.fromISO(isoTime, {zone: ianaTZ})
   if (parsed.invalidReason) {
     throw new Error(
       `${parsed.invalidReason}: ${isoTime} with time-zone: ${ianaTZ}`
     )
   }
-  return parsed.toUTC().toISO()
+  return parsed
+}
+
+export const breakTime = (isoString: string) => {
+  const tSplit = isoString.split('T')
+  return {
+    date: tSplit[0],
+    time: tSplit[1].substr(0, 8)
+  }
 }
 
 @Entity()
-class EventLocation extends BaseEntity {}
+class EventLocation extends BaseEntity {
+}
 
 class Contact {
   @Column()
@@ -33,31 +42,34 @@ class Contact {
 
 @Entity()
 class EventContactPerson {
+
   @Column()
   name: string
-
-  // todo: check pg support for arrays
-  // @Column({type: "array"})
-  // languages: string[]
 
   @Column()
   contact: Contact
 }
 
+/**
+ * EventTime documents the time in the local mindset of the user created the event
+ * therefore all times are string and not Date objects. TODO: Add joi validation
+ */
+
+
 export class EventTime {
   @Column()
   timeZone: string
 
-  @Column({ type: "timestamp without time zone" })
+  @Column()
   start: string
 
-  @Column({ type: "timestamp without time zone" })
+  @Column()
   end: string
 
-  @Column({ nullable: true })
+  @Column({nullable: true})
   recurrence?: string
 
-  @Column({ nullable: true })
+  @Column({nullable: true})
   exceptions?: string
 }
 
@@ -95,32 +107,29 @@ export class Event extends BaseEntity {
   location: EventLocation
 
   updateOccurrences() {
-    if (!this.time.recurrence) {
-      const singleOccurrence = new EventOccurrence()
-      singleOccurrence.event = this
-      singleOccurrence.timeZone = this.time.timeZone
-      singleOccurrence.start = this.time.start
-      singleOccurrence.end = this.time.end
-      singleOccurrence.utcStart = toUTC(this.time.start, this.time.timeZone)
-      singleOccurrence.utcEnd = toUTC(this.time.end, this.time.timeZone)
-      this.occurrences = Promise.resolve([singleOccurrence])
+    const occurences = []
+    if (this.time.recurrence) {
+      const occ = new EventOccurrence()
+      occ.during = `[${this.time.start},${this.time.end}]`
+      occurences.push(occ)
     } else {
-      const ruleSet = rrulestr(this.time.recurrence)
-      const allDates = ruleSet.all((occurenceDate, i) => i < 30)
+      const dates = rrulestr(this.time.recurrence).all((occurenceDate, i) => i < 30)
+      const eventDuration = DateTime.fromISO(this.time.start).diff(DateTime.fromISO(this.time.end))
 
-      const occurrences = allDates.map(occurenceDate => {
+      dates.forEach(recurrenceDateStart => {
         const occ = new EventOccurrence()
-        occ.timeZone = this.time.timeZone
-        occ.start = this.time.start
-        occ.end = this.time.end
-        occ.utcStart = toUTC(this.time.start, this.time.timeZone)
-        occ.utcEnd = toUTC(this.time.end, this.time.timeZone)
-        occ.event = this
-        return occ
+        const brokenRecurrenceDateStart = breakTime(recurrenceDateStart.toISOString())
+        const brokenRecurrenceDateEnd = breakTime(DateTime.fromJSDate(recurrenceDateStart).plus(eventDuration).toISO())
+        const userInputStart = breakTime(this.time.start)
+        const userInputEnd = breakTime(this.time.end)
+
+        const duringFrom = `${brokenRecurrenceDateStart.date} ${userInputStart.time} ${this.time.timeZone}`
+        const duringTo = `${brokenRecurrenceDateEnd.date} ${userInputEnd.time} ${this.time.timeZone}`
+        occ.during = `[${duringFrom}, ${duringTo}]`
       })
-      this.occurrences = Promise.resolve(occurrences)
+
     }
-    return this
+    return
   }
 }
 
@@ -132,7 +141,7 @@ export class EventInformation {
   language: string
   @Column()
   title: string
-  @Column({ nullable: true })
+  @Column({nullable: true})
   description: string
   @ManyToOne(type => Event, event => event.info)
   event: Event
@@ -144,27 +153,8 @@ export class EventOccurrence extends BaseEntity {
   id: number
 
   @ManyToOne(type => Event, event => event.occurrences)
-  event: Event
+  event: Promise<Event>
 
-  // Time zone of the event as entered by the user
-  // or implicitly by calendar's time-zone
-  @Column()
-  timeZone: string
-  @Column({ type: "timestamp" })
-  // Start date as entered by the user local to the
-  // event's time zone
-  start: string
-  // End date as entered by the user local to the
-  // event's time zone
-  @Column({ type: "timestamp" })
-  end: string
-
-  // Absolute start date in UTC used to find
-  // and order occurrences chronologically
-  @Column({ type: "timestamptz" })
-  utcStart: string
-  // Absolute end date in UTC used to find
-  // and order occurrences chronologically
-  @Column({ type: "timestamptz" })
-  utcEnd: string
+  @Column({type: "tstzrange", nullable: true})
+  during: string
 }

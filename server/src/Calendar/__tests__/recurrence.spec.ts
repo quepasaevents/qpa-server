@@ -1,7 +1,7 @@
 import { testConfig } from "../../../ormconfig"
 import { createConnection } from "typeorm"
 import { User } from "../../Auth/User.entity"
-import { Event, EventOccurrence } from "../Event.entity"
+import { Event, EventInformation, EventOccurrence } from "../Event.entity"
 import { DateTime } from "luxon"
 
 const toUTC = (isoTime: string, ianaTZ: string) => {
@@ -35,15 +35,15 @@ describe("Recurring events", () => {
 
   it("Event with no recurrence has one occurrence", async done => {
     const event = new Event()
-    event.info = {
-      title: "Test one time event",
-      description: "This is a test event that has no repetition rules"
-    }
+    const info = new EventInformation()
+
+    info.title = "Test one time event"
+    info.description = "This is a test event that has no repetition rules"
     event.owner = owner
     event.time = {
       timeZone: "Europe/Madrid",
-      start: "2019-02-01T10:00",
-      end: "2019-02-01T11:00"
+      start: "2019-02-01T10:00Z",
+      end: "2019-02-01T11:00Z"
     }
 
     await event.save()
@@ -55,16 +55,18 @@ describe("Recurring events", () => {
       where: { eventId: event.id }
     })
     expect(occurences).toHaveLength(1)
-    expect(occurences[0].timeZone).toEqual(event.time.timeZone)
+    expect((await occurences[0].event).time.timeZone).toEqual(event.time.timeZone)
     done()
   })
 
   it("Event happening once a week", () => {
     const event = new Event()
-    event.info = {
-      title: "Weekly testing event",
-      description: "This event takes place every monday at 2pm"
-    }
+    const info = new EventInformation()
+    info.language = "en"
+    info.title = "Weekly testing event"
+    info.description = "This event takes place every monday at 2pm"
+
+    event.info = Promise.resolve([info])
     event.owner = owner
 
     // from 2019-03-04 to 2019-03-25 every monday
@@ -81,7 +83,8 @@ describe("Recurring events", () => {
       timeZone: "Europe/Madrid",
       start: "2019-03-04T14:00",
       end: "2019-03-04T15:00",
-      recurrence: "DTSTART:20190304T140000Z\nRRULE:FREQ=WEEKLY;BYDAY=MO;INTERVAL=1;UNTIL=20190325T230000Z" // until 15/04/2019
+      recurrence:
+        "DTSTART:20190304T140000Z\nRRULE:FREQ=WEEKLY;BYDAY=MO;INTERVAL=1;UNTIL=20190325T230000Z" // until 15/04/2019
     }
 
     event.updateOccurrences()

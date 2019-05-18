@@ -22,12 +22,13 @@ const resolvers: ResolverMap = {
       context,
       info
     ) => {
-      return EventOccurrence.createQueryBuilder("occurrence")
-        .where("occurrence.utcStart BETWEEN :from AND :to", {
-          from: req.filter.from,
-          to: req.filter.to
-        })
-        .limit(req.filter.limit)
+      const { from, to } = req.filter
+      const occurrences = await EventOccurrence.find({
+        where: `during && tstzrange('${from}', '${to}')`,
+        take: req.filter.limit
+      })
+
+      return occurrences
     }
   },
 
@@ -36,8 +37,13 @@ const resolvers: ResolverMap = {
       return event.owner
     },
     info: async (event: Event) => {
-      console.log("event.info", await event.info)
       return event.info
+    }
+  },
+
+  EventOccurrence: {
+    event: async (eOcc: EventOccurrence) => {
+      return eOcc.event
     }
   },
 

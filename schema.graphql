@@ -161,7 +161,6 @@ input EventContactPersonInput  {
 }
 
 input CreateEventInput {
-    owner: ID!
     time: EventTimeInput
     info: [EventInformationInput]
     location: EventLocationInput

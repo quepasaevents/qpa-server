@@ -1,7 +1,7 @@
 schema: src/schema.graphql
 overwrite: true
 generates:
-  ./src/@types/index.d.ts:
+  ./src/@types/graphql.d.ts:
     plugins:
       - add: // tslint:disable
       - typescript-common
