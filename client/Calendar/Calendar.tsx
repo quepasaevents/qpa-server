@@ -1,22 +1,40 @@
 import * as React from "react"
-import EventsQuery from "../Event/EventsQuery"
-import Event from "../Event/Event"
+import OccurrencesQuery from "../Event/OccurrencesQuery"
+import CalendarOccurrence from "./CalendarOccurrence"
+
 interface Props {
-  from: Date
+  from: string
+  to: string
   type: "list" | "board"
 }
 
-const today = new Date().toISOString().split("T")[0]
+const beginningOfThisMonth = (() => {
+    const dt = new Date()
+    dt.setDate(1)
+    return dt
+  }
+)()
 
-const Calendar = () => (
-  <EventsQuery
+const endOfThisMonth = (
+  () => {
+    const dt = new Date()
+    dt.setMonth(dt.getMonth() + 1)
+    dt.setDate(0)
+    return dt
+  }
+)()
+
+
+const Calendar = (props: Props) => (
+  <OccurrencesQuery
     variables={{
       filter: {
-        from: today
+        from: beginningOfThisMonth,
+        to: endOfThisMonth
       }
     }}
   >
-    {({ data, error, loading }) => {
+    {({data, error, loading}) => {
       if (loading) {
         return "I am a Spinner"
       }
@@ -24,9 +42,9 @@ const Calendar = () => (
         return error.message
       }
 
-      return data.events.map(event => <Event key={event.id} event={event} />)
+      return data.occurrences.map(occ => <CalendarOccurrence key={occ.id} occurrence={occ}/>)
     }}
-  </EventsQuery>
+  </OccurrencesQuery>
 )
 
 export default Calendar

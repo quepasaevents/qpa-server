@@ -29,6 +29,8 @@ export const createServer = async (dependencies: Dependencies) => {
 
   const typeDefs = importSchema(__dirname + '/../../schema.graphql')
 
+  const { Query: EventQueryResolvers, Mutation: EventResolversMutation,...eventResolvers} = EventsResolvers
+
   const schema = makeExecutableSchema({
     typeDefs: [
       typeDefs
@@ -36,17 +38,18 @@ export const createServer = async (dependencies: Dependencies) => {
     resolvers: {
       Query: {
         ...resolvers.Query,
-        ...EventsResolvers.Query,
+        ...EventQueryResolvers,
         ...authResolvers.Query
       },
       Mutation: {
         ...resolvers.Mutation,
-        ...EventsResolvers.Mutation,
+        ...EventResolversMutation,
         ...authResolvers.Mutation
       },
       UserSession: {
         ...authResolvers.UserSession
-      }
+      },
+      ...eventResolvers
     },
   })
 

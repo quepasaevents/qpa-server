@@ -7,6 +7,9 @@ import { Context, ResolverMap } from "../@types/graphql-utils"
 
 const resolvers: ResolverMap = {
   Query: {
+    event: (_, req: GQL.IEventOnQueryArguments, context, info) => {
+      return Event.findOne(req.id)
+    },
     events: async (_, req: GQL.IEventsOnQueryArguments, context, info) => {
       return Event.find({
         take: req.filter.limit,
@@ -32,7 +35,7 @@ const resolvers: ResolverMap = {
     }
   },
 
-  Event: {
+  CalendarEvent: {
     owner: async (event: Event, args, context, info) => {
       return event.owner
     },
@@ -42,7 +45,9 @@ const resolvers: ResolverMap = {
   },
 
   EventOccurrence: {
+    start: (eOcc: EventOccurrence) => JSON.parse(eOcc.during)[0],
     event: async (eOcc: EventOccurrence) => {
+      console.log('eOcc', eOcc)
       return eOcc.event
     }
   },

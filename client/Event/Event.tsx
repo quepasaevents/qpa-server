@@ -1,8 +1,9 @@
 import * as React from "react"
 import { EventData } from "./EventsQuery"
+import {OccurrenceData} from "./OccurrencesQuery";
 
 interface Props {
-  event: EventData
+  occurrence: OccurrenceData
   language?: string
 }
 

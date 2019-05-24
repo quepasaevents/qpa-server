@@ -4,4 +4,6 @@ interface Props {
   from: Date
 }
 
-const List = () => ()
+const List = () => 'tbd'
+
+export default List

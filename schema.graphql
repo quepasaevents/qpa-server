@@ -161,9 +161,9 @@ input EventContactPersonInput  {
 }
 
 input CreateEventInput {
-    time: EventTimeInput
-    info: [EventInformationInput]
-    location: EventLocationInput
+    time: EventTimeInput!
+    info: [EventInformationInput]!
+    location: EventLocationInput!
     meta: EventMetaInput
     status: String!
     contact: [EventContactPersonInput!]!
@@ -191,6 +191,7 @@ type Query {
     me: User
 
     # Event
+    event(id: ID!): CalendarEvent
     events(filter: EventsQueryFilter!): [CalendarEvent]
     occurrences(filter: OccurrencesQueryFilter!): [EventOccurrence]
 }
