@@ -3,9 +3,6 @@ import OccurrencesQuery from "../Event/OccurrencesQuery"
 import CalendarOccurrence from "./CalendarOccurrence"
 
 interface Props {
-  from: string
-  to: string
-  type: "list" | "board"
 }
 
 const beginningOfThisMonth = (() => {
@@ -42,6 +39,9 @@ const Calendar = (props: Props) => (
         return error.message
       }
 
+      if (!data.occurrences.length) {
+        return <p>No occurrences</p>
+      }
       return data.occurrences.map(occ => <CalendarOccurrence key={occ.id} occurrence={occ}/>)
     }}
   </OccurrencesQuery>

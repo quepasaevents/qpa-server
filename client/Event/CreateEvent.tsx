@@ -1,20 +1,38 @@
 import * as React from 'react'
 import CreateEventMutation from './CreateEventMutation'
-import EventForm from "./EventForm";
+import EventForm, {EventFormData} from "./EventForm"
 
 const CreateEvent = () => {
-  <CreateEventMutation>
+  return <CreateEventMutation>
     {
       (createEvent) => (
-        <EventForm onSubmit={createEvent({
-          variables: {
-            input: {
-
+        <EventForm onSubmit={(values: EventFormData) => {
+          createEvent({
+            variables: {
+              input: {
+                location: {
+                  name: values.location.name,
+                  address: values.location.address,
+                },
+                time: {
+                  end: values.time.end,
+                  start: values.time.start,
+                  timeZone: 'Europe/Madrid',
+                  recurrence: values.time.recurrence
+                },
+                status: 'confirmed',
+                contact: [
+                  {
+                    name: values.contact.name,
+                    languages: values.contact.languages,
+                  }
+                ]
+              }
             }
-          }
-        })}>
-
-        </EventForm>
-      )    }
+          })
+        }} />
+      )}
   </CreateEventMutation>
 }
+
+export default CreateEvent

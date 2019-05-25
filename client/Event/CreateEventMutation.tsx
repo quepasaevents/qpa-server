@@ -1,6 +1,6 @@
 import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
-import {GQL} from "../../@types";
+import {GQL} from "../../@types"
 
 const mutation = gql`
   mutation CreateEvent($input: CreateEventInput!) {

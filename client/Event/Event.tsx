@@ -3,7 +3,7 @@ import { EventData } from "./EventsQuery"
 import {OccurrenceData} from "./OccurrencesQuery";
 
 interface Props {
-  occurrence: OccurrenceData
+  event: EventData
   language?: string
 }
 

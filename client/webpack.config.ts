@@ -7,6 +7,10 @@ const config: webpack.Configuration = {
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"]
   },
+  devServer: {
+    historyApiFallback: true,
+    hot: true,
+  },
   module: {
     rules: [
       {

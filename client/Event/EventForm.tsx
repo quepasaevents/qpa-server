@@ -2,11 +2,11 @@ import * as React from "react"
 import { Formik, Form, Field } from "formik"
 
 interface Props {
-  values: EventFormData
+  values?: EventFormData
   onSubmit: (values: EventFormData) => void
 }
 
-interface EventFormData {
+export interface EventFormData {
   time: {
     timeZone: string;
     start: string;
