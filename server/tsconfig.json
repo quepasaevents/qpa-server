@@ -18,7 +18,7 @@
     "src"
   ],
   "files": [
-    "../@types/graphql.d.ts", "../node_modules/@types/node/ts3.2/index.d.ts"
+    "../@types/index.d.ts", "../node_modules/@types/node/ts3.2/index.d.ts"
   ],
   "exclude": [
     "**/*.spec.ts", "node_modules", "__tests__"

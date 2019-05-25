@@ -4,7 +4,7 @@ import {
   EventOccurrence
 } from "../Calendar/Event.entity"
 import { Context, ResolverMap } from "../@types/graphql-utils"
-
+import {GQL} from "../../../@types"
 const resolvers: ResolverMap = {
   Query: {
     event: (_, req: GQL.IEventOnQueryArguments, context, info) => {

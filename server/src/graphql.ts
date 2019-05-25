@@ -59,6 +59,7 @@ export const createServer = async (dependencies: Dependencies) => {
       const ctx: Context = {
         req: a.req
       }
+      console.log('cookies: ', a.req.cookies.toString())
       if (a.req && a.req.headers.authentication) {
         const session = await Session.findOne({hash: a.req.headers.authentication as string})
         if (session) {

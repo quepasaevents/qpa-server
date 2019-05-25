@@ -119,6 +119,7 @@ const EventForm = (props: Props) => (
               ({field}) => <input {...field} placeholder="Email to contact"/>
             }
           </Field>
+          <button type="submit">Create</button>
         </Form>
       )
     }

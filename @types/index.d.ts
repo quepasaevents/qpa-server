@@ -24,8 +24,13 @@ declare namespace GQL {
   interface IQuery {
     __typename: 'Query';
     me: IUser | null;
+    event: ICalendarEvent | null;
     events: Array<ICalendarEvent | null> | null;
     occurrences: Array<IEventOccurrence | null> | null;
+  }
+
+  interface IEventOnQueryArguments {
+    id: string;
   }
 
   interface IEventsOnQueryArguments {
@@ -42,14 +47,6 @@ declare namespace GQL {
     username: string;
     email: string;
     id: string;
-  }
-
-  interface IEventsQueryFilter {
-    owner?: string | null;
-    limit?: number | null;
-    from?: any | null;
-    to?: any | null;
-    categories?: Array<any | null> | null;
   }
 
   interface ICalendarEvent {
@@ -117,6 +114,14 @@ declare namespace GQL {
     timeZone: string;
   }
 
+  interface IEventsQueryFilter {
+    owner?: string | null;
+    limit?: number | null;
+    from?: any | null;
+    to?: any | null;
+    categories?: Array<any | null> | null;
+  }
+
   interface IOccurrencesQueryFilter {
     from?: any | null;
     to?: any | null;
@@ -178,9 +183,9 @@ declare namespace GQL {
   }
 
   interface ICreateEventInput {
-    time?: IEventTimeInput | null;
-    info?: Array<IEventInformationInput | null> | null;
-    location?: IEventLocationInput | null;
+    time: IEventTimeInput;
+    info: Array<IEventInformationInput | null>;
+    location: IEventLocationInput;
     meta?: IEventMetaInput | null;
     status: string;
     contact: Array<IEventContactPersonInput>;
@@ -225,5 +230,8 @@ declare namespace GQL {
     phone?: string | null;
   }
 }
+
+// tslint:enable
+
 
 // tslint:enable

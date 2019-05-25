@@ -1,6 +1,7 @@
 import SessionManager, { SessionAlreadyValidatedError } from "./SessionManager"
 import { User } from "./User.entity"
 import { PostOffice } from "../post_office"
+import {GQL} from "../../../@types"
 
 interface Dependencies {
   sendEmail: PostOffice

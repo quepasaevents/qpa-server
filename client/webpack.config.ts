@@ -10,6 +10,14 @@ const config: webpack.Configuration = {
   devServer: {
     historyApiFallback: true,
     hot: true,
+    proxy: {
+      '/graphql': {
+        redirect: false,
+        changeOrigin: true,
+        target: `http://localhost:4000`,
+      }
+
+    }
   },
   module: {
     rules: [
@@ -28,7 +36,7 @@ const config: webpack.Configuration = {
         }
       }    ]
   },
-  devtool: '#@source-map',
+  devtool: '@source-map',
   output: {
     path: path.resolve(__dirname, './dist'),
     filename: 'bundle.js'
