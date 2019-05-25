@@ -59,11 +59,13 @@ export const createServer = async (dependencies: Dependencies) => {
       const ctx: Context = {
         req: a.req
       }
-      console.log('cookies: ', a.req.cookies.toString())
-      if (a.req && a.req.headers.authentication) {
-        const session = await Session.findOne({hash: a.req.headers.authentication as string})
-        if (session) {
-          ctx.user = session.user
+      if (a.req.headers.cookie) {
+        const cookies: any = a.req.headers.cookie.split(';').map(s => s.trim().split('=')).reduce((acc, val)=> {acc[val[0]] = val[1]; return acc},{})
+        if (cookies.authentication) {
+          const session = await Session.findOne({hash: cookies.authentication as string})
+          if (session) {
+            ctx.user = session.user
+          }
         }
       }
 

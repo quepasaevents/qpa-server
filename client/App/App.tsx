@@ -5,7 +5,7 @@ import { ApolloProvider } from 'react-apollo'
 import { ApolloClient } from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
 import { IdGetterObj, InMemoryCache } from "apollo-cache-inmemory"
-import CreateEvent from "../Event/CreateEvent";
+import CreateEvent from "../Event/CreateEvent"
 
 
 const httpLink = new HttpLink({
