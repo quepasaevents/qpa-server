@@ -108,7 +108,8 @@ export class Event extends BaseEntity {
 
   updateOccurrences() {
     const occurences = []
-    if (this.time.recurrence) {
+    console.log('this.time.recurrence', this.time.recurrence)
+    if (!this.time.recurrence) {
       const occ = new EventOccurrence()
       occ.during = `[${this.time.start},${this.time.end}]`
       occurences.push(occ)
@@ -129,6 +130,12 @@ export class Event extends BaseEntity {
       })
 
     }
+    occurences.forEach(occ => {
+      occ.start = this.time.start
+      occ.end = this.time.end
+    })
+    console.log('occurences', occurences)
+    this.occurrences = Promise.resolve(occurences)
     return
   }
 }
@@ -157,4 +164,11 @@ export class EventOccurrence extends BaseEntity {
 
   @Column({type: "tstzrange", nullable: true})
   during: string
+
+  @Column()
+  start: string
+
+  @Column()
+  end: string
+
 }

@@ -14,7 +14,7 @@ export interface EventFormData {
     recurrence?: string;
   }
   info?: Array<{
-    language?: string;
+    language: string;
     title: string;
     description: string;
   }>
@@ -39,11 +39,11 @@ export interface EventFormData {
 class EventFormik extends Formik<EventFormData> {}
 
 const nextWeekTenAM = new Date()
-nextWeekTenAM.setDate(nextWeekTenAM.getDate() + 7)
-nextWeekTenAM.setHours(10, 0)
+nextWeekTenAM.setUTCDate(nextWeekTenAM.getDate() + 7)
+nextWeekTenAM.setUTCHours(10, 0)
 
 const nextWeekMidday = new Date(nextWeekTenAM)
-nextWeekMidday.setHours(12)
+nextWeekMidday.setUTCHours(12)
 
 const EventForm = (props: Props) => (
   <EventFormik
@@ -54,12 +54,12 @@ const EventForm = (props: Props) => (
         : {
             time: {
               timeZone: "Europe/Madrid",
-              start: nextWeekTenAM.toDateString(),
-              end: nextWeekMidday.toDateString(),
-              recurrence: ""
+              start: nextWeekTenAM.toISOString().substring(0,16),
+              end: nextWeekMidday.toISOString().substring(0,16),
             },
             info: [
               {
+                language: "en",
                 title: "",
                 description: ""
               }
@@ -78,18 +78,18 @@ const EventForm = (props: Props) => (
     }
     validate={(values) => {
       const errors: any = {}
-      values.info
+      console.log(values.info)
     }}
   >
     {
       ({ isValid }) => (
         <Form>
-          <Field name="info.title">
+          <Field name="info[0].title">
             {
               ({field}) => (<input {...field} placeholder="Name your event" />)
             }
           </Field>
-          <Field name="info.description">
+          <Field name="info[0].description">
             {
               ({field}) => <textarea {...field} placeholder="Write a few words about your event"/>
             }

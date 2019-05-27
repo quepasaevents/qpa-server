@@ -10,6 +10,7 @@ const CreateEvent = () => {
           createEvent({
             variables: {
               input: {
+                info: values.info,
                 location: {
                   name: values.location.name,
                   address: values.location.address,
