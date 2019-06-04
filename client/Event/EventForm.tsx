@@ -6,6 +6,7 @@ import {EventStatus} from "../../@types"
 interface Props {
   values?: EventFormData
   onSubmit: (values: EventFormData) => void
+  loading: boolean
 }
 
 export interface EventFormData {

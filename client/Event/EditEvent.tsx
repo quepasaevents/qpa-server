@@ -10,7 +10,7 @@ interface Props {
 const EditEvent = (props: Props) => (
   <EditEventMutation>
     {
-      (editEvent) => (
+      (editEvent, { loading }) => (
         <GetEventQuery skip={!props.eventId}>
           {
             ({data, error, loading}) => {
@@ -22,6 +22,7 @@ const EditEvent = (props: Props) => (
               }
               return (
                 <EventForm
+                  loading={loading}
                   onSubmit={values => {
                     editEvent({
                       variables: {

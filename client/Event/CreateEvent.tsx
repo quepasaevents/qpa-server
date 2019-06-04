@@ -5,8 +5,10 @@ import EventForm, {EventFormData} from "./EventForm"
 const CreateEvent = () => {
   return <CreateEventMutation>
     {
-      (createEvent) => (
-        <EventForm onSubmit={(values: EventFormData) => {
+      (createEvent, { loading }) => (
+        <EventForm
+          loading={loading}
+          onSubmit={(values: EventFormData) => {
           createEvent({
             variables: {
               input: {
