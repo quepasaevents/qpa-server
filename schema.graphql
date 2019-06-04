@@ -169,6 +169,16 @@ input CreateEventInput {
     contact: [EventContactPersonInput!]!
 }
 
+input UpdateEventInput {
+    id: ID!
+    time: EventTimeInput!
+    info: [EventInformationInput]!
+    location: EventLocationInput!
+    meta: EventMetaInput
+    status: String!
+    contact: [EventContactPersonInput!]!
+}
+
 type Error {
     path: String!
     message: String!
@@ -182,6 +192,7 @@ type Mutation {
 
     # Event
     createEvent(input: CreateEventInput!): CalendarEvent
+    updateEvent(input: UpdateEventInput!): CalendarEvent
 
 }
 

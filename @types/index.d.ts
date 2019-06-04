@@ -1,7 +1,7 @@
 export type EventStatus = 'confirmed' | 'canceled'
+
 // tslint:disable
 // graphql typescript definitions
-
 declare namespace GQL {
   interface IGraphQLResponseRoot {
     data?: IQuery | IMutation;
@@ -136,6 +136,7 @@ declare namespace GQL {
     signin: IUserSession;
     requestInvite: boolean;
     createEvent: ICalendarEvent | null;
+    updateEvent: ICalendarEvent | null;
   }
 
   interface ISignupOnMutationArguments {
@@ -152,6 +153,10 @@ declare namespace GQL {
 
   interface ICreateEventOnMutationArguments {
     input: ICreateEventInput;
+  }
+
+  interface IUpdateEventOnMutationArguments {
+    input: IUpdateEventInput;
   }
 
   interface ISignupInput {
@@ -229,9 +234,16 @@ declare namespace GQL {
     email?: string | null;
     phone?: string | null;
   }
+
+  interface IUpdateEventInput {
+    id: string;
+    time: IEventTimeInput;
+    info: Array<IEventInformationInput | null>;
+    location: IEventLocationInput;
+    meta?: IEventMetaInput | null;
+    status: string;
+    contact: Array<IEventContactPersonInput>;
+  }
 }
-
-// tslint:enable
-
 
 // tslint:enable

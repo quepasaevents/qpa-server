@@ -11,24 +11,13 @@ const CreateEvent = () => {
             variables: {
               input: {
                 info: values.info,
-                location: {
-                  name: values.location.name,
-                  address: values.location.address,
-                },
+                location: values.location,
                 time: {
-                  end: values.time.end,
-                  start: values.time.start,
+                  ...values.time,
                   timeZone: 'Europe/Madrid',
-                  recurrence: values.time.recurrence
                 },
                 status: 'confirmed',
-                contact: [
-                  {
-                    name: values.contact.name,
-                    languages: values.contact.languages,
-                  }
-                ]
-              }
+                contact: values.contact              }
             }
           })
         }} />
