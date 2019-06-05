@@ -22,16 +22,7 @@ const httpLink = new HttpLink({
 const graphqlClient = new ApolloClient({
   connectToDevTools: true,
   link: httpLink,
-  cache: new InMemoryCache({
-    addTypename: false,
-    dataIdFromObject: (o: IdGetterObj) => {
-      if (o.id && o.__typename) {
-        return `${o.__typename}_${o.id}`
-      } else {
-        return o.id
-      }
-    }
-  })
+  cache: new InMemoryCache()
 }) as ApolloClient<any>
 
 const App = () => (

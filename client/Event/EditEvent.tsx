@@ -2,6 +2,7 @@ import * as React from 'react'
 import GetEventQuery from "./GetEventQuery"
 import EventForm from "./EventForm"
 import EditEventMutation from "./EditEventMutation"
+import removeTypename from "../App/remove-typename";
 
 interface Props {
   eventId: string
@@ -20,6 +21,8 @@ const EditEvent = (props: Props) => (
               if (error) {
                 return error.message
               }
+              const event = removeTypename(data.event)
+
               return (
                 <EventForm
                   loading={loading}
@@ -34,11 +37,13 @@ const EditEvent = (props: Props) => (
                     })
                   }}
                   values={{
-                    meta: data.event.meta,
-                    time: data.event.time,
-                    location: data.event.location,
-                    info: data.event.info,
-                    status: data.event.status
+                    meta: {
+                      tags: event.meta.tags
+                    },
+                    time: event.time,
+                    location: event.location,
+                    info: event.info,
+                    status: event.status
                   }}/>
               )
             }

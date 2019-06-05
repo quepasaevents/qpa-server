@@ -11,7 +11,7 @@
   },
   "workspaces": [
     "packages/*",
-    "webapp",
+    "client",
     "server"
   ],
   "scripts": {

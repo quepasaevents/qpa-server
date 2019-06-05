@@ -88,6 +88,16 @@ const EventForm = (props: Props) => {
               />
             )}
           </Field>
+          <Field name="time.start">
+            {
+              ({ field }) => <input type="date" {...field} value={field.value.split('T')[0]}/>
+            }
+          </Field>
+          <Field name="time.start">
+            {
+              ({ field }) => <input type="date" {...field} value={field.value.split('T')[0]}/>
+            }
+          </Field>
           <Field name="location.name">
             {({ field }) => <input {...field} placeholder="Location's name" />}
           </Field>
