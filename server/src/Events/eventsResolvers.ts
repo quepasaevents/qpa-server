@@ -44,10 +44,6 @@ const resolvers: ResolverMap = {
     start: (eOcc: EventOccurrence) => {
       return eOcc.during.split(',')[0].substring(1)
     },
-    event: async (eOcc: EventOccurrence) => {
-      console.log('eOcc', eOcc)
-      return eOcc.event
-    }
   },
 
   Mutation: {

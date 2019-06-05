@@ -6,11 +6,8 @@ const query = gql`
   query EventsQuery($filter: OccurrencesQueryFilter!) {
     occurrences(filter: $filter) {
       id
-      utcStart
-      utcEnd
       start
       end
-      timeZone
       event {
         id
         info {
@@ -33,11 +30,8 @@ export interface InfoData {
 
 export interface OccurrenceData {
   id: string
-  utcStart: string
-  utcEnd: string
   start: string
   end: string
-  timeZone: string
   event: {
     id: string
     info: InfoData[]

@@ -12,7 +12,7 @@ const CalendarOccurrence = (props: Props) => {
     ? event.info.find(info => info.language === props.language)
     : event.info[0]
   return (<div>
-
+    {event.info[0].title}
 </div>)
 
 }
