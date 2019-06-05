@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Formik, Form, Field } from "formik"
 import styled from "styled-components"
-import {EventStatus} from "../../@types"
+import { EventStatus } from "../../@types"
 
 interface Props {
   values?: EventFormData
@@ -11,33 +11,24 @@ interface Props {
 
 export interface EventFormData {
   time: {
-    timeZone: string
-    start: string
-    end: string
-    recurrence?: string
+    timeZone: string;
+    start: string;
+    end: string;
+    recurrence?: string;
   }
   info: Array<{
-    language: string
-    title: string
-    description: string
+    language: string;
+    title: string;
+    description: string;
   }>
   location: {
-    address?: string
-    name: string
-    coordinate?: {
-      lat: number
-      lng: number
-    }
+    address?: string;
+    name: string;
   }
-  contact: Array<{
-    name: string
-    languages?: string[]
-    contact: {
-      email?: string
-      phone?: string
-    }
-  }>
   status: EventStatus
+  meta: {
+    tags: string[];
+  }
 }
 
 class EventFormik extends Formik<EventFormData> {}
@@ -58,32 +49,26 @@ const EventForm = (props: Props) => {
         props.values
           ? props.values
           : {
-            time: {
-              timeZone: "Europe/Madrid",
-              start: nextWeekTenAM.toISOString().substring(0, 16),
-              end: nextWeekMidday.toISOString().substring(0, 16)
-            },
-            info: [
-              {
-                language: "en",
-                title: "",
-                description: ""
-              }
-            ],
-            location: {
-              name: ""
-            },
-            contact: [
-              {
-                name: "",
-                contact: {
-                  email: "",
-                  phone: ""
+              time: {
+                timeZone: "Europe/Madrid",
+                start: nextWeekTenAM.toISOString().substring(0, 16),
+                end: nextWeekMidday.toISOString().substring(0, 16)
+              },
+              info: [
+                {
+                  language: "en",
+                  title: "",
+                  description: ""
                 }
-              }
-            ],
-          status: 'confirmed'
-          }
+              ],
+              location: {
+                name: ""
+              },
+              meta: {
+                tags: []
+              },
+              status: "confirmed"
+            }
       }
       validate={values => {
         const errors: any = {}
@@ -109,29 +94,12 @@ const EventForm = (props: Props) => {
           <Field name="location.address">
             {({ field }) => <input {...field} placeholder="Address" />}
           </Field>
-          <Field name="contact[0].name">
-            {({ field }) => (
-              <input {...field} placeholder="Name of contact person" />
-            )}
-          </Field>
-          <Field name="contact[0].phone">
-            {({ field }) => (
-              <input {...field} placeholder="Phone number to contact" />
-            )}
-          </Field>
-          <Field name="contact[0].email">
-            {({ field }) => <input {...field} placeholder="Email to contact" />}
-          </Field>
-          <button type="submit">
-            {
-              isEdit ? 'Edit' : 'Create'
-            }
-          </button>
+
+          <button type="submit">{isEdit ? "Edit" : "Create"}</button>
         </StyledForm>
       )}
     </EventFormik>
   )
-
 }
 const StyledForm = styled(Form)``
 export default EventForm

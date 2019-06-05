@@ -1,5 +1,4 @@
 import {ConnectionOptions} from 'typeorm'
-import { User } from './src/Auth/User.entity'
 
 const config: ConnectionOptions = {
   type: 'postgres',
@@ -7,7 +6,9 @@ const config: ConnectionOptions = {
   port: Number(process.env.POSTGRES_PORT || 5432),
   database: process.env.POSTGRES_DB || 'qpa-dev',
   entities: ["src/**/*.entity.ts"],
-  logging: true
+  logging: true,
+  synchronize: true,
+  logger: 'debug'
 }
 
 export const testConfig: ConnectionOptions = {

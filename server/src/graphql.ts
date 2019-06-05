@@ -7,6 +7,7 @@ import {Connection} from "typeorm"
 import {PostOffice} from "./post_office"
 import {Session} from "./Auth/Session.entity"
 import {Context} from "./@types/graphql-utils"
+import {auth} from "google-auth-library";
 
 interface Dependencies {
   typeormConnection: Connection
@@ -59,13 +60,20 @@ export const createServer = async (dependencies: Dependencies) => {
       const ctx: Context = {
         req: a.req
       }
+      let authToken
+      if (a.req.header('authentication')) {
+        authToken = a.req.header('authentication')
+      }
       if (a.req.headers.cookie) {
         const cookies: any = a.req.headers.cookie.split(';').map(s => s.trim().split('=')).reduce((acc, val)=> {acc[val[0]] = val[1]; return acc},{})
         if (cookies.authentication) {
-          const session = await Session.findOne({hash: cookies.authentication as string})
-          if (session) {
-            ctx.user = session.user
-          }
+          authToken = cookies.authentication as string
+        }
+      }
+      if (authToken) {
+        const session = await Session.findOne({hash: authToken})
+        if (session) {
+          ctx.user = session.user
         }
       }
 

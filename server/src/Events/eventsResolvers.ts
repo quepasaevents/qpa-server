@@ -7,10 +7,10 @@ import { Context, ResolverMap } from "../@types/graphql-utils"
 import {GQL} from "../../../@types"
 const resolvers: ResolverMap = {
   Query: {
-    event: (_, req: GQL.IEventOnQueryArguments, context, info) => {
+    event: (_, req: GQL.IEventOnQueryArguments) => {
       return Event.findOne(req.id)
     },
-    events: async (_, req: GQL.IEventsOnQueryArguments, context, info) => {
+    events: async (_, req: GQL.IEventsOnQueryArguments) => {
       return Event.find({
         take: req.filter.limit,
         where:
@@ -22,21 +22,17 @@ const resolvers: ResolverMap = {
     occurrences: async (
       _,
       req: GQL.IOccurrencesOnQueryArguments,
-      context,
-      info
     ) => {
       const { from, to } = req.filter
-      const occurrences = await EventOccurrence.find({
+      return EventOccurrence.find({
         where: `during && tstzrange('${from}', '${to}')`,
         take: req.filter.limit
       })
-
-      return occurrences
     }
   },
 
   CalendarEvent: {
-    owner: async (event: Event, args, context, info) => {
+    owner: async (event: Event) => {
       return event.owner
     },
     info: async (event: Event) => {
@@ -45,7 +41,9 @@ const resolvers: ResolverMap = {
   },
 
   EventOccurrence: {
-    start: (eOcc: EventOccurrence) => JSON.parse(eOcc.during)[0],
+    start: (eOcc: EventOccurrence) => {
+      return eOcc.during.split(',')[0].substring(1)
+    },
     event: async (eOcc: EventOccurrence) => {
       console.log('eOcc', eOcc)
       return eOcc.event
@@ -57,13 +55,12 @@ const resolvers: ResolverMap = {
       _,
       { input }: GQL.ICreateEventOnMutationArguments,
       context: Context,
-      info
     ) => {
       if (!context.user) {
         throw Error("not authenticated")
       }
       const event = new Event()
-      event.owner = context.user
+      event.owner = Promise.resolve(context.user)
       event.info = Promise.resolve(
         input.info.map(infoInput => {
           const eventInformation = new EventInformation()
@@ -80,9 +77,51 @@ const resolvers: ResolverMap = {
         start: input.time.start,
         end: input.time.end
       }
+      event.meta = input.meta
+      event.location = input.location
       event.updateOccurrences()
       await event.save()
       return event
+    },
+    updateEvent: async (
+      _,
+      { input }: GQL.IUpdateEventOnMutationArguments,
+      context: Context,
+      info
+    ) => {
+      const {id, ...fields} = input
+
+      if (!context.user) {
+        throw Error("not authenticated")
+      }
+      const event = await Event.findOne(id)
+      if ((await event.owner).id !== context.user.id) {
+        throw Error("Only the owner can edit their events")
+      }
+      if (Object.keys(fields).length === 0) {
+        throw Error("No change detected")
+      }
+      if (input.time) {
+        event.time = input.time
+        event.updateOccurrences()
+      }
+      if (input.info) {
+        event.info = Promise.resolve(
+          input.info.map(inputInfo => {
+            const newInfo = new EventInformation()
+            Object.keys(inputInfo).forEach(inputInfoKey => {
+              newInfo[inputInfoKey] = inputInfo[inputInfoKey]
+            })
+            return newInfo
+          })
+        )
+      }
+      if (info.location) {
+        event.location = info.location
+      }
+      if (info.meta) {
+        event.meta = info.meta
+      }
     }
   }
 }

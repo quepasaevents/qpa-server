@@ -1,6 +1,6 @@
 import {Query} from 'react-apollo'
 import gql from 'graphql-tag'
-import {EventStatus} from "../../@types";
+import {EventStatus} from "../../@types"
 
 export const EventFragment = gql`
   fragment EventData on CalendarEvent {
@@ -10,20 +10,8 @@ export const EventFragment = gql`
       language
       title
     }
-    contact {
-      contact {
-        email
-        phone
-      }
-      languages
-      name
-    }
     location {
       address
-      coordinate {
-        lat
-        lng
-      }
       name
     }
     time {
@@ -64,10 +52,6 @@ export interface EventData {
   contact: ContactData[]
   location: {
     address: string
-    coordinate: {
-      lat: number
-      lng: number
-    }
     name: string
   }
   time: EventTimeData

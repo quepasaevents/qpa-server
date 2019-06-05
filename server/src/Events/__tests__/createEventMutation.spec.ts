@@ -25,10 +25,6 @@ const mutation = gql`
             location: {
                 address: "Camino de Cerro Negro",
                 name: "The dance floor",
-                coordinate: {
-                    lat: 10
-                    lng: 40
-                }
             },
             status: "Confirmed",
             contact: {

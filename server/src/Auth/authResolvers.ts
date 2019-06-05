@@ -2,6 +2,7 @@ import SessionManager, { SessionAlreadyValidatedError } from "./SessionManager"
 import { User } from "./User.entity"
 import { PostOffice } from "../post_office"
 import {GQL} from "../../../@types"
+import {Context} from "../@types/graphql-utils";
 
 interface Dependencies {
   sendEmail: PostOffice
@@ -20,7 +21,7 @@ export default class AuthResolvers {
   }
 
   Query = {
-    me: async (_, req, context, info) => {
+    me: async (_, req, context: Context, info) => {
       return context.user
     }
   }

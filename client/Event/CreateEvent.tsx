@@ -19,7 +19,8 @@ const CreateEvent = () => {
                   timeZone: 'Europe/Madrid',
                 },
                 status: 'confirmed',
-                contact: values.contact              }
+                meta: values.meta
+              }
             }
           })
         }} />

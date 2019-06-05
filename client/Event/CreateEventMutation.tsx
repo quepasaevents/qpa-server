@@ -11,20 +11,8 @@ const mutation = gql`
               language
               title
           }
-          contact {
-              contact {
-                  email
-                  phone
-              }
-              languages
-              name
-          }
           location {
               address 
-              coordinate {
-                  lat
-                  lng
-              }
               name
           }
           occurrences {
@@ -38,15 +26,6 @@ const mutation = gql`
 
 interface Variables {
   input: GQL.ICreateEventInput
-}
-
-interface ContactData {
-    contact: {
-        email: string
-        phone: string
-    }
-    languages: string[]
-    name: string
 }
 
 interface InfoData {
@@ -63,13 +42,8 @@ interface OccurrenceData {
 interface Data {
     id: string
     info: InfoData[]
-    contact: ContactData[]
     location: {
         address: string
-        coordinate: {
-            lat: number
-            lng: number
-        }
         name: string
 
     }

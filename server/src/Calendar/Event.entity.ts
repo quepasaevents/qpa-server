@@ -28,26 +28,11 @@ export const breakTime = (isoString: string) => {
   }
 }
 
-@Entity()
-class EventLocation extends BaseEntity {
-}
-
-class Contact {
-  @Column()
-  email?: string
-
-  @Column()
-  phone?: string
-}
-
-@Entity()
-class EventContactPerson {
-
-  @Column()
-  name: string
-
-  @Column()
-  contact: Contact
+export class EventLocation {
+  @Column({nullable: true})
+  address?: string
+  @Column({nullable: true})
+  name?: string
 }
 
 /**
@@ -73,13 +58,17 @@ export class EventTime {
   exceptions?: string
 }
 
+export class EventMeta {
+  @Column({type: "varchar", array: true})
+  tags: string[]
+}
 @Entity()
 export class Event extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: number
 
   @ManyToOne(type => User, user => user.events)
-  owner: User
+  owner: Promise<User>
 
   @OneToMany(type => EventOccurrence, occurrence => occurrence.event, {
     cascade: true
@@ -94,14 +83,13 @@ export class Event extends BaseEntity {
   @Column(type => EventTime)
   time: EventTime
 
+  @Column(type => EventMeta)
+  meta: EventMeta
+
   @Column({
     default: "confirmed"
   })
   status: string
-
-  // todo: check pg support for arrays
-  // @Column(type => EventContactPerson)
-  // contact: EventContactPerson[]
 
   @Column(type => EventLocation)
   location: EventLocation

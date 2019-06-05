@@ -8,5 +8,6 @@
   "cli": {
     "migrationsDir": "./migrations"
   },
-  "logging": true
+  "logging": true,
+  "synchronize": true
 }

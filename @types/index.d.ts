@@ -1,7 +1,7 @@
 export type EventStatus = 'confirmed' | 'canceled'
-
 // tslint:disable
 // graphql typescript definitions
+
 declare namespace GQL {
   interface IGraphQLResponseRoot {
     data?: IQuery | IMutation;
@@ -56,7 +56,6 @@ declare namespace GQL {
     info: Array<IEventInformation | null>;
     time: IEventTime;
     status: any;
-    contact: Array<IEventContactPerson>;
     location: ILocation;
     occurrences: Array<IEventOccurrence | null> | null;
   }
@@ -77,30 +76,10 @@ declare namespace GQL {
     exceptions: string | null;
   }
 
-  interface IEventContactPerson {
-    __typename: 'EventContactPerson';
-    name: string;
-    languages: Array<any> | null;
-    contact: IContact | null;
-  }
-
-  interface IContact {
-    __typename: 'Contact';
-    email: string | null;
-    phone: string | null;
-  }
-
   interface ILocation {
     __typename: 'Location';
     address: string | null;
     name: string | null;
-    coordinate: IGeoCoordinate | null;
-  }
-
-  interface IGeoCoordinate {
-    __typename: 'GeoCoordinate';
-    lat: number | null;
-    lng: number | null;
   }
 
   interface IEventOccurrence {
@@ -191,9 +170,8 @@ declare namespace GQL {
     time: IEventTimeInput;
     info: Array<IEventInformationInput | null>;
     location: IEventLocationInput;
-    meta?: IEventMetaInput | null;
+    meta: IEventMetaInput | null;
     status: string;
-    contact: Array<IEventContactPersonInput>;
   }
 
   interface IEventTimeInput {
@@ -212,37 +190,19 @@ declare namespace GQL {
   interface IEventLocationInput {
     address?: string | null;
     name?: string | null;
-    coordinate?: IGeoCoordinateInput | null;
-  }
-
-  interface IGeoCoordinateInput {
-    lat?: number | null;
-    lng?: number | null;
   }
 
   interface IEventMetaInput {
-    tags?: Array<string | null> | null;
-  }
-
-  interface IEventContactPersonInput {
-    name: string;
-    languages?: Array<any> | null;
-    contact?: IEventContactInput | null;
-  }
-
-  interface IEventContactInput {
-    email?: string | null;
-    phone?: string | null;
+    tags: Array<string>;
   }
 
   interface IUpdateEventInput {
     id: string;
-    time: IEventTimeInput;
-    info: Array<IEventInformationInput | null>;
-    location: IEventLocationInput;
+    time?: IEventTimeInput | null;
+    info?: Array<IEventInformationInput | null> | null;
+    location?: IEventLocationInput | null;
     meta?: IEventMetaInput | null;
-    status: string;
-    contact: Array<IEventContactPersonInput>;
+    status?: string | null;
   }
 }
 
