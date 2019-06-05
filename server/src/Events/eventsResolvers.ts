@@ -87,7 +87,6 @@ const resolvers: ResolverMap = {
       _,
       { input }: GQL.IUpdateEventOnMutationArguments,
       context: Context,
-      info
     ) => {
       const {id, ...fields} = input
 
@@ -116,12 +115,16 @@ const resolvers: ResolverMap = {
           })
         )
       }
-      if (info.location) {
-        event.location = info.location
+      if (input.location) {
+        event.location = input.location
       }
-      if (info.meta) {
-        event.meta = info.meta
+      if (input.meta) {
+        event.meta = input.meta
       }
+      if (input.location) {
+        event.location = input.location
+      }
+      return event.save()
     }
   }
 }

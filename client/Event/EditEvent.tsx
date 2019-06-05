@@ -10,8 +10,8 @@ interface Props {
 const EditEvent = (props: Props) => (
   <EditEventMutation>
     {
-      (editEvent, { loading }) => (
-        <GetEventQuery skip={!props.eventId}>
+      (editEvent, { loading: editLoading }) => (
+        <GetEventQuery skip={!props.eventId} variables={{id: props.eventId}}>
           {
             ({data, error, loading}) => {
               if (loading) {
@@ -34,7 +34,7 @@ const EditEvent = (props: Props) => (
                     })
                   }}
                   values={{
-                    contact: data.event.contact,
+                    meta: data.event.meta,
                     time: data.event.time,
                     location: data.event.location,
                     info: data.event.info,

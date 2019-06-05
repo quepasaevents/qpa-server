@@ -23,6 +23,7 @@ const graphqlClient = new ApolloClient({
   connectToDevTools: true,
   link: httpLink,
   cache: new InMemoryCache({
+    addTypename: false,
     dataIdFromObject: (o: IdGetterObj) => {
       if (o.id && o.__typename) {
         return `${o.__typename}_${o.id}`

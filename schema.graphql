@@ -41,6 +41,11 @@ type CalendarEvent {
     status: EventStatus!
     location: Location!
     occurrences: [EventOccurrence]
+    meta: EventMeta
+}
+
+type EventMeta {
+    tags: [String]!
 }
 
 type EventOccurrence {

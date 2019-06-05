@@ -21,6 +21,9 @@ export const EventFragment = gql`
       recurrence
     }
     status
+    meta {
+      tags
+    }
   }
 `
 
@@ -45,6 +48,9 @@ export interface ContactData {
   languages: string[]
   name: string
 }
+export interface EventMetaData {
+  tags: string[]
+}
 
 export interface EventData {
   id: string
@@ -56,6 +62,7 @@ export interface EventData {
   }
   time: EventTimeData
   status: EventStatus
+  meta: EventMetaData
 }
 
 interface Data {
@@ -72,7 +79,7 @@ const query = gql`
 `
 
 interface Variables {
-  id: number
+  id: string
 }
 
 export default class GetEventQuery extends Query<Data, Variables> {

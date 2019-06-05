@@ -39,7 +39,8 @@ const config: webpack.Configuration = {
   devtool: '@source-map',
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    publicPath: '/'
   },
   plugins: [new HtmlWebpackPlugin({
     title: "blabla",
