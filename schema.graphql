@@ -52,9 +52,7 @@ type EventOccurrence {
     id: ID!
     event: CalendarEvent!
     start: String!
-    utcStart: String!
     end: String!
-    utcEnd: String!
     timeZone: String!
 }
 

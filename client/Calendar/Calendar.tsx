@@ -1,6 +1,6 @@
 import * as React from "react"
 import OccurrencesQuery from "../Event/OccurrencesQuery"
-import CalendarOccurrence from "./CalendarOccurrence"
+import List from "./List"
 
 interface Props {
 }
@@ -42,7 +42,7 @@ const Calendar = (props: Props) => (
       if (!data.occurrences.length) {
         return <p>No occurrences</p>
       }
-      return data.occurrences.map(occ => <CalendarOccurrence key={occ.id} occurrence={occ}/>)
+      return <List occurrences={data.occurrences}/>
     }}
   </OccurrencesQuery>
 )

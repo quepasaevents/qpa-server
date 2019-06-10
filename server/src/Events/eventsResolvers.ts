@@ -42,7 +42,10 @@ const resolvers: ResolverMap = {
 
   EventOccurrence: {
     start: (eOcc: EventOccurrence) => {
-      return eOcc.during.split(',')[0].substring(1)
+      return eOcc.during.split(',')[0].substring(2, 21)
+    },
+    end: (eOcc: EventOccurrence) => {
+      return eOcc.during.split(',')[1].substring(2, 21)
     },
   },
 

@@ -65,7 +65,9 @@ export const createServer = async (dependencies: Dependencies) => {
         authToken = a.req.header('authentication')
       }
       if (a.req.headers.cookie) {
+        console.log('a.req.headers.cookie', a.req.headers.cookie)
         const cookies: any = a.req.headers.cookie.split(';').map(s => s.trim().split('=')).reduce((acc, val)=> {acc[val[0]] = val[1]; return acc},{})
+
         if (cookies.authentication) {
           authToken = cookies.authentication as string
         }

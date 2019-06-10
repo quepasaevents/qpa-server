@@ -72,7 +72,6 @@ const EventForm = (props: Props) => {
       }
       validate={values => {
         const errors: any = {}
-        console.log(values.info)
       }}
     >
       {({ isValid }) => (
