@@ -2,6 +2,7 @@ import * as React from "react"
 import { Formik, Form, Field } from "formik"
 import styled from "styled-components"
 import { EventStatus } from "../../@types"
+import DateTime from "./DateTime";
 
 interface Props {
   values?: EventFormData
@@ -74,7 +75,7 @@ const EventForm = (props: Props) => {
         const errors: any = {}
       }}
     >
-      {({ isValid }) => (
+      {({ isValid, setFieldValue }) => (
         <StyledForm>
           <Field name="info[0].title">
             {({ field }) => <input {...field} placeholder="Name your event" />}
@@ -89,12 +90,12 @@ const EventForm = (props: Props) => {
           </Field>
           <Field name="time.start">
             {
-              ({ field }) => <input type="date" {...field} value={field.value.split('T')[0]}/>
+              ({ field }) => <DateTime {...field} onChange={(newStartValue) => setFieldValue('time.start', newStartValue)} />
             }
           </Field>
-          <Field name="time.start">
+          <Field name="time.end">
             {
-              ({ field }) => <input type="date" {...field} value={field.value.split('T')[0]}/>
+              ({ field }) => <DateTime {...field} onChange={(newEndValue) => setFieldValue('time.end', newEndValue)} />
             }
           </Field>
           <Field name="location.name">
