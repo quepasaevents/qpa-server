@@ -78,7 +78,8 @@ const resolvers: ResolverMap = {
       }
       event.meta = input.meta
       event.location = input.location
-      event.updateOccurrences()
+
+      event.occurrences = Promise.resolve(event.getOccurrences())
       await event.save()
       return event
     },
@@ -101,7 +102,9 @@ const resolvers: ResolverMap = {
       }
       if (input.time) {
         event.time = input.time
-        event.updateOccurrences()
+        const existingOccurrences = await event.occurrences
+        await Promise.all(existingOccurrences.map(occ => EventOccurrence.delete(occ.id)))
+        event.occurrences = Promise.resolve(event.getOccurrences())
       }
       if (input.info) {
         event.info = Promise.resolve(
@@ -123,6 +126,7 @@ const resolvers: ResolverMap = {
       if (input.location) {
         event.location = input.location
       }
+      console.log(JSON.stringify(event,null,'\t'))
       return event.save()
     }
   }

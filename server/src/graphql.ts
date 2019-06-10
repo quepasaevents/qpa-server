@@ -1,13 +1,13 @@
 import {ApolloServer} from 'apollo-server'
 import {makeExecutableSchema} from "graphql-tools"
 import EventsResolvers from './Events/eventsResolvers'
+import UserResolvers from './Auth/userResolvers'
 import {importSchema} from 'graphql-import'
 import AuthResolvers from "./Auth/authResolvers"
 import {Connection} from "typeorm"
 import {PostOffice} from "./post_office"
 import {Session} from "./Auth/Session.entity"
 import {Context} from "./@types/graphql-utils"
-import {auth} from "google-auth-library";
 
 interface Dependencies {
   typeormConnection: Connection
@@ -31,6 +31,7 @@ export const createServer = async (dependencies: Dependencies) => {
   const typeDefs = importSchema(__dirname + '/../../schema.graphql')
 
   const { Query: EventQueryResolvers, Mutation: EventResolversMutation,...eventResolvers} = EventsResolvers
+  const { Query: UserQueryResolvers, Mutation: UserMutationResolvers, ...userResolvers} = UserResolvers
 
   const schema = makeExecutableSchema({
     typeDefs: [
@@ -40,17 +41,21 @@ export const createServer = async (dependencies: Dependencies) => {
       Query: {
         ...resolvers.Query,
         ...EventQueryResolvers,
-        ...authResolvers.Query
+        ...authResolvers.Query,
+          ...UserQueryResolvers,
       },
       Mutation: {
         ...resolvers.Mutation,
         ...EventResolversMutation,
-        ...authResolvers.Mutation
+        ...authResolvers.Mutation,
+        ...UserMutationResolvers,
       },
       UserSession: {
         ...authResolvers.UserSession
       },
-      ...eventResolvers
+      ...eventResolvers,
+      ...userResolvers,
+
     },
   })
 

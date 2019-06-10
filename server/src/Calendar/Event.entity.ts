@@ -94,7 +94,7 @@ export class Event extends BaseEntity {
   @Column(type => EventLocation)
   location: EventLocation
 
-  updateOccurrences() {
+  getOccurrences() {
     const occurences = []
     console.log('this.time.recurrence', this.time.recurrence)
     if (!this.time.recurrence) {
@@ -121,10 +121,10 @@ export class Event extends BaseEntity {
     occurences.forEach(occ => {
       occ.start = this.time.start
       occ.end = this.time.end
+      occ.event = Promise.resolve(this)
     })
-    console.log('occurences', occurences)
-    this.occurrences = Promise.resolve(occurences)
-    return
+
+    return occurences
   }
 }
 
@@ -147,7 +147,7 @@ export class EventOccurrence extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: number
 
-  @ManyToOne(type => Event, event => event.occurrences)
+  @ManyToOne(type => Event, event => event.occurrences, { nullable: false })
   event: Promise<Event>
 
   @Column({type: "tstzrange", nullable: true})
