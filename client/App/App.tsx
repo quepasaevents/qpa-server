@@ -7,14 +7,15 @@ import {
   Link
 } from "react-router-dom"
 import Calendar from "../Calendar/Calendar"
-import {ApolloProvider} from "react-apollo"
-import {ApolloClient} from "apollo-client"
-import {HttpLink} from "apollo-link-http"
-import {IdGetterObj, InMemoryCache} from "apollo-cache-inmemory"
+import { ApolloProvider } from "react-apollo"
+import { ApolloClient } from "apollo-client"
+import { HttpLink } from "apollo-link-http"
+import { IdGetterObj, InMemoryCache } from "apollo-cache-inmemory"
 import CreateEvent from "../Event/CreateEvent"
 import EditEvent from "../Event/EditEvent"
-import {RouteComponentProps} from "react-router"
-import {AppContextProvider} from "./Context/AppContext"
+import { RouteComponentProps } from "react-router"
+import { AppContextProvider, AppContext } from "./Context/AppContext"
+import Header from "./Header/Header";
 
 const httpLink = new HttpLink({
   uri: "/graphql"
@@ -29,21 +30,21 @@ const graphqlClient = new ApolloClient({
 const App = () => (
   <ApolloProvider client={graphqlClient}>
     <AppContextProvider>
-      <Router>
-        <h1>what</h1>
-        <Link to="/create">Create event</Link>
-        <Switch>
-          <Route path="/create" component={CreateEvent}/>
-          <Route
-            path="/event/:eventId/edit"
-            render={(routeProps: RouteComponentProps<{ eventId: string }>) => (
-              <EditEvent eventId={routeProps.match.params.eventId}/>
-            )}
-          />
-          <Route path="/" component={Calendar}/>
-          <Redirect to="/"/>
-        </Switch>
-      </Router>
+          <Router>
+            <Header />
+            <Switch>
+              <Route path="/create" component={CreateEvent} />
+              <Route
+                path="/event/:eventId/edit"
+                render={(
+                  routeProps: RouteComponentProps<{ eventId: string }>
+                ) => <EditEvent eventId={routeProps.match.params.eventId} />}
+              />
+              <Route path="/" component={Calendar} />
+              <Redirect to="/" />
+            </Switch>
+          </Router>
+
     </AppContextProvider>
   </ApolloProvider>
 )
