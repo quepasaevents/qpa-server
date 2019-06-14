@@ -19,44 +19,30 @@ import Header from "./Header/Header"
 import Login from "./Auth/Login"
 import styled from "@emotion/styled"
 
-const httpLink = new HttpLink({
-  uri: "/graphql"
-})
-
-const graphqlClient = new ApolloClient({
-  connectToDevTools: true,
-  link: httpLink,
-  cache: new InMemoryCache()
-}) as ApolloClient<any>
 
 const App = () => (
-  <ApolloProvider client={graphqlClient}>
-    <AppContextProvider>
-          <Router>
-            <Header />
-            <Content>
-
-            <Switch>
-              <Route path="/create" component={CreateEvent} />
-              <Route
-                path="/event/:eventId/edit"
-                render={(
-                  routeProps: RouteComponentProps<{ eventId: string }>
-                ) => <EditEvent eventId={routeProps.match.params.eventId} />}
-              />
-              <Route path="/login" component={Login} />
-              <Route path="/" component={Calendar} />
-              <Redirect to="/" />
-            </Switch>
-            </Content>
-
-          </Router>
-
-    </AppContextProvider>
-  </ApolloProvider>
+  <Root>
+    <Header />
+    <Content>
+      <Switch>
+        <Route path="/create" component={CreateEvent} />
+        <Route
+          path="/event/:eventId/edit"
+          render={(
+            routeProps: RouteComponentProps<{ eventId: string }>
+          ) => <EditEvent eventId={routeProps.match.params.eventId} />}
+        />
+        <Route path="/login" component={Login} />
+        <Route path="/" component={Calendar} />
+        <Redirect to="/" />
+      </Switch>
+    </Content>
+  </Root>
 )
 
+const Root = styled.div`
 
+`
 const Content = styled.div`
   display: flex;
   justify-content: center;
