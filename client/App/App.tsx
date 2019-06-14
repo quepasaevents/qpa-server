@@ -15,7 +15,9 @@ import CreateEvent from "../Event/CreateEvent"
 import EditEvent from "../Event/EditEvent"
 import { RouteComponentProps } from "react-router"
 import { AppContextProvider, AppContext } from "./Context/AppContext"
-import Header from "./Header/Header";
+import Header from "./Header/Header"
+import Login from "./Auth/Login"
+import styled from "@emotion/styled"
 
 const httpLink = new HttpLink({
   uri: "/graphql"
@@ -32,6 +34,8 @@ const App = () => (
     <AppContextProvider>
           <Router>
             <Header />
+            <Content>
+
             <Switch>
               <Route path="/create" component={CreateEvent} />
               <Route
@@ -40,12 +44,21 @@ const App = () => (
                   routeProps: RouteComponentProps<{ eventId: string }>
                 ) => <EditEvent eventId={routeProps.match.params.eventId} />}
               />
+              <Route path="/login" component={Login} />
               <Route path="/" component={Calendar} />
               <Redirect to="/" />
             </Switch>
+            </Content>
+
           </Router>
 
     </AppContextProvider>
   </ApolloProvider>
 )
+
+
+const Content = styled.div`
+  display: flex;
+  justify-content: center;
+`
 export default App

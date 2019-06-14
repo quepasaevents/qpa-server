@@ -1,5 +1,5 @@
 import { AppContext } from "../Context/AppContext"
-import { BrowserRouter as Router, Link } from "react-router-dom"
+import { Link } from "react-router-dom"
 import * as React from "react"
 import styled from "@emotion/styled"
 
