@@ -1,4 +1,4 @@
-import {ApolloServer} from 'apollo-server'
+import {ApolloServer} from 'apollo-server-express'
 import {makeExecutableSchema} from "graphql-tools"
 import EventsResolvers from './Events/eventsResolvers'
 import UserResolvers from './Auth/userResolvers'

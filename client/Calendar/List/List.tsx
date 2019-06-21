@@ -25,9 +25,11 @@ const List = (props: Props) => {
     }
     days[day].push(occ)
   })
+  const dayNames = Object.keys(days)
   return (
     <div>
-      {Object.keys(days).map(dayName => (
+      <h3>Events for the dates between {dayNames[0]} and {dayNames[dayNames.length-1]}</h3>
+      {dayNames.map(dayName => (
         <ul key={dayName}>
           <li>{dayName}</li>
           {days[dayName].map(occ => (

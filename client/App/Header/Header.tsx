@@ -30,7 +30,7 @@ const Header = (props: Props) => (
 
 const StyledLink = styled(Link)`
   color: rgba(0,0,0,.7);
-  &:not(:first-child) {
+  &:not(:first-of-type) {
     margin-left: 8px;
   }
 `

@@ -2,7 +2,7 @@ import * as React from 'react'
 import styled from '@emotion/styled'
 
 interface Props {
-  className: string
+  className?: string
 }
 const Footer = (props: Props) => (
   <Root className={props.className}>

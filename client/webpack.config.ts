@@ -15,6 +15,11 @@ const config: webpack.Configuration = {
         redirect: false,
         changeOrigin: true,
         target: `http://localhost:4000`,
+      },
+      '/api': {
+        redirect: false,
+        changeOrigin: true,
+        target: `http://localhost:4000`,
       }
 
     }
