@@ -19,6 +19,7 @@ import Header from "./Header/Header"
 import Login from "./Auth/Login"
 import styled from "@emotion/styled"
 import Footer from "./Footer";
+import InitializeSession from "./Auth/InitializeSession";
 
 
 const App = () => (
@@ -33,6 +34,7 @@ const App = () => (
             routeProps: RouteComponentProps<{ eventId: string }>
           ) => <EditEvent eventId={routeProps.match.params.eventId} />}
         />
+        <Route path="/init-session/:hash" component={InitializeSession} />
         <Route path="/login" component={Login} />
         <Route path="/" component={Calendar} />
         <Redirect to="/" />

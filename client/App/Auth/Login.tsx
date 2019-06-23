@@ -4,7 +4,10 @@ import styled from "@emotion/styled"
 const sendLogin = (email: string) => {
   return fetch("/api/login", {
     method: "post",
-    body: JSON.stringify({email})
+    body: JSON.stringify({email}),
+    headers:{
+      'Content-Type': 'application/json'
+    }
   })
 }
 
@@ -21,37 +24,48 @@ const Login = () => {
       setError(false)
       setLoading(true)
       sendLogin(email)
-        .then(() => {
-          setSuccess(true)
+        .then((res) => {
+          if (res.status === 200) {
+            setSuccess(true)
+          } else {
+            setError(true)
+          }
         })
         .catch(() => {
           setError(true)
         })
     }}>
       {
-        success ? (
-          <>
-            <p>Invitation was sent to your email: {email}</p>
-            <p>Please check your email and click on the link provided in the invitation</p>
-          </>
+        error ? (
+          <p>
+            Could not find a user with the mentioned email. Please sign up first.
+          </p>
         ) : (
-          <>
-            <label htmlFor="email">Please enter your email to log in</label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={e => {
-                setEmail(e.target.value)
-              }}
-              disabled={loading || success}
-            />
-            <Button
-              disabled={!isValid || success}
-            >
-              Login
-            </Button>
-          </>
+          success ? (
+            <>
+              <p>Invitation was sent to your email: {email}</p>
+              <p>Please check your email and click on the link provided in the invitation</p>
+            </>
+          ) : (
+            <>
+              <label htmlFor="email">Please enter your email to log in</label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={e => {
+                  setEmail(e.target.value)
+                }}
+                disabled={loading || success}
+              />
+              <Button
+                disabled={!isValid || success}
+              >
+                Login
+              </Button>
+            </>
+          )
+
         )
       }
     </Root>

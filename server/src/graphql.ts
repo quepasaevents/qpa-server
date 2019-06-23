@@ -8,12 +8,14 @@ import {Connection} from "typeorm"
 import {PostOffice} from "./post_office"
 import {Session} from "./Auth/Session.entity"
 import {Context} from "./@types/graphql-utils"
+import SessionManager from "./Auth/SessionManager"
 
 interface Dependencies {
   typeormConnection: Connection
   sendEmail: PostOffice
   domain?: string
   customContext?: Context
+  sessionManager: SessionManager
 }
 
 const resolvers = {
@@ -26,6 +28,7 @@ export const createServer = async (dependencies: Dependencies) => {
   const authResolvers = new AuthResolvers({
     sendEmail: dependencies.sendEmail,
     emailTargetDomain: dependencies.domain,
+    sessionManager: dependencies.sessionManager
   })
 
   const typeDefs = importSchema(__dirname + '/../../schema.graphql')

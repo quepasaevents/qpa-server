@@ -6,6 +6,7 @@ import {PostOffice} from '../post_office'
 import {Session, SessionInvite} from "./Session.entity"
 
 export class SessionAlreadyValidatedError extends Error {}
+export class InvitationNotFoundError extends Error {}
 
 const generateHash = () => randomstring({
   length: 48,
@@ -75,7 +76,7 @@ export default class SessionManager {
       relations: ['user']
     })
     if (!sessionInvite) {
-      throw new Error(`Could not find invite with hash ${inviteHash}`)
+      throw new InvitationNotFoundError(`Could not find invite with hash ${inviteHash}`)
     }
     if (sessionInvite.timeValidated) {
       throw new SessionAlreadyValidatedError()
@@ -87,8 +88,8 @@ export default class SessionManager {
     session.hash = await generateUniqueSessionHash()
     await session.save()
 
-    sessionInvite.timeValidated = new Date()
-    await sessionInvite.save()
+    // sessionInvite.timeValidated = new Date()
+    // await sessionInvite.save()
 
     return session
   }

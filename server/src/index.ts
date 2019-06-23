@@ -4,19 +4,29 @@ import {createConnection} from "typeorm"
 import { sendEmail} from "./post_office"
 import * as config from './config'
 import express from 'express'
-import {loginHandler} from "./Auth/authHttpHandler"
+import authHttpHandlers from "./Auth/authHttpHandlers"
+import SessionManager from "./Auth/SessionManager"
 
 const start = async () => {
+  const sessionManager = new SessionManager({
+    sendEmail: sendEmail,
+    emailTargetDomain: config.domain
+  })
+
   console.log(`Starting with db: ${typeormConfig.database} and config:\n ${JSON.stringify(typeormConfig,null,'\t')}`)
   const server = await createServer({
     typeormConnection: await createConnection(typeormConfig),
     sendEmail,
-    domain: config.domain
-
+    domain: config.domain,
+    sessionManager
   })
 
+  const authHandlers = authHttpHandlers(sessionManager)
+
   const app = express()
-  app.post('/api/login', loginHandler)
+  app.use(express.json())
+  app.post('/api/login', authHandlers.loginHandler)
+  app.post('/api/init-session', authHandlers.initializeSessionHandler)
   server.applyMiddleware({ app })
 
   app.listen({port: 4000}, () => {

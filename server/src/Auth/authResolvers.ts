@@ -7,16 +7,14 @@ import {Context} from "../@types/graphql-utils"
 interface Dependencies {
   sendEmail: PostOffice
   emailTargetDomain?: string
+  sessionManager: SessionManager
 }
 export default class AuthResolvers {
   sessionManager: SessionManager
   sendEmail: PostOffice
 
   constructor(deps: Dependencies) {
-    this.sessionManager = new SessionManager({
-      sendEmail: deps.sendEmail,
-      emailTargetDomain: deps.emailTargetDomain
-    })
+    this.sessionManager = deps.sessionManager
     this.sendEmail = deps.sendEmail
   }
 
