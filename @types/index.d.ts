@@ -27,6 +27,7 @@ declare namespace GQL {
     event: ICalendarEvent | null;
     events: Array<ICalendarEvent | null> | null;
     occurrences: Array<IEventOccurrence | null> | null;
+    occurrence: IEventOccurrence | null;
   }
 
   interface IEventOnQueryArguments {
@@ -41,12 +42,17 @@ declare namespace GQL {
     filter: IOccurrencesQueryFilter;
   }
 
+  interface IOccurrenceOnQueryArguments {
+    id: string;
+  }
+
   interface IUser {
     __typename: 'User';
     name: string;
     username: string;
     email: string;
     id: string;
+    events: Array<ICalendarEvent | null>;
   }
 
   interface ICalendarEvent {
@@ -58,6 +64,7 @@ declare namespace GQL {
     status: any;
     location: ILocation;
     occurrences: Array<IEventOccurrence | null> | null;
+    meta: IEventMeta | null;
   }
 
   interface IEventInformation {
@@ -87,10 +94,13 @@ declare namespace GQL {
     id: string;
     event: ICalendarEvent;
     start: string;
-    utcStart: string;
     end: string;
-    utcEnd: string;
     timeZone: string;
+  }
+
+  interface IEventMeta {
+    __typename: 'EventMeta';
+    tags: Array<string | null>;
   }
 
   interface IEventsQueryFilter {
@@ -170,7 +180,7 @@ declare namespace GQL {
     time: IEventTimeInput;
     info: Array<IEventInformationInput | null>;
     location: IEventLocationInput;
-    meta: IEventMetaInput | null;
+    meta: IEventMetaInput;
     status: string;
   }
 
@@ -193,13 +203,13 @@ declare namespace GQL {
   }
 
   interface IEventMetaInput {
-    tags: Array<string>;
+    tags: Array<string | null>;
   }
 
   interface IUpdateEventInput {
     id: string;
     time?: IEventTimeInput | null;
-    info?: Array<IEventInformationInput | null> | null;
+    info?: Array<IEventInformationInput> | null;
     location?: IEventLocationInput | null;
     meta?: IEventMetaInput | null;
     status?: string | null;

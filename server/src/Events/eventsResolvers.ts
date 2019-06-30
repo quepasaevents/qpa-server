@@ -28,6 +28,13 @@ const resolvers: ResolverMap = {
         where: `during && tstzrange('${from}', '${to}')`,
         take: req.filter.limit
       })
+    },
+    occurrence: async (_, req: GQL.IOccurrenceOnQueryArguments) => {
+      const occ = EventOccurrence.findOne(req.id)
+      if (!occ) {
+        throw new Error(`No occurrence found for id ${req.id}`)
+      }
+      return occ
     }
   },
 

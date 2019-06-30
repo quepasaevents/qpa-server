@@ -172,4 +172,5 @@ type Query {
     event(id: ID!): CalendarEvent
     events(filter: EventsQueryFilter!): [CalendarEvent]
     occurrences(filter: OccurrencesQueryFilter!): [EventOccurrence]
+    occurrence(id: ID!): EventOccurrence
 }

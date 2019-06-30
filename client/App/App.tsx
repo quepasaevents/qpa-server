@@ -15,6 +15,7 @@ import Footer from "./Footer"
 import InitializeSession from "./Auth/InitializeSession"
 import Signup from "./Auth/Signup"
 import Signout from "./Auth/Signout"
+import OccurrenceDetails from "./Occurrence/OccurrenceDetails"
 
 
 const App = () => (
@@ -29,6 +30,7 @@ const App = () => (
             routeProps: RouteComponentProps<{ eventId: string }>
           ) => <EditEvent eventId={routeProps.match.params.eventId} />}
         />
+        <Route path="/o/:sanitizedEventName/:occurrenceId" component={OccurrenceDetails}/>
         <Route path="/init-session/:hash" component={InitializeSession} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />
