@@ -1,25 +1,20 @@
 import * as React from "react"
 import {
-  BrowserRouter as Router,
   Redirect,
   Route,
   Switch,
-  Link
 } from "react-router-dom"
 import Calendar from "../Calendar/Calendar"
-import { ApolloProvider } from "react-apollo"
-import { ApolloClient } from "apollo-client"
-import { HttpLink } from "apollo-link-http"
-import { IdGetterObj, InMemoryCache } from "apollo-cache-inmemory"
 import CreateEvent from "../Event/CreateEvent"
 import EditEvent from "../Event/EditEvent"
 import { RouteComponentProps } from "react-router"
-import { AppContextProvider, AppContext } from "./Context/AppContext"
 import Header from "./Header/Header"
 import Login from "./Auth/Login"
 import styled from "@emotion/styled"
-import Footer from "./Footer";
-import InitializeSession from "./Auth/InitializeSession";
+import Footer from "./Footer"
+import InitializeSession from "./Auth/InitializeSession"
+import Signup from "./Auth/Signup"
+import Signout from "./Auth/Signout"
 
 
 const App = () => (
@@ -36,6 +31,8 @@ const App = () => (
         />
         <Route path="/init-session/:hash" component={InitializeSession} />
         <Route path="/login" component={Login} />
+        <Route path="/signup" component={Signup} />
+        <Route path="/logout" component={Signout} />
         <Route path="/" component={Calendar} />
         <Redirect to="/" />
       </Switch>

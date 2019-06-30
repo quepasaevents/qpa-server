@@ -57,7 +57,7 @@ export default class SessionManager {
         await this.sendEmail({
           to: user.email,
           from: `signin@${this.emailTargetDomain}`,
-          text: `Follow this link to start a session: https://${this.emailTargetDomain}/login/${invite.hash}`,
+          text: `Follow this link to start a session: https://${this.emailTargetDomain}/init-session/${invite.hash}`,
           subject: 'Invitation for session'
         })
         resolve(invite)

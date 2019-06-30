@@ -15,7 +15,10 @@ const Header = (props: Props) => (
         <Title />
         <LinksSection>
           {me ? (
-            <StyledLink to="/create">Create event</StyledLink>
+            <>
+              <StyledLink to="/create">Create event</StyledLink>
+              <StyledLink to="/logout">Log out</StyledLink>
+            </>
           ) : (
             <>
               <StyledLink to="/login">Log In</StyledLink>

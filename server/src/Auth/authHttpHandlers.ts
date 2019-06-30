@@ -1,7 +1,7 @@
 import {User} from "./User.entity"
 import SessionManager, {InvitationNotFoundError, SessionAlreadyValidatedError} from "./SessionManager"
-import {Request} from "express-serve-static-core"
-import {Session} from "./Session.entity";
+import {Request, Response} from "express-serve-static-core"
+import {Session, SessionInvite} from "./Session.entity"
 
 const authHttpHandlers = (sessionManager: SessionManager) => ({
   loginHandler: async function (req: Request, res) {
@@ -48,6 +48,42 @@ const authHttpHandlers = (sessionManager: SessionManager) => ({
     res.setHeader('set-cookie', `authentication=${session.hash};Path=/;HttpOnly`)
 
     res.send('alright')
+  },
+
+  signupHandler: async (req: Request, res: Response) => {
+    const { name, email } = req.body
+    if (!(name && email)) {
+      res.status(400)
+      res.send('must provide email and name')
+      return
+    }
+    const existingUser = await User.findOne({email})
+    if (existingUser) {
+      res.status(409)
+      res.send('email taken')
+      return
+    }
+
+    const user = new User()
+    user.email = email
+    user.name = name
+    user.save()
+
+    const invitataion = sessionManager.inviteUser(user)
+
+  },
+
+  signoutHandler: async (req: Request, res: Response) => {
+    const hash = req.header('cookie').match(/.*authentication=(\w+)/)[1]
+    res.clearCookie('authentication')
+    const session = await Session.findOne({hash})
+    session.isValid = false
+    await session.save()
+
+    res.status(200)
+    res.send('You have been signed out successfully')
+    return res
+
   }
 })
 

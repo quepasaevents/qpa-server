@@ -49,6 +49,7 @@ export default class AuthResolvers {
       newUser.name = args.input.name
       newUser.email = args.input.email
       newUser.username = args.input.username
+
       await newUser.save()
 
       if (!newUser.id) {

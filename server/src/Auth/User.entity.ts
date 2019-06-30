@@ -19,7 +19,7 @@ export class User extends BaseEntity {
   @Column()
   username: string
 
-  @Column()
+  @Column({ unique: true })
   email: string
 
   @OneToMany(type => Event, event => event.owner)

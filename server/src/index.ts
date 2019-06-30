@@ -27,6 +27,7 @@ const start = async () => {
   app.use(express.json())
   app.post('/api/login', authHandlers.loginHandler)
   app.post('/api/init-session', authHandlers.initializeSessionHandler)
+  app.get('/api/signout', authHandlers.signoutHandler)
   server.applyMiddleware({ app })
 
   app.listen({port: 4000}, () => {
