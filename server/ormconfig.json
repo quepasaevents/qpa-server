@@ -1,8 +1,9 @@
 {
   "type": "postgres",
   "host": "localhost",
-  "port":  5432,
-  "database": "qpa-dev",
+  "database": "qpa",
+  "username": "qpa",
+  "password": "qpa",
   "entities": ["src/**/*.entity.ts"],
   "migrations": ["migrations/*.ts"],
   "cli": {
