@@ -21,7 +21,7 @@ const InitializeSession = (props: Props) => {
       setResponseCode(res.status)
       setLoading(false)
       if (res.status === 200) {
-        // props.history.replace("/my-events")
+        props.history.replace("/my-events")
       }
     })
   })
@@ -32,7 +32,7 @@ const InitializeSession = (props: Props) => {
       {loading
         ? "Loading..."
         : responseCode === 200
-        ? "You will be redirected  now"
+        ? "You will be redirected now"
         : "Validation failed. Please try to log in again."}
     </Root>
   )

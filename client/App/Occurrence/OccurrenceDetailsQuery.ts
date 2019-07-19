@@ -7,7 +7,6 @@ const query = gql`
         id
         start
         end
-        timeZone
         event {
           id
           owner {
@@ -29,7 +28,6 @@ export interface OccurrenceDetailsData {
     id: string
     start: string
     end: string
-    timeZone: string
     event: {
       owner: {
         id: string

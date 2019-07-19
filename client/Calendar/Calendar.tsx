@@ -22,29 +22,32 @@ const endOfThisMonth = (
 )()
 
 
-const Calendar = (props: Props) => (
-  <OccurrencesQuery
-    variables={{
-      filter: {
-        from: beginningOfThisMonth,
-        to: endOfThisMonth
-      }
-    }}
-  >
-    {({data, error, loading}) => {
-      if (loading) {
-        return "I am a Spinner"
-      }
-      if (error) {
-        return error.message
-      }
+const Calendar = (props: Props) => {
+  return (
+    <OccurrencesQuery
+      variables={{
+        filter: {
+          from: "2019-06-01",
+          to: "2019-06-30"
+        }
+      }}
+    >
+      {({data, error, loading}) => {
+        if (loading) {
+          return "I am a Spinner"
+        }
+        if (error) {
+          return error.message
+        }
 
-      if (!data.occurrences.length) {
-        return <p>No occurrences</p>
-      }
-      return <List occurrences={data.occurrences}/>
-    }}
-  </OccurrencesQuery>
-)
+        if (!data.occurrences.length) {
+          return <p>No occurrences</p>
+        }
+        return <List occurrences={data.occurrences}/>
+      }}
+    </OccurrencesQuery>
+  )
+
+}
 
 export default Calendar

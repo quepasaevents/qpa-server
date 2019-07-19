@@ -54,7 +54,6 @@ type EventOccurrence {
     event: CalendarEvent!
     start: String!
     end: String!
-    timeZone: String!
 }
 
 type Location {

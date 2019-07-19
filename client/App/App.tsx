@@ -1,9 +1,5 @@
 import * as React from "react"
-import {
-  Redirect,
-  Route,
-  Switch,
-} from "react-router-dom"
+import { Redirect, Route, Switch } from "react-router-dom"
 import Calendar from "../Calendar/Calendar"
 import CreateEvent from "../Event/CreateEvent"
 import EditEvent from "../Event/EditEvent"
@@ -16,21 +12,35 @@ import InitializeSession from "./Auth/InitializeSession"
 import Signup from "./Auth/Signup"
 import Signout from "./Auth/Signout"
 import OccurrenceDetails from "./Occurrence/OccurrenceDetails"
-
+import { Global, css } from "@emotion/core"
 
 const App = () => (
   <Root>
+    <Global
+      styles={css`
+        body {
+          margin: 0;
+          height: 100vh;
+        }
+        #app {
+          height: 100%;
+        }
+      `}
+    />
     <StyledHeader />
     <Content>
       <Switch>
         <Route path="/create" component={CreateEvent} />
         <Route
           path="/event/:eventId/edit"
-          render={(
-            routeProps: RouteComponentProps<{ eventId: string }>
-          ) => <EditEvent eventId={routeProps.match.params.eventId} />}
+          render={(routeProps: RouteComponentProps<{ eventId: string }>) => (
+            <EditEvent eventId={routeProps.match.params.eventId} />
+          )}
         />
-        <Route path="/o/:sanitizedEventName/:occurrenceId" component={OccurrenceDetails}/>
+        <Route
+          path="/o/:sanitizedEventName/:occurrenceId"
+          component={OccurrenceDetails}
+        />
         <Route path="/init-session/:hash" component={InitializeSession} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />
@@ -59,9 +69,9 @@ const Content = styled.div`
 `
 
 const StyledFooter = styled(Footer)`
-  grid-row: footer
+  grid-row: footer;
 `
 const StyledHeader = styled(Header)`
-  grid-row: header
+  grid-row: header;
 `
 export default App

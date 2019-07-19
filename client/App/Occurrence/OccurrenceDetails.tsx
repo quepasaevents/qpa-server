@@ -17,6 +17,9 @@ const OccurrenceDetails = (props: Props) => {
         if (loading) {
           return <p>loading...</p>
         }
+        if (error) {
+          return <p>{error.message}</p>
+        }
         return (
           <div>
             { data.occurrence.event.info[0].title}

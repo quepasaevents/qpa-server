@@ -1,6 +1,9 @@
 import * as webpack from 'webpack'
 import * as path from "path"
 import * as HtmlWebpackPlugin from 'html-webpack-plugin'
+import * as express from 'express'
+import * as WebpackDevServer from "webpack-dev-server"
+import {httpSSRHandler} from "./SSR/handler"
 
 const config: webpack.Configuration = {
   entry: './App/index.tsx',
@@ -10,6 +13,10 @@ const config: webpack.Configuration = {
   devServer: {
     historyApiFallback: true,
     hot: true,
+    before: (app: express.Application, server: WebpackDevServer) => {
+      //todo: improve the regex
+      app.get(/^((?!\.\w+).)*$/, httpSSRHandler)
+    },
     proxy: {
       '/graphql': {
         redirect: false,

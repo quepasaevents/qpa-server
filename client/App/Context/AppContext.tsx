@@ -9,13 +9,15 @@ const { Provider, Consumer } = React.createContext<IAppContext>({ me: null })
 
 const AppContextProvider = props => (
   <MeQuery>
-    {({ data, loading, error }) => (
-      <Provider value={data}>
-        {
-          props.children
-        }
-      </Provider>
-    )}
+    {({ data, loading, error }) => {
+      return (
+        <Provider value={data}>
+          {
+            props.children
+          }
+        </Provider>
+      )
+    }}
   </MeQuery>
 )
 

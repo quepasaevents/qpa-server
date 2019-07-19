@@ -2,13 +2,13 @@ import * as React from "react"
 import { OccurrenceData } from "../../Event/OccurrencesQuery"
 import { AppContext } from "../../App/Context/AppContext"
 import { Link } from 'react-router-dom'
+import styled from '@emotion/styled'
 
 interface Props {
   occurrence: OccurrenceData
 }
 
 const sanitizeEventName = (name: string) => {
-  encodeURIComponent
   return encodeURIComponent(name.trim().toLocaleLowerCase()
     .replace(/\s+/g,'-'))
 
@@ -29,7 +29,7 @@ const ListItem = (props: Props) => {
           </Link>
           {
             me && me.events.find(myEvent => myEvent.id ===  event.id) ? (
-              <Link to={`/event/${event.id}/edit`}>Edit</Link>
+              <EditLink to={`/event/${event.id}/edit`}>Edit</EditLink>
             ) : null
           }
         </div>
@@ -37,5 +37,10 @@ const ListItem = (props: Props) => {
     </AppContext>
   )
 }
+
+const EditLink = styled(Link)`
+  margin-left: 8px;
+  font-size: 0.6em;
+`
 
 export default ListItem

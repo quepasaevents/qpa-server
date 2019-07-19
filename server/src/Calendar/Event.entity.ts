@@ -159,7 +159,4 @@ export class EventOccurrence extends BaseEntity {
   @Column()
   end: string
 
-  @Column({nullable: true})
-  timeZone: string
-
 }

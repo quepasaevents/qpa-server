@@ -12,16 +12,15 @@ const Signup = () => {
     <form
       onSubmit={(e: FormEvent) => {
         e.preventDefault()
-        const data = new FormData(e.target as HTMLFormElement)
-
+        const form = e.target as any
         fetch("/api/signup", {
           method: "post",
           headers: {
             "content-type": "application/json"
           },
           body: JSON.stringify({
-            name: data.get("name"),
-            email: data.get("email")
+            name: form.name.value,
+            email: form.email.value
           })
         }).then((res) => {
           if (res.status === 200) {

@@ -16,6 +16,7 @@
   ],
   "scripts": {
     "codegen": "gql2ts ./schema.graphql -o ./@types/graphql.d.ts",
+    "ssr": "(cd client; yarn ssr)",
     "server": "(cd server; yarn start)",
     "client": "(cd client; yarn start)"
   },
