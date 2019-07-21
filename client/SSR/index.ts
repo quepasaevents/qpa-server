@@ -1,4 +1,3 @@
-import * as React from 'react'
 import * as express from 'express'
 import { httpSSRHandler } from './handler'
 
