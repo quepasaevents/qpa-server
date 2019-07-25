@@ -6,6 +6,7 @@ import gql from "graphql-tag"
 import {PostOffice, sendEmail} from "../../post_office"
 import {User} from "../User.entity"
 import {Session, SessionInvite} from "../Session.entity"
+import SessionManager from "../SessionManager";
 
 jest.setTimeout(10000)
 
@@ -32,6 +33,7 @@ describe('Authentication', () => {
     await testyUser.save()
     const server = await createServer({
       typeormConnection: connection,
+      sessionManager: {} as SessionManager,
       sendEmail: jest.fn(() => Promise.resolve(true)) as PostOffice,
       domain: 'example.com',
       customContext: {

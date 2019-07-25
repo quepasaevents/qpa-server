@@ -1,0 +1,23 @@
+{
+  "apps" : [{
+    "name"        : "client",
+    "script"      : "./client/SSR/index.ts",
+    "watch"       : true,
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "env_production" : {
+      "NODE_ENV": "production"
+    }
+  },{
+    "name"       : "api",
+    "exp_backoff_restart_delay": 2000,
+    "script"     : "./server/lib/src/index.js",
+    "env": {
+      "NODE_ENV": "production"
+    },
+    "env_production" : {
+      "NODE_ENV": "development"
+    }
+  }]
+}

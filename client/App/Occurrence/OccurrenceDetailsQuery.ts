@@ -33,11 +33,11 @@ export interface OccurrenceDetailsData {
         id: string
         name: string
       }
-      info: {
+      info: Array<{
         description
         language
         title
-      }
+      }>
     }
   }
 }
