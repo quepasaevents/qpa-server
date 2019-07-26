@@ -5,7 +5,7 @@
     "build": "tsc --version && tsc",
     "start": "nodemon --exec ts-node --files src/index.ts",
     "test": "jest --runInBand",
-    "prod-server": "DB_USERNAME=qpa DB_PASSWORD=qpa POSTGRES_DB=qpa forever start -v -c ts-node ./src/index.ts)"
+    "prod-server": "DB_USERNAME=qpa DB_PASSWORD=qpa POSTGRES_DB=qpa forever start -v -c ts-node ./src/index.ts"
   },
   "main": "lib/index.js",
   "dependencies": {
