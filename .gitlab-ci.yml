@@ -1,4 +1,4 @@
-image: devillex/docker-firebase:latest
+image: ubuntu:18.04
 
 cache:
   paths:
@@ -10,7 +10,8 @@ deploy_staging:
   only:
     - master
   script:
-    - yarn
+    - apt-get update
+    - apt-get install -y node docker
     - (cd server; yarn build)
     - (cd client; yarn build)
     - docker build -t registry.gitlab.com/amiiit/gcf-auth:$CI_COMMIT_SHA .
