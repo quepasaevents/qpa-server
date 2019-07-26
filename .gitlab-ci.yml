@@ -3,7 +3,6 @@ image: devillex/docker-firebase:latest
 cache:
   paths:
     - node_modules/
-    - functions/node_modules/
 
 deploy_staging:
   stage: deploy
@@ -11,8 +10,7 @@ deploy_staging:
   only:
     - master
   script:
-    - make configure-functions-staging
     - yarn
-    - (cd functions; yarn; yarn lint; yarn build)
-    - (yarn global add typescript)
-    - (cd webapp; yarn; yarn build)
+    - (cd server; yarn build)
+    - (cd client; yarn build)
+    - docker build -t registry.gitlab.com/amiiit/gcf-auth:$CI_COMMIT_SHA .

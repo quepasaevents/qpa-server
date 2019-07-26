@@ -1,5 +1,5 @@
 import { createServer } from "./graphql"
-import typeormConfig from '../ormconfig'
+import typeormConfig from './ormconfig'
 import {createConnection} from "typeorm"
 import { sendEmail} from "./post_office"
 import * as config from './config'

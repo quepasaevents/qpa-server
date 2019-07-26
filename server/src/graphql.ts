@@ -31,7 +31,7 @@ export const createServer = async (dependencies: Dependencies) => {
     sessionManager: dependencies.sessionManager
   })
 
-  const typeDefs = importSchema(__dirname + '/../../schema.graphql')
+  const typeDefs = importSchema(__dirname + '/schema.graphql')
 
   const { Query: EventQueryResolvers, Mutation: EventResolversMutation,...eventResolvers} = EventsResolvers
   const { Query: UserQueryResolvers, Mutation: UserMutationResolvers, ...userResolvers} = UserResolvers
