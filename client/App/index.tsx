@@ -2,10 +2,9 @@ import * as React from "react"
 import * as ReactDOM from "react-dom"
 import App from "./App"
 import Providers from "./Providers"
-import css from "@emotion/css"
 
 const container = document.getElementById("app")
-ReactDOM.hydrate(
+ReactDOM.render(
   <Providers>
     <App />
   </Providers>,
