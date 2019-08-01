@@ -12,6 +12,7 @@ deploy_staging:
   script:
     - apt-get update
     - apt-get install -y nodejs docker
+    - curl -o- -L https://yarnpkg.com/install.sh | bash
     - (cd server; yarn build)
     - docker build -t eu.gcr.io/qpa-staging-237606/qpa:$CI_COMMIT_TAG .
     - docker push eu.gcr.io/qpa-staging-237606/qpa:$CI_COMMIT_TAG
