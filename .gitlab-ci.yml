@@ -9,7 +9,8 @@ cache:
 
 deploy_staging:
   stage: deploy
-  environment: staging
+  environment:
+    name: staging
   only:
     - tags
   script:
