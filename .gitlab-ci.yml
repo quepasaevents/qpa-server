@@ -1,4 +1,7 @@
-image: circleci/node:lts
+image: docker:latest
+
+services:
+  - docker:dind
 
 cache:
   paths:
