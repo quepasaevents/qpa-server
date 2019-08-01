@@ -1,8 +1,8 @@
-import { testConfig } from "../../../ormconfig"
 import { createConnection } from "typeorm"
 import { User } from "../../Auth/User.entity"
 import { Event, EventInformation, EventOccurrence } from "../Event.entity"
 import { DateTime } from "luxon"
+import testConfig from "../../__tests__/testORMConfig";
 
 const toUTC = (isoTime: string, ianaTZ: string) => {
   const parsed = DateTime.fromISO(isoTime, { zone: ianaTZ })

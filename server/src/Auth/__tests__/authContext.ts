@@ -1,12 +1,12 @@
 import {createTestClient} from 'apollo-server-testing'
 import {createServer} from "../../graphql"
 import {Connection, createConnection} from "typeorm"
-import {testConfig} from "../../ormconfig"
 import gql from "graphql-tag"
 import {PostOffice, sendEmail} from "../../post_office"
 import {User} from "../User.entity"
 import {Session, SessionInvite} from "../Session.entity"
 import SessionManager from "../SessionManager"
+import testConfig from "../../__tests__/testORMConfig"
 
 jest.setTimeout(10000)
 

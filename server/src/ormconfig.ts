@@ -1,6 +1,6 @@
-import {ConnectionOptions} from 'typeorm'
+import {PostgresConnectionOptions} from "typeorm/driver/postgres/PostgresConnectionOptions"
 
-const config: ConnectionOptions = {
+const config: PostgresConnectionOptions = {
   type: 'postgres',
   host: process.env.POSTGRES_HOST || 'localhost',
   port: Number(process.env.POSTGRES_PORT || 5432),
@@ -8,15 +8,13 @@ const config: ConnectionOptions = {
   username: process.env.DB_USER || null,
   password: process.env.DB_PASSWORD || null,
   entities: ["src/**/*.entity.ts"],
+  migrations: ["migrations/*.js"],
   logging: true,
   synchronize: true,
-  logger: 'debug'
+  logger: 'debug',
+  cli: {
+    migrationsDir: "migrations"
+  }
 }
 
-export const testConfig: ConnectionOptions = {
-  ...config,
-  database: 'qpa-test',
-  dropSchema: true
-}
-
-export default config
+export = config

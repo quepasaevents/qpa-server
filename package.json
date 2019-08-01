@@ -18,6 +18,7 @@
     "codegen": "gql2ts ./schema.graphql -o ./@types/graphql.d.ts",
     "ssr": "(cd client; yarn ssr)",
     "server": "(cd server; yarn start)",
+    "server-build": "(rm -r ./server/lib; cd server; yarn build)",
     "client": "(cd client; yarn start)",
     "prod-server": "(cd server; yarn prod-server)"
   },

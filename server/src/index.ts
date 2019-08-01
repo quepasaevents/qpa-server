@@ -14,8 +14,12 @@ const start = async () => {
   })
 
   console.log(`Starting with db: ${typeormConfig.database} and config:\n ${JSON.stringify(typeormConfig,null,'\t')}`)
+  const connection = await createConnection(typeormConfig)
+  console.log('Will look for migrations and run them')
+  await connection.runMigrations()
+  console.log('No more migrations to run')
   const server = await createServer({
-    typeormConnection: await createConnection(typeormConfig),
+    typeormConnection: connection,
     sendEmail,
     domain: config.domain,
     sessionManager

@@ -15,7 +15,8 @@
   },
   "compileOnSave": true,
   "include": [
-    "src"
+    "src",
+    "migrations"
   ],
   "files": [
     "../@types/index.d.ts", "../node_modules/@types/node/ts3.2/index.d.ts"

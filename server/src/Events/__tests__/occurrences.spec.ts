@@ -2,8 +2,8 @@ import {User} from "../../Auth/User.entity"
 import {Session} from "../../Auth/Session.entity"
 import {Event, EventInformation, toUTC} from "../../Calendar/Event.entity"
 import {Frequency, RRule} from 'rrule'
-import {testConfig} from "../../../ormconfig"
 import {Connection, createConnection} from "typeorm"
+import testConfig from "../../__tests__/testORMConfig";
 
 let connection: Connection = null
 

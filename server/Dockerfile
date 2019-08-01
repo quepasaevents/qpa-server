@@ -15,15 +15,10 @@ RUN apt-get install -y nginx
 
 # application
 RUN mkdir /opt/server
-RUN mkdir /opt/client
 
-COPY ./server/lib ./opt/server
-COPY ./server/package.json /opt/server
+COPY ./lib ./opt/server
+COPY ./package.json /opt/server
 
-COPY ./client/dist ./opt/client
-COPY ./client/package.json ./opt/client
-
-RUN (cd /opt/client; npm install)
 RUN (cd /opt/server; npm install)
 
 WORKDIR /opt

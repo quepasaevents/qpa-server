@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 import eventResolvers from '../eventsResolvers'
-import {testConfig} from "../../../ormconfig"
 import {User} from "../../Auth/User.entity"
 import { createConnection } from "typeorm"
+import testConfig from "../../__tests__/testORMConfig"
 
 const mutation = gql`
     mutation {
