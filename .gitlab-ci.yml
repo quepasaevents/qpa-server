@@ -13,5 +13,5 @@ deploy_staging:
     - curl -o- -L https://yarnpkg.com/install.sh | bash
     - yarn global add typescript
     - (cd server; yarn; yarn build)
-    - docker build -t eu.gcr.io/qpa-staging-237606/qpa:$CI_COMMIT_TAG .
+    - (cd server; docker build -t eu.gcr.io/qpa-staging-237606/qpa:$CI_COMMIT_TAG .)
     - docker push eu.gcr.io/qpa-staging-237606/qpa:$CI_COMMIT_TAG
