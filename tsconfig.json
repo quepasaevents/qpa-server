@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "typeRoots": ["src/@types", "node_modules/@types"],
+    "lib": ["es2015", "esnext.asynciterable"],
+    "module": "commonjs",
+    "noImplicitReturns": true,
+    "outDir": "lib",
+    "sourceMap": true,
+    "target": "es6",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "types": ["node", "jest"]
+  },
+  "compileOnSave": true,
+  "include": [
+    "migrations"
+  ],
+  "files": [
+    "@types/index.d.ts"
+  ],
+  "exclude": [
+    "**/*.spec.ts", "node_modules", "__tests__"
+  ]}
+
+
+rm ./Auth/authHttpHandlers.js ./Auth/authResolvers.js ./Auth/Session.entity.js ./Auth/SessionManager.js ./Auth/User.entity.js ./Auth/userResolvers.js ./Calendar/Event.entity.js ./config.js ./Events/eventsResolvers.js ./graphql.js ./index.js ./ormconfig.js ./post_office.js

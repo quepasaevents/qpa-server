@@ -1,7 +1,5 @@
-dist/
+yarn-error.log
+config.ts
 node_modules
 .idea
-yarn-error.log
-.DS_Store
-lib
-.env
+lib/

@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
         - name: master
-          image: eu.gcr.io/qpa-staging-237606/qpa:0.0.4
+          image: eu.gcr.io/qpa-staging-237606/qpa:0.0.6
           resources:
             requests:
               cpu: 100m
@@ -56,6 +56,8 @@ spec:
           ports:
             - containerPort: 4000
           env:
+            - name: DOMAIN
+              value: "alpha.quapasaalpujarra.com"
             - name: DB_USER
               value: "qpa"
             - name: POSTGRES_DB
@@ -64,3 +66,9 @@ spec:
               value: "1zrBGfidoPzf"
             - name: POSTGRES_HOST
               value: "10.79.112.3"
+            - name: MAILGUN_KEY
+              value: "key-59ad615180cb44e4ff5fd41236a9694a"
+            - name: EMAIL_DOMAIN
+              value: "staging.quepasaalpujarra.com"
+
+
