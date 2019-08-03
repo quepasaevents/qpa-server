@@ -7,7 +7,7 @@ const config: PostgresConnectionOptions = {
   database: process.env.POSTGRES_DB || 'qpa-dev',
   username: process.env.DB_USER || null,
   password: process.env.DB_PASSWORD || null,
-  entities: ["src/**/*.entity.ts"],
+  entities: ["**/*.entity.ts", "**/*.entity.js"],
   migrations: ["migrations/*.js"],
   logging: true,
   synchronize: true,

@@ -15,7 +15,8 @@
   },
   "compileOnSave": true,
   "include": [
-    "migrations"
+    "migrations",
+    "src"
   ],
   "files": [
     "@types/index.d.ts"
@@ -23,6 +24,3 @@
   "exclude": [
     "**/*.spec.ts", "node_modules", "__tests__"
   ]}
-
-
-rm ./Auth/authHttpHandlers.js ./Auth/authResolvers.js ./Auth/Session.entity.js ./Auth/SessionManager.js ./Auth/User.entity.js ./Auth/userResolvers.js ./Calendar/Event.entity.js ./config.js ./Events/eventsResolvers.js ./graphql.js ./index.js ./ormconfig.js ./post_office.js

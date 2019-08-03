@@ -23,11 +23,12 @@ RUN apt-get install -y nginx
 # application
 RUN mkdir /opt/server
 
-COPY ./lib ./opt/server
-COPY ./package.json /opt/server
+COPY ./dist ./opt/api
+COPY ./package.json /opt/api
+COPY ./yarn.lock /opt/api
 
-RUN (cd /opt/server; yarn)
+RUN (cd /opt/api; yarn)
 
-WORKDIR /opt
+WORKDIR /opt/api
 
-CMD node ./server/index.js
+CMD node index.js

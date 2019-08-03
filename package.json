@@ -2,7 +2,9 @@
   "name": "functions",
   "scripts": {
     "lint": "tslint --project tsconfig.json",
-    "build": "tsc --version && tsc ; cp ./src/schema.graphql ./lib/",
+    "build": "tsc --version && tsc; mkdir dist; cp ./src/schema.graphql ./dist; cp -r lib/src/ dist/; cp -r lib/migrations dist/",
+    "release": "docker build -t eu.gcr.io/qpa-staging-237606/qpa:$TAG .; docker push eu.gcr.io/qpa-staging-237606/qpa:$TAG",
+    "deploy": "kubectl apply -f k8s/cluster.yaml",
     "start": "nodemon --exec ts-node --files src/index.ts",
     "test": "jest --runInBand",
     "prod-server": "DB_USER=qpa DB_PASSWORD=qpa POSTGRES_DB=qpa forever start -v -c ts-node ./src/index.ts"
@@ -22,7 +24,8 @@
     "luxon": "^1.17.2",
     "mailgun-js": "^0.22.0",
     "node-pre-gyp": "^0.13.0",
-    "randomstring": "^1.1.5",
+    "pg": "^7.12.0",
+    "random-string": "^0.2.0",
     "rrule": "^2.6.2",
     "typeorm": "^0.2.18",
     "typescript": "^3.5.3",

@@ -3,3 +3,4 @@ config.ts
 node_modules
 .idea
 lib/
+dist

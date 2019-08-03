@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
         - name: master
-          image: eu.gcr.io/qpa-staging-237606/qpa:0.0.6
+          image: eu.gcr.io/qpa-staging-237606/qpa:0.0.13
           resources:
             requests:
               cpu: 100m
