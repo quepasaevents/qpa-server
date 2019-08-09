@@ -8,13 +8,14 @@ const authHttpHandlers = (sessionManager: SessionManager) => ({
     const body = req.body
     console.log('body', body)
 
-    const user = await User.findOne({ email: req.body.email })
+    const user = await User.findOne({email: req.body.email})
 
     if (user) {
       sessionManager.inviteUser(user)
       res.statusCode = '200'
       res.send('invitation sent')
-    } if (!user) {
+    }
+    if (!user) {
       res.statusCode = '404'
       res.send('email not found')
     }
@@ -51,14 +52,14 @@ const authHttpHandlers = (sessionManager: SessionManager) => ({
   },
 
   signupHandler: async (req: Request, res: Response) => {
-    const { name, email } = req.body
+    const {name, email} = req.body
     if (!(name && email)) {
       res.status(400)
       res.send('must provide email and name')
       return
     }
-    const existingUser = await User.findOne({email})
-    if (existingUser) {
+    const existingEmailUser = await User.findOne({email})
+    if (existingEmailUser) {
       res.status(409)
       res.send('email taken')
       return
@@ -67,9 +68,20 @@ const authHttpHandlers = (sessionManager: SessionManager) => ({
     const user = new User()
     user.email = email
     user.name = name
-    user.save()
 
-    const invitataion = sessionManager.inviteUser(user)
+    try {
+      await user.save()
+      res.status(200)
+      res.send('User created. An invite will be sent soon per email')
+    } catch (e) {
+      res.status(500)
+      console.log(`Error saving user ${e.message}`)
+      res.send('Error saving user')
+      return
+    }
+
+    const invitation = await sessionManager.inviteUser(user)
+    console.log(`Invitation sent. userId: ${invitation.user.id}`)
 
   },
 

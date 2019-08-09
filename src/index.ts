@@ -29,6 +29,7 @@ const start = async () => {
 
   const app = express()
   app.use(express.json())
+  app.post('/api/signup', authHandlers.signupHandler)
   app.post('/api/login', authHandlers.loginHandler)
   app.post('/api/init-session', authHandlers.initializeSessionHandler)
   app.get('/api/signout', authHandlers.signoutHandler)
