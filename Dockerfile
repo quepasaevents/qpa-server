@@ -17,9 +17,6 @@ RUN apt-get install -y nodejs
 # postgres
 RUN apt-get install -y postgresql-10
 
-# nginx
-RUN apt-get install -y nginx
-
 # application
 RUN mkdir /opt/server
 

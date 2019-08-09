@@ -3,7 +3,7 @@
   "scripts": {
     "lint": "tslint --project tsconfig.json",
     "build": "tsc --version && tsc; mkdir dist; cp ./src/schema.graphql ./dist; cp -r lib/src/ dist/; cp -r lib/migrations dist/",
-    "release": "docker build -t eu.gcr.io/qpa-staging-237606/qpa:$TAG .; docker push eu.gcr.io/qpa-staging-237606/qpa:$TAG",
+    "release": "docker build -t eu.gcr.io/qpa-staging-237606/api:$TAG .; docker push eu.gcr.io/qpa-staging-237606/api:$TAG",
     "deploy": "kubectl apply -f k8s/cluster.yaml",
     "start": "nodemon --exec ts-node --files src/index.ts",
     "test": "jest --runInBand",
