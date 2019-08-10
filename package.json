@@ -1,6 +1,8 @@
 {
   "name": "functions",
   "scripts": {
+    "codegen": "gql2ts ./src/schema.graphql -o ./@types/graphql.d.ts",
+    "migration-gen": "ts-node ./node_modules/.bin/typeorm migration:generate --config src/ormconfig.ts --name default",
     "lint": "tslint --project tsconfig.json",
     "build": "tsc --version && tsc; mkdir dist; cp ./src/schema.graphql ./dist; cp -r lib/src/ dist/; cp -r lib/migrations dist/",
     "release": "docker build -t eu.gcr.io/qpa-staging-237606/api:$TAG .; docker push eu.gcr.io/qpa-staging-237606/api:$TAG",
@@ -37,8 +39,10 @@
     "@types/luxon": "^1.15.2",
     "@types/node": "^10.12.30",
     "@types/uuid": "^3.4.5",
+    "gql2ts": "^1.10.1",
     "jest": "^24.8.0",
     "nodemon": "^1.19.1",
+    "prettier": "^1.18.2",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",

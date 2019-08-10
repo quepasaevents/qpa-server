@@ -5,6 +5,10 @@ import {
 } from "../Calendar/Event.entity"
 import { Context, ResolverMap } from "../@types/graphql-utils"
 import {GQL} from "../../@types"
+import EventsService from './EventsService'
+
+const eventsService = new EventsService()
+
 const resolvers: ResolverMap = {
   Query: {
     event: (_, req: GQL.IEventOnQueryArguments) => {

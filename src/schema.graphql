@@ -4,9 +4,15 @@ type User {
     email: String!
     id: ID!
     events: [CalendarEvent]!
+    roles: [UserRole!]
 }
 
+type UserRole {
+    user: User!
+    type: RoleType!
+}
 scalar Date
+scalar RoleType
 
 type UserSession {
     hash: String!
@@ -145,6 +151,16 @@ input UpdateEventInput {
     status: String
 }
 
+input GrantRoleInput {
+    userId: ID!
+    roleType: RoleType!
+}
+
+input RevokeRoleInput {
+    userId: ID!
+    roleType: RoleType!
+}
+
 type Error {
     path: String!
     message: String!
@@ -152,9 +168,11 @@ type Error {
 
 type Mutation {
     # Auth
-    signup(input: SignupInput): [Error]
-    signin(input: SigninInput): UserSession!
-    requestInvite(input: RequestInviteInput): Boolean!
+    signup(input: SignupInput!): [Error]
+    signin(input: SigninInput!): UserSession!
+    requestInvite(input: RequestInviteInput!): Boolean!
+    grantRole(input: GrantRoleInput!): User!
+    revokeRole(input: GrantRoleInput!): User!
 
     # Event
     createEvent(input: CreateEventInput!): CalendarEvent

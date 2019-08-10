@@ -7,6 +7,7 @@ import {
 } from "typeorm"
 import { Event } from "../Calendar/Event.entity"
 import {Session, SessionInvite} from "./Session.entity"
+import UserRole from "./UserRole.entity";
 
 @Entity("app_user")
 export class User extends BaseEntity {
@@ -33,4 +34,7 @@ export class User extends BaseEntity {
 
   @CreateDateColumn()
   created: Date
+
+  @OneToMany(() => UserRole, role => role.user)
+  roles: Promise<UserRole[]>
 }

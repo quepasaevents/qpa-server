@@ -10,7 +10,7 @@ import SessionManager from "./Auth/SessionManager"
 const start = async () => {
   const sessionManager = new SessionManager({
     sendEmail: sendEmail,
-    emailTargetDomain: config.domain
+    emailTargetDomain: config.mailgun.domain
   })
 
   console.log(`Starting with db: ${typeormConfig.database} and config:\n ${JSON.stringify(typeormConfig,null,'\t')}`)

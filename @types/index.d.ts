@@ -1,6 +1,7 @@
 export type EventStatus = 'confirmed' | 'canceled'
 // tslint:disable
 // graphql typescript definitions
+
 declare namespace GQL {
   interface IGraphQLResponseRoot {
     data?: IQuery | IMutation;
@@ -48,10 +49,11 @@ declare namespace GQL {
   interface IUser {
     __typename: 'User';
     name: string;
-    username: string;
+    username: string | null;
     email: string;
     id: string;
     events: Array<ICalendarEvent | null>;
+    roles: Array<IUserRole> | null;
   }
 
   interface ICalendarEvent {
@@ -101,6 +103,12 @@ declare namespace GQL {
     tags: Array<string | null>;
   }
 
+  interface IUserRole {
+    __typename: 'UserRole';
+    user: IUser;
+    type: any;
+  }
+
   interface IEventsQueryFilter {
     owner?: string | null;
     limit?: number | null;
@@ -122,20 +130,30 @@ declare namespace GQL {
     signup: Array<IError | null> | null;
     signin: IUserSession;
     requestInvite: boolean;
+    grantRole: IUser;
+    revokeRole: IUser;
     createEvent: ICalendarEvent | null;
     updateEvent: ICalendarEvent | null;
   }
 
   interface ISignupOnMutationArguments {
-    input?: ISignupInput | null;
+    input: ISignupInput;
   }
 
   interface ISigninOnMutationArguments {
-    input?: ISigninInput | null;
+    input: ISigninInput;
   }
 
   interface IRequestInviteOnMutationArguments {
-    input?: IRequestInviteInput | null;
+    input: IRequestInviteInput;
+  }
+
+  interface IGrantRoleOnMutationArguments {
+    input: IGrantRoleInput;
+  }
+
+  interface IRevokeRoleOnMutationArguments {
+    input: IGrantRoleInput;
   }
 
   interface ICreateEventOnMutationArguments {
@@ -172,6 +190,11 @@ declare namespace GQL {
 
   interface IRequestInviteInput {
     email: string;
+  }
+
+  interface IGrantRoleInput {
+    userId: string;
+    roleType: any;
   }
 
   interface ICreateEventInput {
@@ -212,5 +235,11 @@ declare namespace GQL {
     meta?: IEventMetaInput | null;
     status?: string | null;
   }
+
+  interface IRevokeRoleInput {
+    userId: string;
+    roleType: any;
+  }
 }
+
 // tslint:enable

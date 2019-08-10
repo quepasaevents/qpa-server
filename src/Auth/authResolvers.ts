@@ -3,6 +3,7 @@ import { User } from "./User.entity"
 import { PostOffice } from "../post_office"
 import {GQL} from "../../@types"
 import {Context} from "../@types/graphql-utils"
+import UserRole from "./UserRole.entity";
 
 interface Dependencies {
   sendEmail: PostOffice
@@ -88,7 +89,59 @@ export default class AuthResolvers {
       }
 
       return true
-    }
+    },
+    grantRole: async (_, args: GQL.IGrantRoleOnMutationArguments, context: Context, info): Promise<User> => {
+      const thisUser = await context.user
+      if (!thisUser) {
+        throw new Error("User not logged in")
+      }
+      const thisUserRoles: UserRole[] = await thisUser.roles
+      const isAdmin = !!thisUserRoles.find(role => role.type === 'admin')
+      if (!isAdmin) {
+        throw new Error("User not logged in")
+      }
+      const { userId, roleType } = args.input
+
+      const grantee = await User.findOne(userId)
+      if (!grantee) {
+        throw new Error("Grantee user not found")
+      }
+      const existingRoles = await grantee.roles
+      const hasRole = existingRoles.find(role => role.type === roleType)
+
+      if (!hasRole) {
+        const newRole = new UserRole()
+        newRole.type = roleType
+        newRole.user = Promise.resolve(grantee)
+        await newRole.save()
+      }
+
+      return grantee
+    },
+    revokeRole: async (_, args: GQL.IRevokeRoleOnMutationArguments, context: Context, info) => {
+      const thisUser = await context.user
+      if (!thisUser) {
+        throw new Error("User not logged in")
+      }
+      const thisUserRoles: UserRole[] = await thisUser.roles
+      const isAdmin = !!thisUserRoles.find(role => role.type === 'admin')
+      if (!isAdmin) {
+        throw new Error("User not logged in")
+      }
+
+      const { userId, roleType } = args.input
+      const revokee = await User.findOne(userId)
+      if (!revokee) {
+        throw new Error("Revokee user not found")
+      }
+      const existingRoles = await revokee.roles
+      const hasRole = !!existingRoles.find(role => role.type === roleType)
+      if (hasRole) {
+        revokee.roles = Promise.resolve(existingRoles.filter(role => role.type !== roleType))
+        await revokee.save()
+      }
+      return revokee
+    },
   }
 
   UserSession = {
