@@ -10,7 +10,7 @@ const config: PostgresConnectionOptions = {
   entities: ["**/*.entity.ts", "**/*.entity.js"],
   migrations: ["migrations/*.js"],
   logging: true,
-  synchronize: true,
+  synchronize: process.env.NODE_ENV === 'development',
   logger: 'debug',
   cli: {
     migrationsDir: "migrations"
