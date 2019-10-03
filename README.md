@@ -1,6 +1,12 @@
 # Communal events calendar
 This is a weekend project of mine and you can use this code at your own risk as there is no guarantee that this code is secure or complying to any privacy rules.
 
+## DB Extensions:
+
+```
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+```
+
 ## Motivation
 I often visit a region that I like very much. I like it because it's very rural and has a lot of beautiful nature.
 There's also a lot going on, and tons of great people but there is nowhere to get information about all the events

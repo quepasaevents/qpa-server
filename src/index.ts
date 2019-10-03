@@ -6,6 +6,7 @@ import * as config from './config'
 import express from 'express'
 import authHttpHandlers from "./Auth/authHttpHandlers"
 import SessionManager from "./Auth/SessionManager"
+import morgan from 'morgan'
 
 const start = async () => {
   const sessionManager = new SessionManager({
@@ -29,6 +30,8 @@ const start = async () => {
 
   const app = express()
   app.use(express.json())
+  app.use(morgan('combined'))
+  
   app.post('/api/signup', authHandlers.signupHandler)
   app.post('/api/login', authHandlers.loginHandler)
   app.post('/api/init-session', authHandlers.initializeSessionHandler)
