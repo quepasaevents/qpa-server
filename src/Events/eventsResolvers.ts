@@ -6,6 +6,7 @@ import {
 import { Context, ResolverMap } from "../@types/graphql-utils"
 import {GQL} from "../../@types"
 import EventsService from './EventsService'
+import { equals } from 'ramda'
 
 const eventsService = new EventsService()
 
@@ -111,7 +112,8 @@ const resolvers: ResolverMap = {
       if (Object.keys(fields).length === 0) {
         throw Error("No change detected")
       }
-      if (input.time) {
+      if (input.time && !equals(input.time, event.time)) {
+        console.log(`Event time changed from: ${JSON.stringify(event.time)} to: ${JSON.stringify(input.time)}`)
         event.time = input.time
         const existingOccurrences = await event.occurrences
         await Promise.all(existingOccurrences.map(occ => EventOccurrence.delete(occ.id)))

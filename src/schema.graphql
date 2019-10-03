@@ -117,6 +117,7 @@ input EventTimeInput {
     start: Timestamp!
     end: Timestamp!
     recurrence: String
+    exceptions: String
 }
 
 input EventInformationInput {
