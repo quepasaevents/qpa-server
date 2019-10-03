@@ -16,7 +16,8 @@ deploy_staging:
     - (cd server; docker build -t eu.gcr.io/qpa-staging-237606/qpa:$CI_COMMIT_TAG .)
     - docker push eu.gcr.io/qpa-staging-237606/qpa:$CI_COMMIT_TAG
 build:
-  image: gcr.io/kaniko-project/executor:debug
+#  image: gcr.io/kaniko-project/executor:debug
+  image: docker:latest
   script:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - echo "Hello and welcome"
