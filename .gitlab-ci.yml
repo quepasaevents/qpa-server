@@ -18,6 +18,8 @@ deploy_staging:
 build:
   image: gcr.io/kaniko-project/executor:debug
   script:
+    — echo "$GCE_SERVICE_ACCOUNT_KEY" > gce_key.json
+    - docker login -u _json_key --password-stdin https://eu.gcr.io < gce_key.json
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - cat /kaniko/.docker/config.json
     - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --no-push
