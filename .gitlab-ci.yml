@@ -8,7 +8,7 @@ build:
   script:
     - curl -o- -L https://yarnpkg.com/install.sh | bash
     - yarn global add typescript
-    - (yarn; yarn build)
+    - yarn; yarn build
 
 release:
   stage: release
@@ -16,5 +16,7 @@ release:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
+    - ls -l
+    - ls dist
     - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --no-push
 
