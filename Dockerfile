@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM node:10.16
 
 RUN apt-get update
 RUN apt-get install -y curl
@@ -10,12 +10,6 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources
 
 RUN apt-get update
 RUN apt-get install -y nodejs yarn
-
-# Node
-RUN apt-get install -y nodejs
-
-# postgres
-RUN apt-get install -y postgresql-10
 
 # application
 RUN mkdir /opt/server
