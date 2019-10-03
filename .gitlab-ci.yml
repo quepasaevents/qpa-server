@@ -13,7 +13,6 @@ build:
     - curl -o- -L https://yarnpkg.com/install.sh | bash
     - yarn global add typescript
     - yarn; yarn build
-    - ls -l
 
 release:
   stage: release
@@ -23,5 +22,7 @@ release:
   script:
     - ls -l
     - ls dist
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --no-push
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination eu.gcr.io/qpa-staging-237606/api:$CI_COMMIT_TAG --no-push
+  only:
+    - tags
 
