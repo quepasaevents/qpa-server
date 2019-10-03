@@ -2,6 +2,7 @@ stages:
   - build
   - release
 
+
 build:
   image: node:10.16
   script:
