@@ -1,8 +1,16 @@
 stages:
   - build
+  - release
 
 build:
-  stage: build
+  image: node:10.16
+  script:
+    - curl -o- -L https://yarnpkg.com/install.sh | bash
+    - yarn global add typescript
+    - (cd server; yarn; yarn build)
+
+release:
+  stage: release
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
