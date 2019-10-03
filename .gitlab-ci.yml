@@ -4,10 +4,6 @@ stages:
 build:
   stage: build
   image: gcr.io/kaniko-project/executor:debug
-  cache:
-    paths:
-      - node_modules/
-
   script:
     — echo "$GCE_SERVICE_ACCOUNT_KEY" > gce_key.json
     - docker login -u _json_key --password-stdin https://eu.gcr.io < gce_key.json
