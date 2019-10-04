@@ -15,7 +15,7 @@ build:
     - yarn; yarn build
     - ls dist/
     - cd dist; find .
-
+    - cd lib; find .
 
 release:
   stage: release
