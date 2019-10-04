@@ -4,7 +4,7 @@
     "codegen": "gql2ts ./src/schema.graphql -o ./@types/graphql.d.ts",
     "migration-gen": "ts-node ./node_modules/.bin/typeorm migration:generate --config src/ormconfig.ts --name default",
     "lint": "tslint --project tsconfig.json",
-    "build": "tsc --version && tsc; mkdir dist; cp ./src/schema.graphql ./dist; cp -r lib/src/ dist/; cp -r lib/migrations dist/",
+    "build": "tsc --version && tsc; (cd lib; find .); mkdir dist; cp ./src/schema.graphql ./dist; cp -r lib/src/ dist/; cp -r lib/migrations dist/",
     "release": "docker build -t eu.gcr.io/qpa-staging-237606/api:$TAG .; docker push eu.gcr.io/qpa-staging-237606/api:$TAG",
     "deploy": "kubectl apply -f k8s/cluster.yaml",
     "start": "NODE_ENV=development nodemon --exec ts-node --files src/index.ts",
