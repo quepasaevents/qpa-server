@@ -13,6 +13,9 @@ build:
     - curl -o- -L https://yarnpkg.com/install.sh | bash
     - yarn global add typescript
     - yarn; yarn build
+    - ls dist/
+    - cd dist; find .
+
 
 release:
   stage: release
