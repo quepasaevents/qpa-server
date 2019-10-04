@@ -13,8 +13,8 @@ build:
     - curl -o- -L https://yarnpkg.com/install.sh | bash
     - yarn; yarn build
     - ls dist/
-    - cd dist; find .
-    - cd lib; find .
+    - (cd dist; find .)
+    - (cd lib; find .)
 
 release:
   stage: release
