@@ -21,7 +21,11 @@ release:
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
+    GOOGLE_APPLICATION_CREDENTIALS: /secret.json
   script:
+    - cp $GCS_SERVICE_ACCOUNT_KEY > /secret.json
+    - cat /secret.json
+    - ls dist/
     - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination eu.gcr.io/qpa-staging-237606/api:$CI_COMMIT_TAG
   only:
     - tags
