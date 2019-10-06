@@ -59,12 +59,17 @@ declare namespace GQL {
     __typename: 'CalendarEvent';
     id: string;
     owner: IUser;
-    info: Array<IEventInformation | null>;
+    infos: Array<IEventInformation | null>;
+    info: IEventInformation | null;
     time: IEventTime;
     status: any;
     location: ILocation;
     occurrences: Array<IEventOccurrence | null> | null;
     meta: IEventMeta | null;
+  }
+
+  interface IInfoOnCalendarEventArguments {
+    lang: string;
   }
 
   interface IEventInformation {
@@ -198,7 +203,7 @@ declare namespace GQL {
 
   interface ICreateEventInput {
     time: IEventTimeInput;
-    info: Array<IEventInformationInput | null>;
+    infos: Array<IEventInformationInput | null>;
     location: IEventLocationInput;
     meta: IEventMetaInput;
     status: string;
@@ -230,7 +235,7 @@ declare namespace GQL {
   interface IUpdateEventInput {
     id: string;
     time?: IEventTimeInput | null;
-    info?: Array<IEventInformationInput> | null;
+    infos?: Array<IEventInformationInput> | null;
     location?: IEventLocationInput | null;
     meta?: IEventMetaInput | null;
     status?: string | null;

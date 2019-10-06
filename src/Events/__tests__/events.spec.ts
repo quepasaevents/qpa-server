@@ -27,10 +27,11 @@ const createKiteflyingEvent = async () => {
 
   const event = new Event()
   event.owner = owner
-  event.info = {
+  event.infos = [{
+    language: "en",
     title: "Kite Flying Test Event",
     description: "Description for test event starting at 3pm"
-  }
+  }]
   event.time = {
     timeZone: "Europe/Madrid",
     start: "2019-10-10T13:00",
@@ -55,10 +56,11 @@ const createKinttingEvent = async () => {
 
   const event = new Event()
   event.owner = owner
-  event.info = {
+  event.infos = [{
+    language: "en",
     title: "Knitting Test Event",
     description: "Description for test event starting at 3pm"
-  }
+  }]
   event.time = {
     timeZone: "Europe/Madrid",
     start: "2019-10-10T14:00",

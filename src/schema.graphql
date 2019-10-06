@@ -43,7 +43,8 @@ input RequestInviteInput {
 type CalendarEvent {
     id: ID!
     owner: User!
-    info: [EventInformation]!
+    infos: [EventInformation]!
+    info(lang: String!): EventInformation
     time: EventTime!
     status: EventStatus!
     location: Location!
@@ -137,7 +138,7 @@ input EventMetaInput {
 
 input CreateEventInput {
     time: EventTimeInput!
-    info: [EventInformationInput]!
+    infos: [EventInformationInput]!
     location: EventLocationInput!
     meta: EventMetaInput!
     status: String!
@@ -146,7 +147,7 @@ input CreateEventInput {
 input UpdateEventInput {
     id: ID!
     time: EventTimeInput
-    info: [EventInformationInput!]
+    infos: [EventInformationInput!]
     location: EventLocationInput
     meta: EventMetaInput
     status: String

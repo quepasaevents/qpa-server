@@ -78,7 +78,7 @@ export class Event extends BaseEntity {
   @OneToMany(type => EventInformation, eventInfo => eventInfo.event, {
     cascade: true
   })
-  info: Promise<EventInformation[]>
+  infos: Promise<EventInformation[]>
 
   @Column(type => EventTime)
   time: EventTime
@@ -138,7 +138,7 @@ export class EventInformation {
   title: string
   @Column({nullable: true})
   description: string
-  @ManyToOne(type => Event, event => event.info)
+  @ManyToOne(type => Event, event => event.infos)
   event: Event
 }
 

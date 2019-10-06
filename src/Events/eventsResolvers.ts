@@ -4,7 +4,6 @@ import {
   EventOccurrence
 } from "../Calendar/Event.entity"
 import { Context, ResolverMap } from "../@types/graphql-utils"
-import {GQL} from "../../@types"
 import EventsService from './EventsService'
 import { equals } from 'ramda'
 
@@ -47,9 +46,13 @@ const resolvers: ResolverMap = {
     owner: async (event: Event) => {
       return event.owner
     },
-    info: async (event: Event) => {
-      return event.info
-    }
+    infos: async (event: Event) => {
+      return event.infos
+    },
+    info: async (event: Event, req: GQL.IInfoOnCalendarEventArguments) => {
+      const infos = await event.infos
+      return infos.find(info => info.language === req.lang)
+    },
   },
 
   EventOccurrence: {
@@ -72,8 +75,8 @@ const resolvers: ResolverMap = {
       }
       const event = new Event()
       event.owner = Promise.resolve(context.user)
-      event.info = Promise.resolve(
-        input.info.map(infoInput => {
+      event.infos = Promise.resolve(
+        input.infos.map(infoInput => {
           const eventInformation = new EventInformation()
           eventInformation.language = infoInput.language
           eventInformation.title = infoInput.title
@@ -119,9 +122,9 @@ const resolvers: ResolverMap = {
         await Promise.all(existingOccurrences.map(occ => EventOccurrence.delete(occ.id)))
         event.occurrences = Promise.resolve(event.getOccurrences())
       }
-      if (input.info) {
-        event.info = Promise.resolve(
-          input.info.map(inputInfo => {
+      if (input.infos) {
+        event.infos = Promise.resolve(
+          input.infos.map(inputInfo => {
             const newInfo = new EventInformation()
             Object.keys(inputInfo).forEach(inputInfoKey => {
               newInfo[inputInfoKey] = inputInfo[inputInfoKey]

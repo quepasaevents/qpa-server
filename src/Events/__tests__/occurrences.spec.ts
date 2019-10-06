@@ -32,7 +32,7 @@ describe('Occurrences', async () => {
     await session.save()
 
     const event = new Event()
-    event.owner = owner
+    event.owner = Promise.resolve(owner)
 
     const info = new EventInformation()
     info.language = "en"
@@ -40,12 +40,12 @@ describe('Occurrences', async () => {
     info.description = "Event happening every monday at 13:00"
     info.event = event
 
-    event.info = Promise.resolve([info])
+    event.infos = Promise.resolve([info])
 
     event.time = {
       timeZone: "Europe/Madrid",
-      start: new Date("2019-03-01T13:00Z"),
-      end: new Date("2019-03-01T14:00Z"),
+      start: "2019-03-01T13:00Z",
+      end: "2019-03-01T13:00Z",
       recurrence: new RRule({
         freq: Frequency.WEEKLY,
         interval: 1,

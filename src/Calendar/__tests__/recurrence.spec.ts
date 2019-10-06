@@ -66,7 +66,7 @@ describe("Recurring events", () => {
     info.title = "Weekly testing event"
     info.description = "This event takes place every monday at 2pm"
 
-    event.info = Promise.resolve([info])
+    event.infos = Promise.resolve([info])
     event.owner = owner
 
     // from 2019-03-04 to 2019-03-25 every monday
