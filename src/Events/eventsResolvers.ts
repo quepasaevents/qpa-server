@@ -156,11 +156,9 @@ const resolvers: ResolverMap = {
         throw Error("Only the owner can delete this event")
       }
 
-      const deleteResult = await Event.delete(id)
-      if (deleteResult.affected !== 1) {
-        throw new Error(`Error deleting event. Row affected: ${deleteResult.affected}`)
-      }
-
+      console.log('will try to remove event now', event.id)
+      const removeEventResult = await Event.remove(event)
+      console.log('removeEventResult', JSON.stringify(removeEventResult))
       return context.user
     }
   }

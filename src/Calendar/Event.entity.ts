@@ -138,7 +138,9 @@ export class EventInformation {
   title: string
   @Column({nullable: true})
   description: string
-  @ManyToOne(type => Event, event => event.infos)
+  @ManyToOne(type => Event, event => event.infos, {
+    onDelete: "CASCADE"
+  })
   event: Event
 }
 
@@ -147,7 +149,10 @@ export class EventOccurrence extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: number
 
-  @ManyToOne(type => Event, event => event.occurrences, { nullable: false })
+  @ManyToOne(type => Event, event => event.occurrences, {
+    nullable: false,
+    onDelete: "CASCADE"
+  })
   event: Promise<Event>
 
   @Column({type: "tstzrange", nullable: true})
