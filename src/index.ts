@@ -11,7 +11,8 @@ import morgan from 'morgan'
 const start = async () => {
   const sessionManager = new SessionManager({
     sendEmail: sendEmail,
-    emailTargetDomain: config.mailgun.domain
+    emailTargetDomain: config.domain,
+    emailSenderDomain: config.mailgun.domain
   })
 
   console.log(`Starting with db: ${typeormConfig.database} and config:\n ${JSON.stringify(typeormConfig,null,'\t')}`)
@@ -31,7 +32,7 @@ const start = async () => {
   const app = express()
   app.use(express.json())
   app.use(morgan('combined'))
-  
+
   app.post('/api/signup', authHandlers.signupHandler)
   app.post('/api/login', authHandlers.loginHandler)
   app.post('/api/init-session', authHandlers.initializeSessionHandler)

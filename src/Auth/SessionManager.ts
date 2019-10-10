@@ -36,15 +36,18 @@ const generateUniqueSessionHash = async () => {
 interface Dependencies {
   sendEmail: PostOffice
   emailTargetDomain: string
+  emailSenderDomain: string
 }
 
 export default class SessionManager {
   sendEmail: PostOffice
   emailTargetDomain: string
+  emailSenderDomain: string
 
   constructor(deps: Dependencies) {
     this.sendEmail = deps.sendEmail
     this.emailTargetDomain = deps.emailTargetDomain
+    this.emailSenderDomain = deps.emailSenderDomain
   }
   inviteUser = async (user: User): Promise<SessionInvite> => {
     const invite = new SessionInvite()
