@@ -6,6 +6,7 @@ import {
 import { Context, ResolverMap } from "../@types/graphql-utils"
 import EventsService from './EventsService'
 import { equals } from 'ramda'
+import { User } from "../Auth/User.entity";
 
 const eventsService = new EventsService()
 
@@ -149,18 +150,18 @@ const resolvers: ResolverMap = {
       _,
       id: string,
       context: Context,
-    ): Promise<Boolean> => {
+    ): Promise<User> => {
       const event = await Event.findOne(id)
       if ((await event.owner).id !== context.user.id) {
         throw Error("Only the owner can delete this event")
       }
 
       const deleteResult = await Event.delete(id)
-      if (deleteResult.affected === 1) {
-        return true
-      } else {
+      if (deleteResult.affected !== 1) {
         throw new Error(`Error deleting event. Row affected: ${deleteResult.affected}`)
       }
+
+      return context.user
     }
   }
 }

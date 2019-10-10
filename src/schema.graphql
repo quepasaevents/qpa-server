@@ -179,7 +179,7 @@ type Mutation {
     # Event
     createEvent(input: CreateEventInput!): CalendarEvent
     updateEvent(input: UpdateEventInput!): CalendarEvent
-    deleteEvent(id: ID!): Boolean
+    deleteEvent(id: ID!): User!
 }
 
 
