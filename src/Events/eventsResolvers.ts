@@ -144,6 +144,23 @@ const resolvers: ResolverMap = {
       }
       console.log(JSON.stringify(event,null,'\t'))
       return event.save()
+    },
+    deleteEvent: async (
+      _,
+      id: string,
+      context: Context,
+    ): Promise<Boolean> => {
+      const event = await Event.findOne(id)
+      if ((await event.owner).id !== context.user.id) {
+        throw Error("Only the owner can delete this event")
+      }
+
+      const deleteResult = await Event.delete(id)
+      if (deleteResult.affected === 1) {
+        return true
+      } else {
+        throw new Error(`Error deleting event. Row affected: ${deleteResult.affected}`)
+      }
     }
   }
 }
