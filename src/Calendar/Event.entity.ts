@@ -62,6 +62,7 @@ export class EventMeta {
   @Column({type: "varchar", array: true})
   tags: string[]
 }
+
 @Entity()
 export class Event extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")

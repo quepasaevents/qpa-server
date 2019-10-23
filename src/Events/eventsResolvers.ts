@@ -7,6 +7,7 @@ import { Context, ResolverMap } from "../@types/graphql-utils"
 import EventsService from './EventsService'
 import { equals } from 'ramda'
 import { User } from "../Auth/User.entity";
+import { hasAnyRole } from "../Auth/authUtils";
 
 const eventsService = new EventsService()
 
@@ -74,6 +75,11 @@ const resolvers: ResolverMap = {
       if (!context.user) {
         throw Error("not authenticated")
       }
+
+      if (!hasAnyRole(await context.user.roles, ['admin','embassador','organizer'])) {
+        throw Error("Cannot create event, please validate as organizer")
+      }
+
       const event = new Event()
       event.owner = Promise.resolve(context.user)
       event.infos = Promise.resolve(

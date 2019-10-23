@@ -1,6 +1,7 @@
 import { Context, ResolverMap } from "../@types/graphql-utils";
 import UserRole, { RoleType } from "./UserRole.entity";
 import { User } from "./User.entity";
+import { hasAnyRole } from "./authUtils";
 
 const SetUnsetRoleRequiresRoles: { [s: string]: RoleType[] } = {
   admin: ["admin"],
@@ -8,19 +9,6 @@ const SetUnsetRoleRequiresRoles: { [s: string]: RoleType[] } = {
   organizer: ["admin", "embassador"]
 };
 const SupportedRoles = Object.keys(SetUnsetRoleRequiresRoles);
-
-const hasAnyRole = (
-  requesterRoles: UserRole[],
-  requiredRoles: RoleType[]
-): boolean => {
-  if (!requesterRoles) {
-    return false;
-  }
-  const requesterRoleTypes = requesterRoles.map(role => role.type);
-  return requiredRoles.some(requiredRoleType =>
-    requesterRoleTypes.includes(requiredRoleType)
-  );
-};
 
 export default {
   Query: {
