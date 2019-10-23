@@ -23,10 +23,15 @@ declare namespace GQL {
   interface IQuery {
     __typename: 'Query';
     me: IUser | null;
+    user: IUser | null;
     event: ICalendarEvent | null;
     events: Array<ICalendarEvent | null> | null;
     occurrences: Array<IEventOccurrence | null> | null;
     occurrence: IEventOccurrence | null;
+  }
+
+  interface IUserOnQueryArguments {
+    id: string;
   }
 
   interface IEventOnQueryArguments {
@@ -138,6 +143,7 @@ declare namespace GQL {
     revokeRole: IUser;
     createEvent: ICalendarEvent | null;
     updateEvent: ICalendarEvent | null;
+    deleteEvent: IUser;
   }
 
   interface ISignupOnMutationArguments {
@@ -166,6 +172,10 @@ declare namespace GQL {
 
   interface IUpdateEventOnMutationArguments {
     input: IUpdateEventInput;
+  }
+
+  interface IDeleteEventOnMutationArguments {
+    id: string;
   }
 
   interface ISignupInput {

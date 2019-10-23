@@ -58,7 +58,6 @@ export const createServer = async (dependencies: Dependencies) => {
       },
       ...eventResolvers,
       ...userResolvers,
-
     },
   })
 

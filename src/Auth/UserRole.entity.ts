@@ -1,16 +1,22 @@
-import {BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm"
-import {User} from "./User.entity"
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn
+} from "typeorm";
+import { User } from "./User.entity";
 
-type RoleType = 'admin' | 'embassador' | 'organizer'
+export type RoleType = "admin" | "embassador" | "organizer";
 
 @Entity()
 export default class UserRole extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
-  id: string
+  id: string;
 
   @Column()
-  type: RoleType
+  type: RoleType;
 
   @ManyToOne(() => User, user => user.roles)
-  user: Promise<User>
+  user: Promise<User>;
 }

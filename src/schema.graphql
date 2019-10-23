@@ -186,6 +186,7 @@ type Mutation {
 type Query {
     # Auth
     me: User
+    user(id: ID!): User
 
     # Event
     event(id: ID!): CalendarEvent
