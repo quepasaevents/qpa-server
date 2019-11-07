@@ -1,6 +1,6 @@
 import {User} from "../../Auth/User.entity"
 import {Session} from "../../Auth/Session.entity"
-import {Event, EventInformation, toUTC} from "../../Calendar/Event.entity"
+import {Event, EventInformation} from "../../Calendar/Event.entity"
 import {Frequency, RRule} from 'rrule'
 import {Connection, createConnection} from "typeorm"
 import testConfig from "../../__tests__/testORMConfig";
@@ -49,12 +49,12 @@ describe('Occurrences', async () => {
       recurrence: new RRule({
         freq: Frequency.WEEKLY,
         interval: 1,
-        dtstart: new Date(toUTC(new Date("2019-03-01T13:00Z"), "Europe/Madrid"))
+        dtstart: new Date("2019-03-01T13:00Z+02:00")
       }).toString()
     }
     event.status = "Scheduled"
+    event.occurrences = Promise.resolve(event.getOccurrences())
 
-    event.updateOccurrences()
     await event.save()
   })
 })

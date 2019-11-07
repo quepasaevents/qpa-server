@@ -18,6 +18,7 @@ describe('Authentication', () => {
     connection = await createConnection({
       ...testConfig,
       logging: null
+
     })
   })
 
@@ -27,7 +28,8 @@ describe('Authentication', () => {
     const server = await createServer({
       typeormConnection: connection,
       sendEmail: sendEmailMock as PostOffice,
-      domain: 'example.com'
+      domain: 'example.com',
+      sessionManager: jest.fn(() => Promise.resolve(true)) as any
     })
     testClient = await createTestClient(server as any)
   })

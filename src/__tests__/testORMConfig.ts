@@ -4,7 +4,8 @@ import {ConnectionOptions} from "typeorm"
 export const testConfig: ConnectionOptions = {
   ...config,
   database: 'qpa-test',
-  dropSchema: true
+  dropSchema: true,
+  synchronize: true
 }
 
 export default testConfig

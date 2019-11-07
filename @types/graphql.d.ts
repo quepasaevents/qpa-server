@@ -70,7 +70,7 @@ declare namespace GQL {
     status: any;
     location: ILocation;
     occurrences: Array<IEventOccurrence | null> | null;
-    meta: IEventMeta | null;
+    tags: Array<IEventTag | null> | null;
   }
 
   interface IInfoOnCalendarEventArguments {
@@ -107,9 +107,17 @@ declare namespace GQL {
     end: string;
   }
 
-  interface IEventMeta {
-    __typename: 'EventMeta';
-    tags: Array<string | null>;
+  interface IEventTag {
+    __typename: 'EventTag';
+    ID: string;
+    name: string;
+    translations: Array<IEventTagTranslation>;
+  }
+
+  interface IEventTagTranslation {
+    __typename: 'EventTagTranslation';
+    language: string;
+    text: string;
   }
 
   interface IUserRole {
@@ -144,6 +152,8 @@ declare namespace GQL {
     createEvent: ICalendarEvent | null;
     updateEvent: ICalendarEvent | null;
     deleteEvent: IUser;
+    createEventTag: IEventTag | null;
+    modifyEventTag: IEventTag | null;
   }
 
   interface ISignupOnMutationArguments {
@@ -176,6 +186,14 @@ declare namespace GQL {
 
   interface IDeleteEventOnMutationArguments {
     id: string;
+  }
+
+  interface ICreateEventTagOnMutationArguments {
+    input: ICreateEventTagInput;
+  }
+
+  interface IModifyEventTagOnMutationArguments {
+    input: IModifyEventTagInput;
   }
 
   interface ISignupInput {
@@ -215,7 +233,7 @@ declare namespace GQL {
     time: IEventTimeInput;
     infos: Array<IEventInformationInput | null>;
     location: IEventLocationInput;
-    meta: IEventMetaInput;
+    tagNames: Array<string>;
     status: string;
   }
 
@@ -238,17 +256,42 @@ declare namespace GQL {
     name?: string | null;
   }
 
-  interface IEventMetaInput {
-    tags: Array<string | null>;
-  }
-
   interface IUpdateEventInput {
     id: string;
     time?: IEventTimeInput | null;
     infos?: Array<IEventInformationInput> | null;
     location?: IEventLocationInput | null;
-    meta?: IEventMetaInput | null;
+    tagNames: Array<string>;
     status?: string | null;
+  }
+
+  interface ICreateEventTagInput {
+    name: string;
+    translations: Array<ICreateModifyEventTagTranslationInput>;
+  }
+
+  interface ICreateModifyEventTagTranslationInput {
+    language: string;
+    text: string;
+  }
+
+  interface IModifyEventTagInput {
+    id: string;
+    name: string;
+    translations: Array<ICreateModifyEventTagTranslationInput>;
+  }
+
+  interface ITag {
+    __typename: 'Tag';
+    id: string;
+    name: string;
+    translations: Array<any>;
+  }
+
+  interface ITagTranslation {
+    __typename: 'TagTranslation';
+    language: string;
+    text: string;
   }
 
   interface IRevokeRoleInput {

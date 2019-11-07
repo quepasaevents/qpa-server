@@ -1,15 +1,14 @@
 import {
   Event,
   EventInformation,
-  EventOccurrence
+  EventOccurrence,
 } from "../Calendar/Event.entity"
 import { Context, ResolverMap } from "../@types/graphql-utils"
-import EventsService from './EventsService'
-import { equals } from 'ramda'
-import { User } from "../Auth/User.entity";
-import { hasAnyRole } from "../Auth/authUtils";
-
-const eventsService = new EventsService()
+import { getTags } from "./EventsService"
+import { equals } from "ramda"
+import { User } from "../Auth/User.entity"
+import { hasAnyRole } from "../Auth/authUtils"
+import { EventTag } from "../Calendar/EventTag.entity"
 
 const resolvers: ResolverMap = {
   Query: {
@@ -22,17 +21,14 @@ const resolvers: ResolverMap = {
         where:
           req.filter && req.filter.owner
             ? `"ownerId"='${req.filter.owner}'`
-            : null
+            : null,
       })
     },
-    occurrences: async (
-      _,
-      req: GQL.IOccurrencesOnQueryArguments,
-    ) => {
+    occurrences: async (_, req: GQL.IOccurrencesOnQueryArguments) => {
       const { from, to } = req.filter
       return EventOccurrence.find({
         where: `during && tstzrange('${from}', '${to}')`,
-        take: req.filter.limit
+        take: req.filter.limit,
       })
     },
     occurrence: async (_, req: GQL.IOccurrenceOnQueryArguments) => {
@@ -41,7 +37,7 @@ const resolvers: ResolverMap = {
         throw new Error(`No occurrence found for id ${req.id}`)
       }
       return occ
-    }
+    },
   },
 
   CalendarEvent: {
@@ -59,10 +55,10 @@ const resolvers: ResolverMap = {
 
   EventOccurrence: {
     start: (eOcc: EventOccurrence) => {
-      return eOcc.during.split(',')[0].substring(2, 21)
+      return eOcc.during.split(",")[0].substring(2, 21)
     },
     end: (eOcc: EventOccurrence) => {
-      return eOcc.during.split(',')[1].substring(2, 21)
+      return eOcc.during.split(",")[1].substring(2, 21)
     },
   },
 
@@ -70,13 +66,19 @@ const resolvers: ResolverMap = {
     createEvent: async (
       _,
       { input }: GQL.ICreateEventOnMutationArguments,
-      context: Context,
+      context: Context
     ) => {
       if (!context.user) {
         throw Error("not authenticated")
       }
 
-      if (!hasAnyRole(await context.user.roles, ['admin','embassador','organizer'])) {
+      if (
+        !hasAnyRole(await context.user.roles, [
+          "admin",
+          "embassador",
+          "organizer",
+        ])
+      ) {
         throw Error("Cannot create event, please validate as organizer")
       }
 
@@ -96,11 +98,12 @@ const resolvers: ResolverMap = {
         recurrence: input.time.recurrence,
         timeZone: input.time.timeZone,
         start: input.time.start,
-        end: input.time.end
+        end: input.time.end,
       }
-      event.meta = input.meta
+      if (input.tagNames) {
+        event.tags = getTags(input.tagNames)
+      }
       event.location = input.location
-
       event.occurrences = Promise.resolve(event.getOccurrences())
       await event.save()
       return event
@@ -108,9 +111,9 @@ const resolvers: ResolverMap = {
     updateEvent: async (
       _,
       { input }: GQL.IUpdateEventOnMutationArguments,
-      context: Context,
+      context: Context
     ) => {
-      const {id, ...fields} = input
+      const { id, ...fields } = input
 
       if (!context.user) {
         throw Error("not authenticated")
@@ -123,10 +126,16 @@ const resolvers: ResolverMap = {
         throw Error("No change detected")
       }
       if (input.time && !equals(input.time, event.time)) {
-        console.log(`Event time changed from: ${JSON.stringify(event.time)} to: ${JSON.stringify(input.time)}`)
+        console.log(
+          `Event time changed from: ${JSON.stringify(
+            event.time
+          )} to: ${JSON.stringify(input.time)}`
+        )
         event.time = input.time
         const existingOccurrences = await event.occurrences
-        await Promise.all(existingOccurrences.map(occ => EventOccurrence.delete(occ.id)))
+        await Promise.all(
+          existingOccurrences.map(occ => EventOccurrence.delete(occ.id))
+        )
         event.occurrences = Promise.resolve(event.getOccurrences())
       }
       if (input.infos) {
@@ -143,31 +152,27 @@ const resolvers: ResolverMap = {
       if (input.location) {
         event.location = input.location
       }
-      if (input.meta) {
-        event.meta = input.meta
+      if (input.tagNames) {
+        event.tags = getTags(input.tagNames)
       }
       if (input.location) {
         event.location = input.location
       }
-      console.log(JSON.stringify(event,null,'\t'))
+      console.log(JSON.stringify(event, null, "\t"))
       return event.save()
     },
-    deleteEvent: async (
-      _,
-      id: string,
-      context: Context,
-    ): Promise<User> => {
+    deleteEvent: async (_, id: string, context: Context): Promise<User> => {
       const event = await Event.findOne(id)
       if ((await event.owner).id !== context.user.id) {
         throw Error("Only the owner can delete this event")
       }
 
-      console.log('will try to remove event now', event.id)
+      console.log("will try to remove event now", event.id)
       const removeEventResult = await Event.remove(event)
-      console.log('removeEventResult', JSON.stringify(removeEventResult))
+      console.log("removeEventResult", JSON.stringify(removeEventResult))
       return context.user
-    }
-  }
+    },
+  },
 }
 
 export default resolvers

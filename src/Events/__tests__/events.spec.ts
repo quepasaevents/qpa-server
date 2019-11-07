@@ -11,6 +11,7 @@ import testConfig from "../../__tests__/testORMConfig"
 let testClient
 let connection: Connection = null
 let sendEmailMock
+let sessionManagerMock
 
 const createKiteflyingEvent = async () => {
   const owner = new User()
@@ -26,12 +27,12 @@ const createKiteflyingEvent = async () => {
   await session.save()
 
   const event = new Event()
-  event.owner = owner
-  event.infos = [{
+  event.owner = Promise.resolve(owner)
+  event.infos = Promise.resolve([{
     language: "en",
     title: "Kite Flying Test Event",
     description: "Description for test event starting at 3pm"
-  }]
+  } as EventInformation])
   event.time = {
     timeZone: "Europe/Madrid",
     start: "2019-10-10T13:00",
@@ -55,19 +56,20 @@ const createKinttingEvent = async () => {
   await session.save()
 
   const event = new Event()
-  event.owner = owner
-  event.infos = [{
+  event.owner = Promise.resolve(owner)
+  event.infos = Promise.resolve([{
     language: "en",
     title: "Knitting Test Event",
     description: "Description for test event starting at 3pm"
-  }]
+  } as EventInformation])
   event.time = {
     timeZone: "Europe/Madrid",
     start: "2019-10-10T14:00",
     end: "2019-10-10T15:00"
   }
   event.status = "Scheduled"
-  return await event.updateOccurrences().save()
+  event.occurrences = Promise.resolve(event.getOccurrences())
+  return await event.save()
 }
 
 describe("Events resolver", () => {
@@ -79,10 +81,12 @@ describe("Events resolver", () => {
 
   beforeEach(async () => {
     sendEmailMock = jest.fn(() => Promise.resolve(true))
+    sessionManagerMock = jest.fn(() => Promise.resolve(true))
 
     const server = await createServer({
       typeormConnection: connection,
-      sendEmail: sendEmailMock as PostOffice
+      sendEmail: sendEmailMock as PostOffice,
+      sessionManager: sessionManagerMock
     })
     return (testClient = await createTestClient(server as any))
   })
@@ -99,7 +103,8 @@ describe("Events resolver", () => {
         query {
           events(filter: { limit: 10 }) {
             id
-            info {
+            info(lang: "en") {
+              language
               title
               description
             }
@@ -127,7 +132,7 @@ describe("Events resolver", () => {
         query GetEvent($ownerId: ID!) {
           events(filter: { limit: 10, owner: $ownerId }) {
             id
-            info {
+            info(lang: "en") {
               title
               description
             }

@@ -1,0 +1,86 @@
+import { Context, ResolverMap } from "../@types/graphql-utils"
+import { EventTag, EventTagTranslation } from "./EventTag.entity"
+
+const adminOrThrow = async (context: Context) => {
+  const roles = await context.user?.roles
+  if (!roles?.find(role => role.type === "admin")) {
+    throw new Error("Only admin can create and modify tags")
+  }
+}
+const resolvers: ResolverMap = {
+  Mutation: {
+    createEventTag: async (
+      _,
+      req: GQL.ICreateEventTagOnMutationArguments,
+      context: Context,
+      info: any
+    ): Promise<EventTag> => {
+      await adminOrThrow(context)
+      const tag = new EventTag()
+      tag.name = req.input.name
+      tag.events = Promise.resolve([])
+
+      const translations: EventTagTranslation[] = req.input.translations.map(
+        translationInput => {
+          const translation = new EventTagTranslation()
+          translation.tag = Promise.resolve(tag)
+          translation.language = translationInput.language
+          translation.text = translationInput.text
+          return translation
+        }
+      )
+
+      tag.translations = Promise.resolve(translations)
+      return tag.save()
+    },
+    modifyEventTag: async (
+      _,
+      req: GQL.IModifyEventTagOnMutationArguments,
+      context: Context
+    ) => {
+      await adminOrThrow(context)
+      const tag = await EventTag.findOne(req.input.id)
+      const translations = await tag.translations
+      const langToExistingTranslation: {[lang: string]: EventTagTranslation} = {}
+      const langToInputTranslations: {[lang: string]: GQL.ICreateModifyEventTagTranslationInput} = {}
+
+      translations.forEach(existingTranslation => langToExistingTranslation[existingTranslation.language] = existingTranslation)
+      req.input.translations.forEach(translationInput => langToInputTranslations[translationInput.language] = translationInput)
+
+      const removedTranslationsPromises = Object.keys(langToExistingTranslation).map((existingLang) => {
+        if (!langToInputTranslations[existingLang]) {
+          return langToExistingTranslation[existingLang].remove()
+        }
+        return null
+      })
+      await Promise.all(removedTranslationsPromises.filter(Boolean))
+
+      const changedTranslationsPromises = Object.keys(langToExistingTranslation).map(existingLang => {
+        const existingTranslation = langToExistingTranslation[existingLang]
+        const matchingInput = langToInputTranslations[existingLang]
+        if (!(existingTranslation && matchingInput)) {
+          throw new Error("Coding error, existing translation and matching input must both exist")
+        }
+
+        if (existingTranslation.text !== matchingInput.text ) {
+          existingTranslation.text = matchingInput.text
+          return existingTranslation.save()
+        }
+        return null
+      })
+      await Promise.all(changedTranslationsPromises.filter(Boolean))
+
+      const newTranslationsPromises = Object.keys(langToInputTranslations).map(inputLang => {
+        if (!langToExistingTranslation[inputLang]) {
+          const newTranslation = new EventTagTranslation()
+          newTranslation.tag = Promise.resolve(tag)
+          newTranslation.language = inputLang
+          newTranslation.text = langToInputTranslations[inputLang].text
+          return newTranslation
+        }
+        return null
+      })
+      await Promise.all(newTranslationsPromises.filter(Boolean))
+    },
+  },
+}

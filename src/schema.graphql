@@ -7,12 +7,25 @@ type User {
     roles: [UserRole!]
 }
 
+type Tag {
+    id: ID!
+    name: String!
+    translations: [Translations!]!
+}
+
+type TagTranslation {
+    language: String!
+    text: String!
+}
+
 type UserRole {
     user: User!
     type: RoleType!
 }
+
 scalar Date
 scalar RoleType
+scalar Translations
 
 type UserSession {
     hash: String!
@@ -49,11 +62,18 @@ type CalendarEvent {
     status: EventStatus!
     location: Location!
     occurrences: [EventOccurrence]
-    meta: EventMeta
+    tags: [EventTag]
 }
 
-type EventMeta {
-    tags: [String]!
+type EventTag {
+    ID: ID!
+    name: String!
+    translations: [EventTagTranslation!]!
+}
+
+type EventTagTranslation {
+    language: String!
+    text: String!
 }
 
 type EventOccurrence {
@@ -132,15 +152,11 @@ input EventLocationInput {
     name: String
 }
 
-input EventMetaInput {
-    tags: [String]!
-}
-
 input CreateEventInput {
     time: EventTimeInput!
     infos: [EventInformationInput]!
     location: EventLocationInput!
-    meta: EventMetaInput!
+    tagNames: [String!]!
     status: String!
 }
 
@@ -149,7 +165,7 @@ input UpdateEventInput {
     time: EventTimeInput
     infos: [EventInformationInput!]
     location: EventLocationInput
-    meta: EventMetaInput
+    tagNames: [String!]!
     status: String
 }
 
@@ -168,6 +184,23 @@ type Error {
     message: String!
 }
 
+input CreateModifyEventTagTranslationInput {
+    language: String!
+    text: String!
+}
+
+input CreateEventTagInput {
+    name: String!
+    translations: [CreateModifyEventTagTranslationInput!]!
+}
+
+
+input ModifyEventTagInput {
+    id: ID!
+    name: String!
+    translations: [CreateModifyEventTagTranslationInput!]!
+}
+
 type Mutation {
     # Auth
     signup(input: SignupInput!): [Error]
@@ -180,6 +213,10 @@ type Mutation {
     createEvent(input: CreateEventInput!): CalendarEvent
     updateEvent(input: UpdateEventInput!): CalendarEvent
     deleteEvent(id: ID!): User!
+
+    # Tags
+    createEventTag(input: CreateEventTagInput!): EventTag
+    modifyEventTag(input: ModifyEventTagInput!): EventTag
 }
 
 

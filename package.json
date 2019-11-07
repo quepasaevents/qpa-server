@@ -32,8 +32,8 @@
     "ramda": "^0.26.1",
     "random-string": "^0.2.0",
     "rrule": "^2.6.2",
-    "typeorm": "^0.2.18",
-    "typescript": "^3.5.3",
+    "typeorm": "^0.2.20",
+    "typescript": "^3.7.2",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
@@ -47,8 +47,7 @@
     "prettier": "^1.18.2",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.3.0",
-    "tslint": "^5.18.0",
-    "typescript": "^3.5.3"
+    "tslint": "^5.18.0"
   },
   "jest": {
     "globalSetup": "./jest-setup.js",

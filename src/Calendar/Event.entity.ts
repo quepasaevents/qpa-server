@@ -9,16 +9,7 @@ import {
 import {User} from "../Auth/User.entity"
 import {DateTime} from "luxon"
 import {rrulestr} from "rrule"
-
-export const toUTC = (isoTime: string, ianaTZ: string): DateTime => {
-  const parsed = DateTime.fromISO(isoTime, {zone: ianaTZ})
-  if (parsed.invalidReason) {
-    throw new Error(
-      `${parsed.invalidReason}: ${isoTime} with time-zone: ${ianaTZ}`
-    )
-  }
-  return parsed
-}
+import { EventTag } from "./EventTag.entity";
 
 export const breakTime = (isoString: string) => {
   const tSplit = isoString.split('T')
@@ -58,11 +49,6 @@ export class EventTime {
   exceptions?: string
 }
 
-export class EventMeta {
-  @Column({type: "varchar", array: true})
-  tags: string[]
-}
-
 @Entity()
 export class Event extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
@@ -84,8 +70,8 @@ export class Event extends BaseEntity {
   @Column(type => EventTime)
   time: EventTime
 
-  @Column(type => EventMeta)
-  meta: EventMeta
+  @OneToMany(type => EventTag, tag => tag.events)
+  tags: Promise<EventTag[]>
 
   @Column({
     default: "confirmed"
@@ -95,7 +81,7 @@ export class Event extends BaseEntity {
   @Column(type => EventLocation)
   location: EventLocation
 
-  getOccurrences() {
+  getOccurrences(): EventOccurrence[] {
     const occurences = []
     console.log('this.time.recurrence', this.time.recurrence)
     if (!this.time.recurrence) {

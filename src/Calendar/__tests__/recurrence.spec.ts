@@ -1,18 +1,7 @@
 import { createConnection } from "typeorm"
 import { User } from "../../Auth/User.entity"
 import { Event, EventInformation, EventOccurrence } from "../Event.entity"
-import { DateTime } from "luxon"
-import testConfig from "../../__tests__/testORMConfig";
-
-const toUTC = (isoTime: string, ianaTZ: string) => {
-  const parsed = DateTime.fromISO(isoTime, { zone: ianaTZ })
-  if (parsed.invalidReason) {
-    throw new Error(
-      `${parsed.invalidReason}: ${isoTime} with time-zone: ${ianaTZ}`
-    )
-  }
-  return parsed.toUTC().toISO()
-}
+import testConfig from "../../__tests__/testORMConfig"
 
 let owner: User = null
 
@@ -20,7 +9,7 @@ let connection
 describe("Recurring events", () => {
   beforeAll(async () => {
     connection = await createConnection({
-      ...testConfig
+      ...testConfig,
     })
     owner = new User()
     owner.username = "onetimeguy"
@@ -39,27 +28,26 @@ describe("Recurring events", () => {
 
     info.title = "Test one time event"
     info.description = "This is a test event that has no repetition rules"
-    event.owner = owner
+    event.owner = Promise.resolve(owner)
     event.time = {
       timeZone: "Europe/Madrid",
       start: "2019-02-01T10:00Z",
-      end: "2019-02-01T11:00Z"
+      end: "2019-02-01T11:00Z",
     }
-
-    await event.save()
-    await event.updateOccurrences()
-
+    event.occurrences = Promise.resolve(event.getOccurrences())
     await event.save()
 
     const occurences = await EventOccurrence.find({
-      where: { eventId: event.id }
+      where: { eventId: event.id },
     })
     expect(occurences).toHaveLength(1)
-    expect((await occurences[0].event).time.timeZone).toEqual(event.time.timeZone)
+    expect((await occurences[0].event).time.timeZone).toEqual(
+      event.time.timeZone
+    )
     done()
   })
 
-  it("Event happening once a week", () => {
+  it("Event happening once a week", async () => {
     const event = new Event()
     const info = new EventInformation()
     info.language = "en"
@@ -67,7 +55,7 @@ describe("Recurring events", () => {
     info.description = "This event takes place every monday at 2pm"
 
     event.infos = Promise.resolve([info])
-    event.owner = owner
+    event.owner = Promise.resolve(owner)
 
     // from 2019-03-04 to 2019-03-25 every monday
     //      March 2019
@@ -84,10 +72,10 @@ describe("Recurring events", () => {
       start: "2019-03-04T14:00",
       end: "2019-03-04T15:00",
       recurrence:
-        "DTSTART:20190304T140000Z\nRRULE:FREQ=WEEKLY;BYDAY=MO;INTERVAL=1;UNTIL=20190325T230000Z" // until 15/04/2019
+        "DTSTART:20190304T140000Z\nRRULE:FREQ=WEEKLY;BYDAY=MO;INTERVAL=1;UNTIL=20190325T230000Z", // until 15/04/2019
     }
 
-    event.updateOccurrences()
-    expect(event.occurrences).toHaveLength(4)
+    event.occurrences = Promise.resolve(event.getOccurrences())
+    expect(await event.occurrences).toHaveLength(4)
   })
 })
