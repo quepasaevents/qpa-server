@@ -109,13 +109,14 @@ declare namespace GQL {
 
   interface IEventTag {
     __typename: 'EventTag';
-    ID: string;
+    id: string;
     name: string;
     translations: Array<IEventTagTranslation>;
   }
 
   interface IEventTagTranslation {
     __typename: 'EventTagTranslation';
+    id: string;
     language: string;
     text: string;
   }

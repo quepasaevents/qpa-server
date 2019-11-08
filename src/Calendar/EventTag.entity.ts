@@ -1,4 +1,13 @@
-import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn
+} from "typeorm";
 import { Event } from "./Event.entity";
 
 @Entity()
@@ -12,7 +21,9 @@ export class EventTag extends BaseEntity {
   @ManyToMany(type => Event, event => event.tags)
   events: Promise<Event[]>
 
-  @OneToMany(type => EventTagTranslation, translation => translation.tag)
+  @OneToMany(type => EventTagTranslation, translation => translation.tag, {
+    cascade: true
+  })
   translations: Promise<EventTagTranslation[]>
 }
 
@@ -21,7 +32,9 @@ export class EventTagTranslation extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: number
 
-  @ManyToOne(type => EventTag, tag => tag.translations)
+  @ManyToOne(type => EventTag, tag => tag.translations, {
+    nullable: false
+  })
   tag: Promise<EventTag>
 
   @Column("varchar")

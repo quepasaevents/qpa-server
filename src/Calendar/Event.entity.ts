@@ -5,24 +5,25 @@ import {
   BaseEntity,
   OneToMany,
   ManyToOne,
-} from "typeorm"
-import {User} from "../Auth/User.entity"
-import {DateTime} from "luxon"
-import {rrulestr} from "rrule"
-import { EventTag } from "./EventTag.entity";
+  ManyToMany, JoinTable
+} from "typeorm";
+import { User } from "../Auth/User.entity"
+import { DateTime } from "luxon"
+import { rrulestr } from "rrule"
+import { EventTag } from "./EventTag.entity"
 
 export const breakTime = (isoString: string) => {
-  const tSplit = isoString.split('T')
+  const tSplit = isoString.split("T")
   return {
     date: tSplit[0],
-    time: tSplit[1].substr(0, 8)
+    time: tSplit[1].substr(0, 8),
   }
 }
 
 export class EventLocation {
-  @Column({nullable: true})
+  @Column({ nullable: true })
   address?: string
-  @Column({nullable: true})
+  @Column({ nullable: true })
   name?: string
 }
 
@@ -30,7 +31,6 @@ export class EventLocation {
  * EventTime documents the time in the local mindset of the user created the event
  * therefore all times are string and not Date objects. TODO: Add joi validation
  */
-
 
 export class EventTime {
   @Column()
@@ -42,10 +42,10 @@ export class EventTime {
   @Column()
   end: string
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   recurrence?: string
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   exceptions?: string
 }
 
@@ -58,23 +58,24 @@ export class Event extends BaseEntity {
   owner: Promise<User>
 
   @OneToMany(type => EventOccurrence, occurrence => occurrence.event, {
-    cascade: true
+    cascade: true,
   })
   occurrences: Promise<EventOccurrence[]>
 
   @OneToMany(type => EventInformation, eventInfo => eventInfo.event, {
-    cascade: true
+    cascade: true,
   })
   infos: Promise<EventInformation[]>
 
   @Column(type => EventTime)
   time: EventTime
 
-  @OneToMany(type => EventTag, tag => tag.events)
+  @ManyToMany(type => EventTag, tag => tag.events)
+  @JoinTable()
   tags: Promise<EventTag[]>
 
   @Column({
-    default: "confirmed"
+    default: "confirmed",
   })
   status: string
 
@@ -83,19 +84,29 @@ export class Event extends BaseEntity {
 
   getOccurrences(): EventOccurrence[] {
     const occurences = []
-    console.log('this.time.recurrence', this.time.recurrence)
+    console.log("this.time.recurrence", this.time.recurrence)
     if (!this.time.recurrence) {
       const occ = new EventOccurrence()
       occ.during = `[${this.time.start},${this.time.end}]`
       occurences.push(occ)
     } else {
-      const dates = rrulestr(this.time.recurrence).all((occurenceDate, i) => i < 30)
-      const eventDuration = DateTime.fromISO(this.time.start).diff(DateTime.fromISO(this.time.end))
+      const dates = rrulestr(this.time.recurrence).all(
+        (occurenceDate, i) => i < 30
+      )
+      const eventDuration = DateTime.fromISO(this.time.start).diff(
+        DateTime.fromISO(this.time.end)
+      )
 
       dates.forEach(recurrenceDateStart => {
         const occ = new EventOccurrence()
-        const brokenRecurrenceDateStart = breakTime(recurrenceDateStart.toISOString())
-        const brokenRecurrenceDateEnd = breakTime(DateTime.fromJSDate(recurrenceDateStart).plus(eventDuration).toISO())
+        const brokenRecurrenceDateStart = breakTime(
+          recurrenceDateStart.toISOString()
+        )
+        const brokenRecurrenceDateEnd = breakTime(
+          DateTime.fromJSDate(recurrenceDateStart)
+            .plus(eventDuration)
+            .toISO()
+        )
         const userInputStart = breakTime(this.time.start)
         const userInputEnd = breakTime(this.time.end)
 
@@ -103,7 +114,6 @@ export class Event extends BaseEntity {
         const duringTo = `${brokenRecurrenceDateEnd.date} ${userInputEnd.time} ${this.time.timeZone}`
         occ.during = `[${duringFrom}, ${duringTo}]`
       })
-
     }
     occurences.forEach(occ => {
       occ.start = this.time.start
@@ -123,10 +133,10 @@ export class EventInformation {
   language: string
   @Column()
   title: string
-  @Column({nullable: true})
+  @Column({ nullable: true })
   description: string
   @ManyToOne(type => Event, event => event.infos, {
-    onDelete: "CASCADE"
+    onDelete: "CASCADE",
   })
   event: Event
 }
@@ -138,11 +148,11 @@ export class EventOccurrence extends BaseEntity {
 
   @ManyToOne(type => Event, event => event.occurrences, {
     nullable: false,
-    onDelete: "CASCADE"
+    onDelete: "CASCADE",
   })
   event: Promise<Event>
 
-  @Column({type: "tstzrange", nullable: true})
+  @Column({ type: "tstzrange", nullable: true })
   during: string
 
   @Column()
@@ -150,5 +160,4 @@ export class EventOccurrence extends BaseEntity {
 
   @Column()
   end: string
-
 }

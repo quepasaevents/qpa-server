@@ -9,6 +9,7 @@ import {PostOffice} from "./post_office"
 import {Session} from "./Auth/Session.entity"
 import {Context} from "./@types/graphql-utils"
 import SessionManager from "./Auth/SessionManager"
+import { tagResolvers } from "./Calendar/tagsResolvers";
 
 interface Dependencies {
   typeormConnection: Connection
@@ -46,12 +47,15 @@ export const createServer = async (dependencies: Dependencies) => {
         ...EventQueryResolvers,
         ...authResolvers.Query,
           ...UserQueryResolvers,
+        ...tagResolvers.Query
+
       },
       Mutation: {
         ...resolvers.Mutation,
         ...EventResolversMutation,
         ...authResolvers.Mutation,
         ...UserMutationResolvers,
+        ...tagResolvers.Mutation
       },
       UserSession: {
         ...authResolvers.UserSession

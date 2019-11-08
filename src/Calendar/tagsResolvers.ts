@@ -7,7 +7,7 @@ const adminOrThrow = async (context: Context) => {
     throw new Error("Only admin can create and modify tags")
   }
 }
-const resolvers: ResolverMap = {
+export const tagResolvers: ResolverMap = {
   Mutation: {
     createEventTag: async (
       _,
@@ -19,6 +19,7 @@ const resolvers: ResolverMap = {
       const tag = new EventTag()
       tag.name = req.input.name
       tag.events = Promise.resolve([])
+
 
       const translations: EventTagTranslation[] = req.input.translations.map(
         translationInput => {
@@ -40,6 +41,7 @@ const resolvers: ResolverMap = {
     ) => {
       await adminOrThrow(context)
       const tag = await EventTag.findOne(req.input.id)
+      tag.name = req.input.name
       const translations = await tag.translations
       const langToExistingTranslation: {[lang: string]: EventTagTranslation} = {}
       const langToInputTranslations: {[lang: string]: GQL.ICreateModifyEventTagTranslationInput} = {}
@@ -49,6 +51,7 @@ const resolvers: ResolverMap = {
 
       const removedTranslationsPromises = Object.keys(langToExistingTranslation).map((existingLang) => {
         if (!langToInputTranslations[existingLang]) {
+          translations.splice(translations.findIndex(translation => translation.language === existingLang), 1)
           return langToExistingTranslation[existingLang].remove()
         }
         return null
@@ -58,11 +61,8 @@ const resolvers: ResolverMap = {
       const changedTranslationsPromises = Object.keys(langToExistingTranslation).map(existingLang => {
         const existingTranslation = langToExistingTranslation[existingLang]
         const matchingInput = langToInputTranslations[existingLang]
-        if (!(existingTranslation && matchingInput)) {
-          throw new Error("Coding error, existing translation and matching input must both exist")
-        }
 
-        if (existingTranslation.text !== matchingInput.text ) {
+        if (existingTranslation && matchingInput && existingTranslation.text !== matchingInput.text ) {
           existingTranslation.text = matchingInput.text
           return existingTranslation.save()
         }
@@ -74,13 +74,16 @@ const resolvers: ResolverMap = {
         if (!langToExistingTranslation[inputLang]) {
           const newTranslation = new EventTagTranslation()
           newTranslation.tag = Promise.resolve(tag)
+          translations.push(newTranslation)
           newTranslation.language = inputLang
           newTranslation.text = langToInputTranslations[inputLang].text
-          return newTranslation
+          return newTranslation.save()
         }
         return null
       })
       await Promise.all(newTranslationsPromises.filter(Boolean))
+      tag.translations = Promise.resolve(translations)
+      return tag.save()
     },
   },
 }

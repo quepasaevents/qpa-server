@@ -51,6 +51,9 @@ const resolvers: ResolverMap = {
       const infos = await event.infos
       return infos.find(info => info.language === req.lang)
     },
+    tags: async (event: Event) => {
+      return event.tags
+    }
   },
 
   EventOccurrence: {

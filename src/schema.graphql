@@ -66,12 +66,13 @@ type CalendarEvent {
 }
 
 type EventTag {
-    ID: ID!
+    id: ID!
     name: String!
     translations: [EventTagTranslation!]!
 }
 
 type EventTagTranslation {
+    id: ID!
     language: String!
     text: String!
 }
