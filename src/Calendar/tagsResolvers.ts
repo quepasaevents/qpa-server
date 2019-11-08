@@ -86,4 +86,23 @@ export const tagResolvers: ResolverMap = {
       return tag.save()
     },
   },
+  EventTag: {
+    translation: async (tag: EventTag, req: any, context: Context): Promise<EventTagTranslation | null> => {
+      if (!req.language) {
+        throw new Error("Language required for getting specific translation")
+      }
+      console.log('Will look for translation with', tag.id, req.language)
+      return EventTagTranslation.findOne({
+        where: {
+          tagId: tag.id,
+          language: req.language
+        }
+      })
+    }
+  },
+  Query: {
+    tags: (_, req) => {
+      return EventTag.find()
+    }
+  }
 }

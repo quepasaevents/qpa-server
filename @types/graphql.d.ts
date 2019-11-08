@@ -28,6 +28,7 @@ declare namespace GQL {
     events: Array<ICalendarEvent | null> | null;
     occurrences: Array<IEventOccurrence | null> | null;
     occurrence: IEventOccurrence | null;
+    tags: Array<IEventTag | null> | null;
   }
 
   interface IUserOnQueryArguments {
@@ -112,6 +113,11 @@ declare namespace GQL {
     id: string;
     name: string;
     translations: Array<IEventTagTranslation>;
+    translation: IEventTagTranslation | null;
+  }
+
+  interface ITranslationOnEventTagArguments {
+    language: string;
   }
 
   interface IEventTagTranslation {
@@ -280,13 +286,6 @@ declare namespace GQL {
     id: string;
     name: string;
     translations: Array<ICreateModifyEventTagTranslationInput>;
-  }
-
-  interface ITag {
-    __typename: 'Tag';
-    id: string;
-    name: string;
-    translations: Array<any>;
   }
 
   interface ITagTranslation {

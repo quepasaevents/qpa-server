@@ -7,12 +7,6 @@ type User {
     roles: [UserRole!]
 }
 
-type Tag {
-    id: ID!
-    name: String!
-    translations: [Translations!]!
-}
-
 type TagTranslation {
     language: String!
     text: String!
@@ -69,6 +63,7 @@ type EventTag {
     id: ID!
     name: String!
     translations: [EventTagTranslation!]!
+    translation(language: String!): EventTagTranslation
 }
 
 type EventTagTranslation {
@@ -231,4 +226,6 @@ type Query {
     events(filter: EventsQueryFilter!): [CalendarEvent]
     occurrences(filter: OccurrencesQueryFilter!): [EventOccurrence]
     occurrence(id: ID!): EventOccurrence
+
+    tags: [EventTag]
 }

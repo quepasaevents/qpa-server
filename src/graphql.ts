@@ -48,7 +48,6 @@ export const createServer = async (dependencies: Dependencies) => {
         ...authResolvers.Query,
           ...UserQueryResolvers,
         ...tagResolvers.Query
-
       },
       Mutation: {
         ...resolvers.Mutation,
@@ -59,6 +58,9 @@ export const createServer = async (dependencies: Dependencies) => {
       },
       UserSession: {
         ...authResolvers.UserSession
+      },
+      EventTag: {
+        ...tagResolvers.EventTag
       },
       ...eventResolvers,
       ...userResolvers,

@@ -161,7 +161,6 @@ const resolvers: ResolverMap = {
       if (input.location) {
         event.location = input.location
       }
-      console.log(JSON.stringify(event, null, "\t"))
       return event.save()
     },
     deleteEvent: async (_, id: string, context: Context): Promise<User> => {
