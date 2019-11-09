@@ -186,7 +186,7 @@ input CreateEventTagInput {
 }
 
 
-input ModifyEventTagInput {
+input UpdateEventTagInput {
     id: ID!
     name: String!
     translations: [CreateModifyEventTagTranslationInput!]!
@@ -207,7 +207,7 @@ type Mutation {
 
     # Tags
     createEventTag(input: CreateEventTagInput!): EventTag
-    updateEventTag(input: ModifyEventTagInput!): EventTag
+    updateEventTag(input: UpdateEventTagInput!): EventTag
 }
 
 

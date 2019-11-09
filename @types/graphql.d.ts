@@ -200,7 +200,7 @@ declare namespace GQL {
   }
 
   interface IModifyEventTagOnMutationArguments {
-    input: IModifyEventTagInput;
+    input: IUpdateEventTagInput;
   }
 
   interface ISignupInput {
@@ -282,7 +282,7 @@ declare namespace GQL {
     text: string;
   }
 
-  interface IModifyEventTagInput {
+  interface IUpdateEventTagInput {
     id: string;
     name: string;
     translations: Array<ICreateModifyEventTagTranslationInput>;
