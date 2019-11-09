@@ -288,12 +288,6 @@ declare namespace GQL {
     translations: Array<ICreateModifyEventTagTranslationInput>;
   }
 
-  interface ITagTranslation {
-    __typename: 'TagTranslation';
-    language: string;
-    text: string;
-  }
-
   interface IRevokeRoleInput {
     userId: string;
     roleType: any;

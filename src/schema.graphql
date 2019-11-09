@@ -7,11 +7,6 @@ type User {
     roles: [UserRole!]
 }
 
-type TagTranslation {
-    language: String!
-    text: String!
-}
-
 type UserRole {
     user: User!
     type: RoleType!
