@@ -34,7 +34,7 @@ export const tagResolvers: ResolverMap = {
       tag.translations = Promise.resolve(translations)
       return tag.save()
     },
-    modifyEventTag: async (
+    updateEventTag: async (
       _,
       req: GQL.IModifyEventTagOnMutationArguments,
       context: Context

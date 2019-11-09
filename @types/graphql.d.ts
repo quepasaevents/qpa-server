@@ -160,7 +160,7 @@ declare namespace GQL {
     updateEvent: ICalendarEvent | null;
     deleteEvent: IUser;
     createEventTag: IEventTag | null;
-    modifyEventTag: IEventTag | null;
+    updateEventTag: IEventTag | null;
   }
 
   interface ISignupOnMutationArguments {
