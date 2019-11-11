@@ -92,12 +92,7 @@ export const tagResolvers: ResolverMap = {
         throw new Error("Language required for getting specific translation")
       }
       console.log('Will look for translation with', tag.id, req.language)
-      return EventTagTranslation.findOne({
-        where: {
-          tagId: tag.id,
-          language: req.language
-        }
-      })
+      return (await tag.translations).find(translation => translation.language === req.language)
     }
   },
   Query: {
