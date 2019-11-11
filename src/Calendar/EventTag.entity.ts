@@ -18,9 +18,6 @@ export class EventTag extends BaseEntity {
   @Column({type: "varchar", unique: true})
   name: string
 
-  @ManyToMany(type => Event, event => event.tags)
-  events: Promise<Event[]>
-
   @OneToMany(type => EventTagTranslation, translation => translation.tag, {
     cascade: true
   })

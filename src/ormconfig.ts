@@ -12,7 +12,8 @@ const config: PostgresConnectionOptions = {
   password: process.env.DB_PASSWORD || null,
   entities: ["**/*.entity.ts", "**/*.entity.js"],
   migrations: ["migrations/*.js", "migrations/*.ts"],
-  logging: isDev || isDebugSQL,
+  // logging: isDev || isDebugSQL,
+  logging: ["query", "error"],
   synchronize: !!process.env.TYPEORM_SYNCHRONIZE,
   cli: {
     migrationsDir: "migrations"

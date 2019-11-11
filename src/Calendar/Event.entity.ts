@@ -70,7 +70,7 @@ export class Event extends BaseEntity {
   @Column(type => EventTime)
   time: EventTime
 
-  @ManyToMany(type => EventTag, tag => tag.events)
+  @ManyToMany(type => EventTag)
   @JoinTable()
   tags: Promise<EventTag[]>
 

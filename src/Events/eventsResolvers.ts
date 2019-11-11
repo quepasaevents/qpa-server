@@ -104,7 +104,9 @@ const resolvers: ResolverMap = {
         end: input.time.end,
       }
       if (input.tagNames) {
-        event.tags = getTags(input.tagNames)
+        const tags = await getTags(input.tagNames)
+        console.log('will set tags', tags)
+        event.tags = Promise.resolve(tags)
       }
       event.location = input.location
       event.occurrences = Promise.resolve(event.getOccurrences())
@@ -156,7 +158,9 @@ const resolvers: ResolverMap = {
         event.location = input.location
       }
       if (input.tagNames) {
-        event.tags = getTags(input.tagNames)
+        const tagsToSet = await getTags(input.tagNames)
+        console.log('tagsToSet, ', tagsToSet)
+        event.tags = Promise.resolve(tagsToSet)
       }
       if (input.location) {
         event.location = input.location

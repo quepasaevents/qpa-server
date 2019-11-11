@@ -18,8 +18,6 @@ export const tagResolvers: ResolverMap = {
       await adminOrThrow(context)
       const tag = new EventTag()
       tag.name = req.input.name
-      tag.events = Promise.resolve([])
-
 
       const translations: EventTagTranslation[] = req.input.translations.map(
         translationInput => {
