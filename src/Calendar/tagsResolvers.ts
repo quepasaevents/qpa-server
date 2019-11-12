@@ -86,7 +86,7 @@ export const tagResolvers: ResolverMap = {
     deleteEventTag: async (_, req: GQL.IDeleteEventTagOnMutationArguments, context: Context) => {
       await adminOrThrow(context)
       await EventTag.delete(req.input.id)
-      return true
+      return EventTag.find()
     }
   },
   EventTag: {

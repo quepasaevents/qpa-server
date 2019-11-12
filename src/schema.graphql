@@ -212,7 +212,7 @@ type Mutation {
     # Tags
     createEventTag(input: CreateEventTagInput!): EventTag
     updateEventTag(input: UpdateEventTagInput!): EventTag
-    deleteEventTag(input: DeleteEventTagInput!): Boolean
+    deleteEventTag(input: DeleteEventTagInput!): [EventTag]
 }
 
 

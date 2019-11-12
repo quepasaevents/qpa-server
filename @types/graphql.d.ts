@@ -161,7 +161,7 @@ declare namespace GQL {
     deleteEvent: IUser;
     createEventTag: IEventTag | null;
     updateEventTag: IEventTag | null;
-    deleteEventTag: IEventTag | null;
+    deleteEventTag: Array<IEventTag | null> | null;
   }
 
   interface ISignupOnMutationArguments {
