@@ -91,7 +91,7 @@ export class Event extends BaseEntity {
       occurences.push(occ)
     } else {
       const dates = rrulestr(this.time.recurrence).all(
-        (occurenceDate, i) => i < 30
+        (occurrenceDate, i) => i < 30
       )
       const eventDuration = DateTime.fromISO(this.time.start).diff(
         DateTime.fromISO(this.time.end)

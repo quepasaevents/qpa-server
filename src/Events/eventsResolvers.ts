@@ -124,7 +124,10 @@ const resolvers: ResolverMap = {
         throw Error("not authenticated")
       }
       const event = await Event.findOne(id)
-      if ((await event.owner).id !== context.user.id) {
+      const isSuperUser = hasAnyRole(await context.user.roles, ['admin','embassador'])
+      const isOwner = (await event.owner).id !== context.user.id
+
+      if (!(isSuperUser || isOwner)) {
         throw Error("Only the owner can edit their events")
       }
       if (Object.keys(fields).length === 0) {
@@ -169,7 +172,11 @@ const resolvers: ResolverMap = {
     },
     deleteEvent: async (_, id: string, context: Context): Promise<User> => {
       const event = await Event.findOne(id)
-      if ((await event.owner).id !== context.user.id) {
+
+      const isSuperUser = hasAnyRole(await context.user.roles, ['admin','embassador'])
+      const isOwner = (await event.owner).id !== context.user.id
+
+      if (!(isSuperUser || isOwner)) {
         throw Error("Only the owner can delete this event")
       }
 
