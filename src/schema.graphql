@@ -192,6 +192,10 @@ input UpdateEventTagInput {
     translations: [CreateModifyEventTagTranslationInput!]!
 }
 
+input DeleteEventTagInput {
+    id: ID!
+}
+
 type Mutation {
     # Auth
     signup(input: SignupInput!): [Error]
@@ -208,6 +212,7 @@ type Mutation {
     # Tags
     createEventTag(input: CreateEventTagInput!): EventTag
     updateEventTag(input: UpdateEventTagInput!): EventTag
+    deleteEventTag(input: DeleteEventTagInput!): Boolean
 }
 
 

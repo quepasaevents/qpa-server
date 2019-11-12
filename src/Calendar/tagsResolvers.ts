@@ -83,6 +83,11 @@ export const tagResolvers: ResolverMap = {
       tag.translations = Promise.resolve(translations)
       return tag.save()
     },
+    deleteEventTag: async (_, req: GQL.IDeleteEventTagOnMutationArguments, context: Context) => {
+      await adminOrThrow(context)
+      await EventTag.delete(req.input.id)
+      return true
+    }
   },
   EventTag: {
     translation: async (tag: EventTag, req: any, context: Context): Promise<EventTagTranslation | null> => {

@@ -161,6 +161,7 @@ declare namespace GQL {
     deleteEvent: IUser;
     createEventTag: IEventTag | null;
     updateEventTag: IEventTag | null;
+    deleteEventTag: IEventTag | null;
   }
 
   interface ISignupOnMutationArguments {
@@ -199,8 +200,12 @@ declare namespace GQL {
     input: ICreateEventTagInput;
   }
 
-  interface IModifyEventTagOnMutationArguments {
+  interface IUpdateEventTagOnMutationArguments {
     input: IUpdateEventTagInput;
+  }
+
+  interface IDeleteEventTagOnMutationArguments {
+    input: IDeleteEventTagInput;
   }
 
   interface ISignupInput {
@@ -286,6 +291,10 @@ declare namespace GQL {
     id: string;
     name: string;
     translations: Array<ICreateModifyEventTagTranslationInput>;
+  }
+
+  interface IDeleteEventTagInput {
+    id: string;
   }
 
   interface IRevokeRoleInput {
