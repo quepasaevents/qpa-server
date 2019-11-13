@@ -46,7 +46,7 @@ const authHttpHandlers = (sessionManager: SessionManager) => ({
     }
 
     console.log('Found session with hash', session.hash)
-    res.setHeader('set-cookie', `authentication=${session.hash};Path=/;HttpOnly`)
+    res.setHeader('set-cookie', `authentication=${session.hash};Path=/;HttpOnly;Max-Age=2628000`)
 
     res.send('alright')
   },
