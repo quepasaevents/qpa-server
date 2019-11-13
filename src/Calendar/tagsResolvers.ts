@@ -34,7 +34,7 @@ export const tagResolvers: ResolverMap = {
     },
     updateEventTag: async (
       _,
-      req: GQL.IModifyEventTagOnMutationArguments,
+      req: GQL.IUpdateEventTagOnMutationArguments,
       context: Context
     ) => {
       await adminOrThrow(context)
