@@ -99,6 +99,7 @@ export class Event extends BaseEntity {
 
       dates.forEach(recurrenceDateStart => {
         const occ = new EventOccurrence()
+        occ.event = Promise.resolve(this)
         const brokenRecurrenceDateStart = breakTime(
           recurrenceDateStart.toISOString()
         )
@@ -113,6 +114,7 @@ export class Event extends BaseEntity {
         const duringFrom = `${brokenRecurrenceDateStart.date} ${userInputStart.time} ${this.time.timeZone}`
         const duringTo = `${brokenRecurrenceDateEnd.date} ${userInputEnd.time} ${this.time.timeZone}`
         occ.during = `[${duringFrom}, ${duringTo}]`
+        occurences.push(occ)
       })
     }
     occurences.forEach(occ => {
