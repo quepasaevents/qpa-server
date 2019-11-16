@@ -5,12 +5,14 @@ import {
   BaseEntity,
   OneToMany,
   ManyToOne,
-  ManyToMany, JoinTable
-} from "typeorm";
+  ManyToMany,
+  JoinTable,
+} from "typeorm"
 import { User } from "../Auth/User.entity"
 import { DateTime } from "luxon"
 import { rrulestr } from "rrule"
 import { EventTag } from "./EventTag.entity"
+import { format } from "date-fns"
 
 export const breakTime = (isoString: string) => {
   const tSplit = isoString.split("T")
@@ -84,7 +86,10 @@ export class Event extends BaseEntity {
 
   getOccurrences(): EventOccurrence[] {
     const occurences = []
-    console.log("this.time.recurrence", this.time.recurrence)
+    const justTime = {
+      start: format(new Date(this.time.start), "HH:mm"),
+      end: format(new Date(this.time.end), "HH:mm"),
+    }
     if (!this.time.recurrence) {
       const occ = new EventOccurrence()
       occ.during = `[${this.time.start},${this.time.end}]`
@@ -93,11 +98,14 @@ export class Event extends BaseEntity {
       const dates = rrulestr(this.time.recurrence).all(
         (occurrenceDate, i) => i < 30
       )
-      const eventDuration = DateTime.fromISO(this.time.start).diff(
-        DateTime.fromISO(this.time.end)
-      )
+      const eventDuration =
+        new Date(this.time.end).getTime() - new Date(this.time.start).getTime()
 
       dates.forEach(recurrenceDateStart => {
+        const recurrenceDateEnd = new Date(
+          recurrenceDateStart.getTime() + eventDuration
+        )
+
         const occ = new EventOccurrence()
         occ.event = Promise.resolve(this)
         const brokenRecurrenceDateStart = breakTime(
@@ -114,15 +122,14 @@ export class Event extends BaseEntity {
         const duringFrom = `${brokenRecurrenceDateStart.date} ${userInputStart.time} ${this.time.timeZone}`
         const duringTo = `${brokenRecurrenceDateEnd.date} ${userInputEnd.time} ${this.time.timeZone}`
         occ.during = `[${duringFrom}, ${duringTo}]`
+        occ.start = `${format(recurrenceDateStart, "yyyy-MM-dd")}T${
+          justTime.start
+        }`
+        occ.end = `${format(recurrenceDateStart, "yyyy-MM-dd")}T${justTime.end}`
+        occ.event = Promise.resolve(this)
         occurences.push(occ)
       })
     }
-    occurences.forEach(occ => {
-      occ.start = this.time.start
-      occ.end = this.time.end
-      occ.event = Promise.resolve(this)
-    })
-
     return occurences
   }
 }
