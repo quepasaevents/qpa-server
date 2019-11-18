@@ -19,7 +19,7 @@ export class EventTag extends BaseEntity {
   name: string
 
   @OneToMany(type => EventTagTranslation, translation => translation.tag, {
-    cascade: true
+    cascade: true,
   })
   translations: Promise<EventTagTranslation[]>
 }
@@ -30,7 +30,8 @@ export class EventTagTranslation extends BaseEntity {
   id: number
 
   @ManyToOne(type => EventTag, tag => tag.translations, {
-    nullable: false
+    nullable: false,
+    onDelete: "CASCADE",
   })
   tag: Promise<EventTag>
 
