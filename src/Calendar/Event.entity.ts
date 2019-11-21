@@ -13,6 +13,7 @@ import { DateTime } from "luxon"
 import { rrulestr } from "rrule"
 import { EventTag } from "./EventTag.entity"
 import { format } from "date-fns"
+import { EventImage } from "../Image/EventImage.entity";
 
 export const breakTime = (isoString: string) => {
   const tSplit = isoString.split("T")
@@ -80,6 +81,11 @@ export class Event extends BaseEntity {
     default: "confirmed",
   })
   status: string
+
+  @OneToMany(type => EventImage, image => image.event, {
+    onDelete: 'CASCADE'
+  })
+  images: EventImage[]
 
   @Column(type => EventLocation)
   location: EventLocation

@@ -2,6 +2,7 @@
 
 import {User} from "./User.entity"
 const randomstring = require('random-string')
+
 import {PostOffice} from '../post_office'
 import {Session, SessionInvite} from "./Session.entity"
 

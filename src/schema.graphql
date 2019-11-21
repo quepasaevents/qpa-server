@@ -196,6 +196,20 @@ input DeleteEventTagInput {
     id: ID!
 }
 
+scalar Upload
+input EventImageUploadInput {
+    id: ID!
+    file: Upload!
+}
+input EventImagesUploadInput {
+    files: [Upload!]!
+    id: ID!
+}
+input EventGalleryImagesInput {
+    eventId: ID!
+    imageIds: [ID!]!
+}
+
 type Mutation {
     # Auth
     signup(input: SignupInput!): [Error]
@@ -208,6 +222,19 @@ type Mutation {
     createEvent(input: CreateEventInput!): CalendarEvent
     updateEvent(input: UpdateEventInput!): CalendarEvent
     deleteEvent(id: ID!): User!
+
+    # Event Images
+    setEventCoverImage(input: EventImageUploadInput!): CalendarEvent
+    unsetEventCoverImage(id: ID!): CalendarEvent
+
+    setEventPosterImage(input: EventImageUploadInput!): CalendarEvent
+    unsetEventPosterImage(id: ID!): CalendarEvent
+
+    setEventThumbnailImage(input: EventImageUploadInput!): CalendarEvent
+    unsetEventThumbnailImage(id: ID!): CalendarEvent
+
+    addEventGalleryImages(input: EventImagesUploadInput!): CalendarEvent
+    removeEventGalleryImages(input: EventGalleryImagesInput!): CalendarEvent
 
     # Tags
     createEventTag(input: CreateEventTagInput!): EventTag

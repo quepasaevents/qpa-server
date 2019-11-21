@@ -159,6 +159,14 @@ declare namespace GQL {
     createEvent: ICalendarEvent | null;
     updateEvent: ICalendarEvent | null;
     deleteEvent: IUser;
+    setEventCoverImage: ICalendarEvent | null;
+    unsetEventCoverImage: ICalendarEvent | null;
+    setEventPosterImage: ICalendarEvent | null;
+    unsetEventPosterImage: ICalendarEvent | null;
+    setEventThumbnailImage: ICalendarEvent | null;
+    unsetEventThumbnailImage: ICalendarEvent | null;
+    addEventGalleryImages: ICalendarEvent | null;
+    removeEventGalleryImages: ICalendarEvent | null;
     createEventTag: IEventTag | null;
     updateEventTag: IEventTag | null;
     deleteEventTag: Array<IEventTag | null> | null;
@@ -194,6 +202,38 @@ declare namespace GQL {
 
   interface IDeleteEventOnMutationArguments {
     id: string;
+  }
+
+  interface ISetEventCoverImageOnMutationArguments {
+    input: IEventImageUploadInput;
+  }
+
+  interface IUnsetEventCoverImageOnMutationArguments {
+    id: string;
+  }
+
+  interface ISetEventPosterImageOnMutationArguments {
+    input: IEventImageUploadInput;
+  }
+
+  interface IUnsetEventPosterImageOnMutationArguments {
+    id: string;
+  }
+
+  interface ISetEventThumbnailImageOnMutationArguments {
+    input: IEventImageUploadInput;
+  }
+
+  interface IUnsetEventThumbnailImageOnMutationArguments {
+    id: string;
+  }
+
+  interface IAddEventGalleryImagesOnMutationArguments {
+    input: IEventImagesUploadInput;
+  }
+
+  interface IRemoveEventGalleryImagesOnMutationArguments {
+    input: IEventGalleryImagesInput;
   }
 
   interface ICreateEventTagOnMutationArguments {
@@ -275,6 +315,21 @@ declare namespace GQL {
     location?: IEventLocationInput | null;
     tagNames: Array<string>;
     status?: string | null;
+  }
+
+  interface IEventImageUploadInput {
+    id: string;
+    file: any;
+  }
+
+  interface IEventImagesUploadInput {
+    files: Array<any>;
+    id: string;
+  }
+
+  interface IEventGalleryImagesInput {
+    eventId: string;
+    imageIds: Array<string>;
   }
 
   interface ICreateEventTagInput {
