@@ -7,8 +7,8 @@ import { FileUpload } from "graphql-upload"
 import { Metadata } from "@google-cloud/common"
 
 export interface ImageBucketServiceOptions {
-  GCS_BUCKET_NAME: string
-  BUCKET_PUBLIC_URL_BASE: string
+  gcsBucketName: string
+  buckerPublicURLBase: string
   tmpLocalPath: string
 }
 
@@ -35,7 +35,7 @@ export default class ImageBucketService {
 
   constructor(options: ImageBucketServiceOptions) {
     this.options = options
-    this.gcsBucket = new Storage().bucket(this.options.GCS_BUCKET_NAME)
+    this.gcsBucket = new Storage().bucket(this.options.gcsBucketName)
 
     // quick fail in case of bad credentials
     this.gcsBucket.getFiles()
@@ -86,6 +86,6 @@ export default class ImageBucketService {
     })
 
     this.deleteLocally(localTempPath) // don't care about result
-    return `${this.options.BUCKET_PUBLIC_URL_BASE}/${bucketFile.name}`
+    return `${this.options.buckerPublicURLBase}/${bucketFile.name}`
   }
 }

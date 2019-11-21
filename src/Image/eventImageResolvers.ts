@@ -16,6 +16,7 @@ const canChangeEvent = async (event: Event, user: User) => {
 export const EventImageResolvers = (
   imageBucketService: ImageBucketService
 ) => ({
+  Query: {},
   Mutation: {
     setEventCoverImage: async (
       _,

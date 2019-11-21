@@ -10,6 +10,8 @@ import {Session} from "./Auth/Session.entity"
 import {Context} from "./@types/graphql-utils"
 import SessionManager from "./Auth/SessionManager"
 import { tagResolvers } from "./Calendar/tagsResolvers";
+import ImageBucketService from "./Image/ImageBucketService";
+import { EventImageResolvers } from "./Image/eventImageResolvers";
 
 interface Dependencies {
   typeormConnection: Connection
@@ -17,6 +19,7 @@ interface Dependencies {
   domain?: string
   customContext?: Context
   sessionManager: SessionManager
+  imageBucketService: ImageBucketService
 }
 
 const resolvers = {
@@ -32,6 +35,7 @@ export const createServer = async (dependencies: Dependencies) => {
     sessionManager: dependencies.sessionManager
   })
 
+  const eventImageResolvers = EventImageResolvers(dependencies.imageBucketService)
   const typeDefs = importSchema(__dirname + '/schema.graphql')
 
   const { Query: EventQueryResolvers, Mutation: EventResolversMutation,...eventResolvers} = EventsResolvers
@@ -47,14 +51,16 @@ export const createServer = async (dependencies: Dependencies) => {
         ...EventQueryResolvers,
         ...authResolvers.Query,
           ...UserQueryResolvers,
-        ...tagResolvers.Query
+        ...tagResolvers.Query,
+        ...eventImageResolvers.Query
       },
       Mutation: {
         ...resolvers.Mutation,
         ...EventResolversMutation,
         ...authResolvers.Mutation,
         ...UserMutationResolvers,
-        ...tagResolvers.Mutation
+        ...tagResolvers.Mutation,
+        ...eventImageResolvers.Mutation
       },
       UserSession: {
         ...authResolvers.UserSession

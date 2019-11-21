@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 import { createServer } from "./graphql"
 import typeormConfig from './ormconfig'
 import {createConnection} from "typeorm"
@@ -7,6 +9,7 @@ import express from 'express'
 import authHttpHandlers from "./Auth/authHttpHandlers"
 import SessionManager from "./Auth/SessionManager"
 import morgan from 'morgan'
+import ImageBucketService from "./Image/ImageBucketService";
 
 const start = async () => {
   const sessionManager = new SessionManager({
@@ -15,6 +18,11 @@ const start = async () => {
     emailSenderDomain: config.mailgun.domain
   })
 
+  const imageBucketService = new ImageBucketService({
+    buckerPublicURLBase: config.eventImage.imageBucketPublicURLBase,
+    tmpLocalPath: config.eventImage.imageTempLocalPath,
+    gcsBucketName: config.eventImage.imageCGSBucketName,
+  })
   console.log(`Starting with db: ${typeormConfig.database} and config:\n ${JSON.stringify(typeormConfig,null,'\t')}`)
   const connection = await createConnection(typeormConfig)
   console.log('Will look for migrations and run them')
@@ -24,7 +32,8 @@ const start = async () => {
     typeormConnection: connection,
     sendEmail,
     domain: config.domain,
-    sessionManager
+    sessionManager,
+    imageBucketService
   })
 
   const authHandlers = authHttpHandlers(sessionManager)
