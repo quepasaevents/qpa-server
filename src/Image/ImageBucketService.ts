@@ -53,19 +53,21 @@ export default class ImageBucketService {
   }
 
   async saveLocally(
-    stream: ReadableStream,
+    readableStream: ReadableStream,
     fileMeta: FileMeta
   ): Promise<string> {
     const targetFileName = this.addRandomHashToFilename(fileMeta.filename)
     const targetFullPath = `${this.options.tmpLocalPath}/${targetFileName}`
-    console.log('::STREAM::',typeof stream, JSON.stringify(stream))
+    console.log('::STREAM::',typeof readableStream, JSON.stringify(readableStream))
+
+    const writeStream =  fs.createWriteStream(targetFullPath)
     return new Promise((resolve, reject) => {
-      fs.writeFile(targetFullPath, stream, err => {
-        if (err) {
-          console.error("error writing file", err)
-          reject(err)
-        }
+      readableStream.pipe(writeStream)
+      readableStream.on('end', () => {
         resolve(targetFullPath)
+      })
+      readableStream.on('error', (err) => {
+        reject(err)
       })
     })
   }
