@@ -5,7 +5,10 @@ import { User } from "../Auth/User.entity";
 import { FileUpload } from "graphql-upload";
 import { EventImage, ImageType } from "./EventImage.entity";
 
-const canChangeEvent = async (event: Event, user: User) => {
+const canChangeEvent = async (event: Event, user?: User) => {
+  if (!user) {
+    return false
+  }
   const roles = (await user.roles).map(role => role.type)
   if (roles.includes("admin") || roles.includes("embassador")) {
     return true
@@ -24,6 +27,7 @@ export const EventImageResolvers = (
       context: Context,
       info
     ) => {
+      console.log('Mutation resolver: setEventCoverImage')
       const event = await Event.findOne(req.input.id)
       if (!event) {
         throw new Error(`Event with id ${req.input.id} not found`)
@@ -34,15 +38,15 @@ export const EventImageResolvers = (
         )
       }
 
+      console.log('will get upload form input')
       const fileUpload: FileUpload = await req.input.file
-      fileUpload.filename
+      console.log('got a file upload', JSON.stringify(fileUpload))
       const coverImageURL = await imageBucketService.uploadToBucket(
         fileUpload,
         {
           fileMeta: {
             filename: fileUpload.filename,
             mimetype: fileUpload.mimetype,
-            encoding: fileUpload.encoding,
           },
           imageType: ImageType.Cover,
           eventId: req.input.id,

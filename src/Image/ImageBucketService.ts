@@ -21,7 +21,6 @@ interface UploadImageOptions {
 interface FileMeta {
   filename: string
   mimetype: string
-  encoding: string
 }
 
 // General pattern for filename:
@@ -38,22 +37,36 @@ export default class ImageBucketService {
     this.gcsBucket = new Storage().bucket(this.options.gcsBucketName)
 
     // quick fail in case of bad credentials
-    this.gcsBucket.getFiles()
+    this.gcsBucket.getFiles().catch(err => {
+      console.error("Error accessing bucket", err)
+    })
   }
 
-  saveLocally(stream: ReadableStream, fileMeta: FileMeta): string {
-    const splitFileName = fileMeta.filename.split(".")
+  addRandomHashToFilename = (filename: string) => {
+    const splitFileName = filename.split(".")
+    const randomSequence = randomstring({ length: 6 })
     splitFileName.reverse()
-    splitFileName.splice(1, 0, randomstring(6))
+    splitFileName.splice(1, 0, randomSequence)
     splitFileName.reverse()
     const targetFileName = splitFileName.join(".")
+  }
+
+  async saveLocally(
+    stream: ReadableStream,
+    fileMeta: FileMeta
+  ): Promise<string> {
+    const targetFileName = this.addRandomHashToFilename(fileMeta.filename)
     const targetFullPath = `${this.options.tmpLocalPath}/${targetFileName}`
-
-    fs.writeFileSync(targetFullPath, stream, {
-      encoding: fileMeta.encoding,
+    console.log('::STREAM::',typeof stream, JSON.stringify(stream))
+    return new Promise((resolve, reject) => {
+      fs.writeFile(targetFullPath, stream, err => {
+        if (err) {
+          console.error("error writing file", err)
+          reject(err)
+        }
+        resolve(targetFullPath)
+      })
     })
-
-    return targetFullPath
   }
 
   async deleteLocally(path: string) {
@@ -61,31 +74,40 @@ export default class ImageBucketService {
   }
 
   async uploadToBucket(file: FileUpload, options: UploadImageOptions) {
-    const localTempPath = this.saveLocally(file.createReadStream(), {
-      encoding: file.encoding,
+    const localTempPath = await this.saveLocally(file.createReadStream(), {
       filename: file.filename,
       mimetype: file.mimetype,
     })
+    console.log("local save call terminated", localTempPath)
 
     const prefix = `e/${options.eventId}/${options.imageType}_`
     const [existingFiles] = await this.gcsBucket.getFiles({
       prefix,
     })
-    const highest: number = existingFiles
-      .map(file => parseInt(file.name.split(prefix)[1]))
-      .sort()
-      .reverse()[0]
+    console.log("existing filenames", existingFiles.map(file => file.name))
+
+    const existingIds: number[] = existingFiles.map(file =>
+      parseInt(file.name.split(prefix)[1])
+    )
+
+    const highest = Math.max(0, ...existingIds)
     const next = `${highest}`.padStart(4, "0")
     const bucketDestination = `${prefix}${next}`
 
-    const [bucketFile, _]: [
-      File,
-      Metadata
-    ] = await this.gcsBucket.upload(localTempPath, {
-      destination: bucketDestination,
-    })
+    console.log(
+      "will bucket upload from",
+      localTempPath,
+      "to",
+      bucketDestination
+    )
+    const [bucketFile]: [File, Metadata] = await this.gcsBucket.upload(
+      localTempPath,
+      {
+        destination: bucketDestination,
+      }
+    )
 
-    this.deleteLocally(localTempPath) // don't care about result
+    // this.deleteLocally(localTempPath) // don't care about result
     return `${this.options.buckerPublicURLBase}/${bucketFile.name}`
   }
 }

@@ -15,6 +15,7 @@ type UserRole {
 scalar Date
 scalar RoleType
 scalar Translations
+scalar Upload
 
 type UserSession {
     hash: String!
@@ -41,6 +42,16 @@ input RequestInviteInput {
 # Events
 # ------
 
+type Image {
+    url: String!
+}
+
+type EventImages {
+    thumb: Image
+    cover: Image
+    poster: Image
+    gallery: [Image!]
+}
 
 type CalendarEvent {
     id: ID!
@@ -52,6 +63,7 @@ type CalendarEvent {
     location: Location!
     occurrences: [EventOccurrence]
     tags: [EventTag]
+    images: EventImages
 }
 
 type EventTag {
@@ -196,7 +208,6 @@ input DeleteEventTagInput {
     id: ID!
 }
 
-scalar Upload
 input EventImageUploadInput {
     id: ID!
     file: Upload!

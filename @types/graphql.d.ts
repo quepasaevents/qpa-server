@@ -72,6 +72,7 @@ declare namespace GQL {
     location: ILocation;
     occurrences: Array<IEventOccurrence | null> | null;
     tags: Array<IEventTag | null> | null;
+    images: IEventImages | null;
   }
 
   interface IInfoOnCalendarEventArguments {
@@ -125,6 +126,19 @@ declare namespace GQL {
     id: string;
     language: string;
     text: string;
+  }
+
+  interface IEventImages {
+    __typename: 'EventImages';
+    thumb: IImage | null;
+    cover: IImage | null;
+    poster: IImage | null;
+    gallery: Array<IImage> | null;
+  }
+
+  interface IImage {
+    __typename: 'Image';
+    url: string;
   }
 
   interface IUserRole {
