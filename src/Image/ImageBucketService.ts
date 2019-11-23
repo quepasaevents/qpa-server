@@ -110,7 +110,7 @@ export default class ImageBucketService {
       }
     )
 
-    // this.deleteLocally(localTempPath) // don't care about result
+    this.deleteLocally(localTempPath) // don't care about result
     return `${this.options.buckerPublicURLBase}/${bucketFile.name}`
   }
 }
