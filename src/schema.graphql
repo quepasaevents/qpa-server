@@ -16,6 +16,7 @@ scalar Date
 scalar RoleType
 scalar Translations
 scalar Upload
+scalar EventImageType
 
 type UserSession {
     hash: String!
@@ -207,9 +208,13 @@ input UpdateEventTagInput {
 input DeleteEventTagInput {
     id: ID!
 }
-
+input UnsetEventImageInput {
+    eventId: ID!
+    imageType: EventImageType
+}
 input EventImageUploadInput {
-    id: ID!
+    eventId: ID!
+    imageType: EventImageType
     file: Upload!
 }
 input EventImagesUploadInput {
@@ -235,14 +240,8 @@ type Mutation {
     deleteEvent(id: ID!): User!
 
     # Event Images
-    setEventCoverImage(input: EventImageUploadInput!): CalendarEvent
-    unsetEventCoverImage(id: ID!): CalendarEvent
-
-    setEventPosterImage(input: EventImageUploadInput!): CalendarEvent
-    unsetEventPosterImage(id: ID!): CalendarEvent
-
-    setEventThumbnailImage(input: EventImageUploadInput!): CalendarEvent
-    unsetEventThumbnailImage(id: ID!): CalendarEvent
+    setEventImage(input: EventImageUploadInput!): CalendarEvent
+    unsetEventImage(id: UnsetEventImageInput!): CalendarEvent
 
     addEventGalleryImages(input: EventImagesUploadInput!): CalendarEvent
     removeEventGalleryImages(input: EventGalleryImagesInput!): CalendarEvent

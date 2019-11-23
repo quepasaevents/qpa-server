@@ -23,9 +23,9 @@ const setEventImageTypeResolver = async (
   imageBucketService: ImageBucketService
 ) => {
   console.log("Mutation resolver: setEventCoverImage")
-  const event = await Event.findOne(input.id)
+  const event = await Event.findOne(input.eventId)
   if (!event) {
-    throw new Error(`Event with id ${input.id} not found`)
+    throw new Error(`Event with id ${input.eventId} not found`)
   }
   if (!(await canChangeEvent(event, context.user))) {
     throw new Error(`Only owner, embassador or admin can manipulate the event`)
@@ -37,7 +37,7 @@ const setEventImageTypeResolver = async (
       mimetype: fileUpload.mimetype,
     },
     imageType,
-    eventId: input.id,
+    eventId: input.eventId,
   })
   const imageEntity = new EventImage()
   imageEntity.type = imageType
@@ -52,67 +52,19 @@ export const EventImageResolvers = (
 ) => ({
   Query: {},
   Mutation: {
-    setEventCoverImage: async (
+    setEventImage: async (
       _,
-      req: GQL.ISetEventCoverImageOnMutationArguments,
+      req: GQL.ISetEventImageOnMutationArguments,
       context: Context,
       info
     ) => {
       return setEventImageTypeResolver(
         req.input,
         context,
-        ImageType.Cover,
+        req.input.imageType,
         imageBucketService
       )
     },
-    unsetEventCoverImage: async (
-      _,
-      req: GQL.IUnsetEventCoverImageOnMutationArguments,
-      context: Context,
-      info
-    ) => {
-
-    },
-    setEventPosterImage: async (
-      _,
-      req: GQL.ISetEventPosterImageOnMutationArguments,
-      context: Context,
-      info
-    ) => {
-      return setEventImageTypeResolver(
-        req.input,
-        context,
-        ImageType.Poster,
-        imageBucketService
-      )
-
-    },
-    unsetEventPosterImage: async (
-      _,
-      req: GQL.IUnsetEventPosterImageOnMutationArguments,
-      context: Context,
-      info
-    ) => {},
-    setEventThumbnailImage: async (
-      _,
-      req: GQL.ISetEventThumbnailImageOnMutationArguments,
-      context: Context,
-      info
-    ) => {
-      return setEventImageTypeResolver(
-        req.input,
-        context,
-        ImageType.Thumbnail,
-        imageBucketService
-      )
-
-    },
-    unsetEventThumbnailImage: async (
-      _,
-      req: GQL.IUnsetEventThumbnailImageOnMutationArguments,
-      context: Context,
-      info
-    ) => {},
     addEventGalleryImages: async (
       _,
       req: GQL.IAddEventGalleryImagesOnMutationArguments,

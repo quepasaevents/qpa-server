@@ -173,12 +173,8 @@ declare namespace GQL {
     createEvent: ICalendarEvent | null;
     updateEvent: ICalendarEvent | null;
     deleteEvent: IUser;
-    setEventCoverImage: ICalendarEvent | null;
-    unsetEventCoverImage: ICalendarEvent | null;
-    setEventPosterImage: ICalendarEvent | null;
-    unsetEventPosterImage: ICalendarEvent | null;
-    setEventThumbnailImage: ICalendarEvent | null;
-    unsetEventThumbnailImage: ICalendarEvent | null;
+    setEventImage: ICalendarEvent | null;
+    unsetEventImage: ICalendarEvent | null;
     addEventGalleryImages: ICalendarEvent | null;
     removeEventGalleryImages: ICalendarEvent | null;
     createEventTag: IEventTag | null;
@@ -218,28 +214,12 @@ declare namespace GQL {
     id: string;
   }
 
-  interface ISetEventCoverImageOnMutationArguments {
+  interface ISetEventImageOnMutationArguments {
     input: IEventImageUploadInput;
   }
 
-  interface IUnsetEventCoverImageOnMutationArguments {
-    id: string;
-  }
-
-  interface ISetEventPosterImageOnMutationArguments {
-    input: IEventImageUploadInput;
-  }
-
-  interface IUnsetEventPosterImageOnMutationArguments {
-    id: string;
-  }
-
-  interface ISetEventThumbnailImageOnMutationArguments {
-    input: IEventImageUploadInput;
-  }
-
-  interface IUnsetEventThumbnailImageOnMutationArguments {
-    id: string;
+  interface IUnsetEventImageOnMutationArguments {
+    id: IUnsetEventImageInput;
   }
 
   interface IAddEventGalleryImagesOnMutationArguments {
@@ -332,8 +312,14 @@ declare namespace GQL {
   }
 
   interface IEventImageUploadInput {
-    id: string;
+    eventId: string;
+    imageType?: any | null;
     file: any;
+  }
+
+  interface IUnsetEventImageInput {
+    eventId: string;
+    imageType?: any | null;
   }
 
   interface IEventImagesUploadInput {
