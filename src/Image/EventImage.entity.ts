@@ -10,7 +10,8 @@ import { Event } from "../Calendar/Event.entity"
 export enum ImageType {
   Cover = 'cover',
   Thumbnail = 'thumb',
-  Gallery = 'gallery'
+  Gallery = 'gallery',
+  Poster = 'poster'
 }
 
 @Entity()

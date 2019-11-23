@@ -1,9 +1,9 @@
-import { Context } from "../@types/graphql-utils";
-import ImageBucketService from "./ImageBucketService";
-import { Event } from "../Calendar/Event.entity";
-import { User } from "../Auth/User.entity";
-import { FileUpload } from "graphql-upload";
-import { EventImage, ImageType } from "./EventImage.entity";
+import { Context } from "../@types/graphql-utils"
+import ImageBucketService from "./ImageBucketService"
+import { Event } from "../Calendar/Event.entity"
+import { User } from "../Auth/User.entity"
+import { FileUpload } from "graphql-upload"
+import { EventImage, ImageType } from "./EventImage.entity"
 
 const canChangeEvent = async (event: Event, user?: User) => {
   if (!user) {
@@ -14,6 +14,37 @@ const canChangeEvent = async (event: Event, user?: User) => {
     return true
   }
   return (await event.owner).id === user.id
+}
+
+const setEventImageTypeResolver = async (
+  input: GQL.IEventImageUploadInput,
+  context: Context,
+  imageType: ImageType,
+  imageBucketService: ImageBucketService
+) => {
+  console.log("Mutation resolver: setEventCoverImage")
+  const event = await Event.findOne(input.id)
+  if (!event) {
+    throw new Error(`Event with id ${input.id} not found`)
+  }
+  if (!(await canChangeEvent(event, context.user))) {
+    throw new Error(`Only owner, embassador or admin can manipulate the event`)
+  }
+  const fileUpload: FileUpload = await input.file
+  const coverImageURL = await imageBucketService.uploadToBucket(fileUpload, {
+    fileMeta: {
+      filename: fileUpload.filename,
+      mimetype: fileUpload.mimetype,
+    },
+    imageType,
+    eventId: input.id,
+  })
+  const imageEntity = new EventImage()
+  imageEntity.type = imageType
+  imageEntity.event = Promise.resolve(event)
+  imageEntity.url = coverImageURL
+  await imageEntity.save()
+  return event
 }
 
 export const EventImageResolvers = (
@@ -27,34 +58,12 @@ export const EventImageResolvers = (
       context: Context,
       info
     ) => {
-      console.log('Mutation resolver: setEventCoverImage')
-      const event = await Event.findOne(req.input.id)
-      if (!event) {
-        throw new Error(`Event with id ${req.input.id} not found`)
-      }
-      if (!(await canChangeEvent(event, context.user))) {
-        throw new Error(
-          `Only owner, embassador or admin can manipulate the event`
-        )
-      }
-      const fileUpload: FileUpload = await req.input.file
-      const coverImageURL = await imageBucketService.uploadToBucket(
-        fileUpload,
-        {
-          fileMeta: {
-            filename: fileUpload.filename,
-            mimetype: fileUpload.mimetype,
-          },
-          imageType: ImageType.Cover,
-          eventId: req.input.id,
-        }
+      return setEventImageTypeResolver(
+        req.input,
+        context,
+        ImageType.Cover,
+        imageBucketService
       )
-      const imageEntity = new EventImage()
-      imageEntity.type = ImageType.Cover
-      imageEntity.event = Promise.resolve(event)
-      imageEntity.url = coverImageURL
-      await imageEntity.save()
-      return event
     },
     unsetEventCoverImage: async (
       _,
@@ -69,7 +78,15 @@ export const EventImageResolvers = (
       req: GQL.ISetEventPosterImageOnMutationArguments,
       context: Context,
       info
-    ) => {},
+    ) => {
+      return setEventImageTypeResolver(
+        req.input,
+        context,
+        ImageType.Poster,
+        imageBucketService
+      )
+
+    },
     unsetEventPosterImage: async (
       _,
       req: GQL.IUnsetEventPosterImageOnMutationArguments,
@@ -81,7 +98,15 @@ export const EventImageResolvers = (
       req: GQL.ISetEventThumbnailImageOnMutationArguments,
       context: Context,
       info
-    ) => {},
+    ) => {
+      return setEventImageTypeResolver(
+        req.input,
+        context,
+        ImageType.Thumbnail,
+        imageBucketService
+      )
+
+    },
     unsetEventThumbnailImage: async (
       _,
       req: GQL.IUnsetEventThumbnailImageOnMutationArguments,
