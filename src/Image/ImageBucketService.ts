@@ -24,9 +24,9 @@ interface FileMeta {
 }
 
 // General pattern for filename:
-// /e/[event_id]/[image_type]_dddd
-// dddd is a running number from 0001 to 9999 describing
-// the order of upload
+// /e/[event_id]/[image_type]_timeOfUploadInMs_RNDM.extension
+// RNDM are 4 random characters
+// Extensions is the extension of the file
 
 export default class ImageBucketService {
   options: ImageBucketServiceOptions
@@ -58,12 +58,6 @@ export default class ImageBucketService {
   ): Promise<string> {
     const targetFileName = this.addRandomHashToFilename(fileMeta.filename)
     const targetFullPath = `${this.options.tmpLocalPath}/${targetFileName}`
-    console.log(
-      "::STREAM::",
-      typeof readableStream,
-      JSON.stringify(readableStream)
-    )
-
     const writeStream = fs.createWriteStream(targetFullPath)
     return new Promise((resolve, reject) => {
       readableStream.pipe(writeStream)
@@ -86,19 +80,10 @@ export default class ImageBucketService {
       mimetype: file.mimetype,
     })
 
-    const prefix = `e/${options.eventId}/${options.imageType}_`
-    const [existingFiles] = await this.gcsBucket.getFiles({
-      prefix,
-    })
-
-    const existingIds: number[] = existingFiles.map(file =>
-      parseInt(file.name.match(/^.*_(\d{4})\..+$/)[1])
-    )
+    const prefix = `e/${options.eventId}/${options.imageType}`
     const fileExtension = file.filename.split(".").reverse()[0]
-
-    const highest = Math.max(0, ...existingIds)
-    const next = `${highest + 1}`.padStart(4, "0")
-    const bucketDestination = `${prefix}${next}.${fileExtension}`
+    const uniquenessSalt = randomstring({ length: 3 })
+    const bucketDestination = `${prefix}_${Date.now()}_${uniquenessSalt}.${fileExtension}`
 
     const [bucketFile]: [File, Metadata] = await this.gcsBucket.upload(
       localTempPath,
