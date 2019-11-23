@@ -12,7 +12,6 @@ import SessionManager from "./Auth/SessionManager"
 import { tagResolvers } from "./Calendar/tagsResolvers"
 import ImageBucketService from "./Image/ImageBucketService"
 import { EventImageResolvers } from "./Image/eventImageResolvers"
-import { GraphQLUpload } from "graphql-upload"
 
 interface Dependencies {
   typeormConnection: Connection
@@ -41,6 +40,10 @@ export const createServer = async (
     dependencies.imageBucketService
   )
   const typeDefs = importSchema(__dirname + "/schema.graphql")
+    .replace(
+    "scalar Upload",
+    ""
+  )
   const {
     Query: EventQueryResolvers,
     Mutation: EventResolversMutation,
@@ -52,10 +55,9 @@ export const createServer = async (
     ...userResolvers
   } = UserResolvers
 
-  const schema = makeExecutableSchema({
-    typeDefs: [typeDefs],
+  return new ApolloServer({
+    typeDefs,
     resolvers: {
-      Upload: GraphQLUpload,
       Query: {
         ...resolvers.Query,
         ...EventQueryResolvers,
@@ -81,10 +83,6 @@ export const createServer = async (
       ...eventResolvers,
       ...userResolvers,
     },
-  })
-
-  return new ApolloServer({
-    schema,
     context: dependencies.customContext
       ? dependencies.customContext
       : async a => {

@@ -35,7 +35,7 @@ const start = async () => {
   await connection.runMigrations()
   console.log("No more migrations to run")
 
-  const server = await createServer({
+  const apolloExpressServer = await createServer({
     typeormConnection: connection,
     sendEmail,
     domain: config.domain,
@@ -53,13 +53,13 @@ const start = async () => {
   app.post("/api/init-session", authHandlers.initializeSessionHandler)
   app.get("/api/signout", authHandlers.signoutHandler)
 
-  server.applyMiddleware({ app })
+  apolloExpressServer.applyMiddleware({ app })
 
   app.listen({ port: 4000 }, () => {
-    console.log(`🚀  Server ready at localhost:4000/${server.graphqlPath}`)
+    console.log(`🚀  Server ready at localhost:4000/${apolloExpressServer.graphqlPath}`)
   })
 
-  return server
+  return apolloExpressServer
 }
 
 start()
