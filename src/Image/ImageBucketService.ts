@@ -58,15 +58,19 @@ export default class ImageBucketService {
   ): Promise<string> {
     const targetFileName = this.addRandomHashToFilename(fileMeta.filename)
     const targetFullPath = `${this.options.tmpLocalPath}/${targetFileName}`
-    console.log('::STREAM::',typeof readableStream, JSON.stringify(readableStream))
+    console.log(
+      "::STREAM::",
+      typeof readableStream,
+      JSON.stringify(readableStream)
+    )
 
-    const writeStream =  fs.createWriteStream(targetFullPath)
+    const writeStream = fs.createWriteStream(targetFullPath)
     return new Promise((resolve, reject) => {
       readableStream.pipe(writeStream)
-      readableStream.on('end', () => {
+      readableStream.on("end", () => {
         resolve(targetFullPath)
       })
-      readableStream.on('error', (err) => {
+      readableStream.on("error", err => {
         reject(err)
       })
     })
@@ -81,28 +85,21 @@ export default class ImageBucketService {
       filename: file.filename,
       mimetype: file.mimetype,
     })
-    console.log("local save call terminated", localTempPath)
 
     const prefix = `e/${options.eventId}/${options.imageType}_`
     const [existingFiles] = await this.gcsBucket.getFiles({
       prefix,
     })
-    console.log("existing filenames", existingFiles.map(file => file.name))
 
     const existingIds: number[] = existingFiles.map(file =>
-      parseInt(file.name.split(prefix)[1])
+      parseInt(file.name.match(/^.*_(\d{4})\..+$/)[1])
     )
+    const fileExtension = file.filename.split(".").reverse()[0]
 
     const highest = Math.max(0, ...existingIds)
-    const next = `${highest}`.padStart(4, "0")
-    const bucketDestination = `${prefix}${next}`
+    const next = `${highest + 1}`.padStart(4, "0")
+    const bucketDestination = `${prefix}${next}.${fileExtension}`
 
-    console.log(
-      "will bucket upload from",
-      localTempPath,
-      "to",
-      bucketDestination
-    )
     const [bucketFile]: [File, Metadata] = await this.gcsBucket.upload(
       localTempPath,
       {

@@ -37,10 +37,7 @@ export const EventImageResolvers = (
           `Only owner, embassador or admin can manipulate the event`
         )
       }
-
-      console.log('will get upload form input')
       const fileUpload: FileUpload = await req.input.file
-      console.log('got a file upload', JSON.stringify(fileUpload))
       const coverImageURL = await imageBucketService.uploadToBucket(
         fileUpload,
         {
