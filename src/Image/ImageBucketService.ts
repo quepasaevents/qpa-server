@@ -49,6 +49,7 @@ export default class ImageBucketService {
     splitFileName.splice(1, 0, randomSequence)
     splitFileName.reverse()
     const targetFileName = splitFileName.join(".")
+    return targetFileName
   }
 
   async saveLocally(
