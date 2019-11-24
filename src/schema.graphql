@@ -43,15 +43,15 @@ input RequestInviteInput {
 # Events
 # ------
 
-type Image {
+type EventImage {
     url: String!
 }
 
 type EventImages {
-    thumb: Image
-    cover: Image
-    poster: Image
-    gallery: [Image!]
+    thumb: EventImage
+    cover: EventImage
+    poster: EventImage
+    gallery: [EventImage!]
 }
 
 type CalendarEvent {
