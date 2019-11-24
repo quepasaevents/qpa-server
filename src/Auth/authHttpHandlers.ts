@@ -5,10 +5,14 @@ import {Session, SessionInvite} from "./Session.entity"
 
 const authHttpHandlers = (sessionManager: SessionManager) => ({
   loginHandler: async function (req: Request, res) {
-    const body = req.body
-    console.log('body', body)
+    if (!req.body?.email) {
+      res.statusCode = '400'
+      res.send('Must provide email address')
+      return
+    }
+    const normalizedEmail = req.body.email.toLowerCase()
 
-    const user = await User.findOne({email: req.body.email})
+    const user = await User.findOne({email: normalizedEmail})
 
     if (user) {
       sessionManager.inviteUser(user)
@@ -52,13 +56,15 @@ const authHttpHandlers = (sessionManager: SessionManager) => ({
   },
 
   signupHandler: async (req: Request, res: Response) => {
-    const {name, email} = req.body
-    if (!(name && email)) {
+    const {name, email: rawEmail} = req.body
+    if (!(name && rawEmail)) {
       res.status(400)
       res.send('must provide email and name')
       return
     }
-    const existingEmailUser = await User.findOne({email})
+    const normalizedEmail = rawEmail.toLowerCase()
+
+    const existingEmailUser = await User.findOne({email: normalizedEmail})
     if (existingEmailUser) {
       res.status(409)
       res.send('email taken')
@@ -66,7 +72,7 @@ const authHttpHandlers = (sessionManager: SessionManager) => ({
     }
 
     const user = new User()
-    user.email = email
+    user.email = normalizedEmail
     user.name = name
 
     try {
