@@ -99,6 +99,8 @@ export class Event extends BaseEntity {
     if (!this.time.recurrence) {
       const occ = new EventOccurrence()
       occ.during = `[${this.time.start},${this.time.end}]`
+      occ.start = format(new Date(this.time.start),"yyyy-MM-dd'T'HH:mm")
+      occ.end = format(new Date(this.time.end),"yyyy-MM-dd'T'HH:mm")
       occurences.push(occ)
     } else {
       const dates = rrulestr(this.time.recurrence).all(
@@ -136,6 +138,7 @@ export class Event extends BaseEntity {
         occurences.push(occ)
       })
     }
+    console.log('the occurrences calculated', occurences)
     return occurences
   }
 }
