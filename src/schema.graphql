@@ -48,6 +48,7 @@ type EventImage {
 }
 
 type EventImages {
+    event: CalendarEvent
     thumb: EventImage
     cover: EventImage
     poster: EventImage

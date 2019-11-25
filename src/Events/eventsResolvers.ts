@@ -8,7 +8,7 @@ import { getTags } from "./EventsService"
 import { equals } from "ramda"
 import { User } from "../Auth/User.entity"
 import { hasAnyRole } from "../Auth/authUtils"
-import { EventTag } from "../Calendar/EventTag.entity"
+import { ImageType } from "../Image/EventImage.entity";
 
 const resolvers: ResolverMap = {
   Query: {
@@ -53,9 +53,17 @@ const resolvers: ResolverMap = {
     },
     tags: async (event: Event) => {
       return event.tags
-    }
+    },
+    images: async (event: Event) => {
+      const allImages = await event.images
+      return {
+        thumb: allImages.filter(image => image.type === ImageType.Thumbnail)[0],
+        cover: allImages.filter(image => image.type === ImageType.Cover)[0],
+        poster: allImages.filter(image => image.type === ImageType.Poster)[0],
+        gallery: allImages.filter(image => image.type === ImageType.Gallery),
+      }
+    },
   },
-
   EventOccurrence: {
     start: (eOcc: EventOccurrence) => {
       return eOcc.start
@@ -105,7 +113,7 @@ const resolvers: ResolverMap = {
       }
       if (input.tagNames) {
         const tags = await getTags(input.tagNames)
-        console.log('will set tags', tags)
+        console.log("will set tags", tags)
         event.tags = Promise.resolve(tags)
       }
       event.location = input.location
@@ -124,7 +132,10 @@ const resolvers: ResolverMap = {
         throw Error("not authenticated")
       }
       const event = await Event.findOne(id)
-      const isSuperUser = hasAnyRole(await context.user.roles, ['admin','embassador'])
+      const isSuperUser = hasAnyRole(await context.user.roles, [
+        "admin",
+        "embassador",
+      ])
       const isOwner = (await event.owner).id !== context.user.id
 
       if (!(isSuperUser || isOwner)) {
@@ -162,7 +173,7 @@ const resolvers: ResolverMap = {
       }
       if (input.tagNames) {
         const tagsToSet = await getTags(input.tagNames)
-        console.log('tagsToSet, ', tagsToSet)
+        console.log("tagsToSet, ", tagsToSet)
         event.tags = Promise.resolve(tagsToSet)
       }
       if (input.location) {
@@ -173,7 +184,10 @@ const resolvers: ResolverMap = {
     deleteEvent: async (_, id: string, context: Context): Promise<User> => {
       const event = await Event.findOne(id)
 
-      const isSuperUser = hasAnyRole(await context.user.roles, ['admin','embassador'])
+      const isSuperUser = hasAnyRole(await context.user.roles, [
+        "admin",
+        "embassador",
+      ])
       const isOwner = (await event.owner).id !== context.user.id
 
       if (!(isSuperUser || isOwner)) {

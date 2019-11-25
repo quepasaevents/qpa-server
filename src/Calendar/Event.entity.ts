@@ -85,7 +85,7 @@ export class Event extends BaseEntity {
   @OneToMany(type => EventImage, image => image.event, {
     onDelete: 'CASCADE'
   })
-  images: EventImage[]
+  images: Promise<EventImage[]>
 
   @Column(type => EventLocation)
   location: EventLocation

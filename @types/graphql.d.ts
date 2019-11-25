@@ -130,6 +130,7 @@ declare namespace GQL {
 
   interface IEventImages {
     __typename: 'EventImages';
+    event: ICalendarEvent | null;
     thumb: IEventImage | null;
     cover: IEventImage | null;
     poster: IEventImage | null;
