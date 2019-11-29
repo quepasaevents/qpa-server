@@ -73,6 +73,7 @@ declare namespace GQL {
     occurrences: Array<IEventOccurrence | null> | null;
     tags: Array<IEventTag | null> | null;
     images: IEventImages | null;
+    publishedState: any;
   }
 
   interface IInfoOnCalendarEventArguments {
@@ -174,6 +175,10 @@ declare namespace GQL {
     createEvent: ICalendarEvent | null;
     updateEvent: ICalendarEvent | null;
     deleteEvent: IUser;
+    startEventRevision: IEventRevision | null;
+    submitEventRevision: IEventRevision | null;
+    requestEventRevision: ICalendarEvent | null;
+    dismissOpenEventRevision: IEventRevision | null;
     setEventImage: ICalendarEvent | null;
     unsetEventImage: ICalendarEvent | null;
     addEventGalleryImages: ICalendarEvent | null;
@@ -213,6 +218,22 @@ declare namespace GQL {
 
   interface IDeleteEventOnMutationArguments {
     id: string;
+  }
+
+  interface IStartEventRevisionOnMutationArguments {
+    input: IStartEventRevisionInput;
+  }
+
+  interface ISubmitEventRevisionOnMutationArguments {
+    input: IReviseEventInput;
+  }
+
+  interface IRequestEventRevisionOnMutationArguments {
+    input: IRequestRevisionInput;
+  }
+
+  interface IDismissOpenEventRevisionOnMutationArguments {
+    input: IEventRevisionInput;
   }
 
   interface ISetEventImageOnMutationArguments {
@@ -281,7 +302,7 @@ declare namespace GQL {
     infos: Array<IEventInformationInput | null>;
     location: IEventLocationInput;
     tagNames: Array<string>;
-    status: string;
+    publishedState: any;
   }
 
   interface IEventTimeInput {
@@ -310,6 +331,40 @@ declare namespace GQL {
     location?: IEventLocationInput | null;
     tagNames: Array<string>;
     status?: string | null;
+    publishedState: any;
+  }
+
+  interface IStartEventRevisionInput {
+    eventId: string;
+  }
+
+  interface IEventRevision {
+    __typename: 'EventRevision';
+    id: string;
+    event: ICalendarEvent;
+    author: IUser;
+    accepting: boolean | null;
+    denying: boolean | null;
+    spam: boolean | null;
+    comment: string | null;
+    createdAt: any;
+    submittedAt: any | null;
+  }
+
+  interface IReviseEventInput {
+    revisionId: string;
+    accepting: boolean;
+    denying: boolean;
+    spam: boolean;
+    comment?: string | null;
+  }
+
+  interface IRequestRevisionInput {
+    eventId: string;
+  }
+
+  interface IEventRevisionInput {
+    revisionId: string;
   }
 
   interface IEventImageUploadInput {

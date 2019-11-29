@@ -1,14 +1,26 @@
-import {
-  Event,
-  EventInformation,
-  EventOccurrence,
-} from "../Calendar/Event.entity"
-import { Context, ResolverMap } from "../@types/graphql-utils"
-import { getTags } from "./EventsService"
-import { equals } from "ramda"
-import { User } from "../Auth/User.entity"
-import { hasAnyRole } from "../Auth/authUtils"
+import { Event, EventInformation, EventOccurrence, RevisionState } from "../Calendar/Event.entity";
+import { Context, ResolverMap } from "../@types/graphql-utils";
+import { getTags } from "./EventsService";
+import { equals } from "ramda";
+import { User } from "../Auth/User.entity";
+import { hasAnyRole } from "../Auth/authUtils";
 import { ImageType } from "../Image/EventImage.entity";
+
+const getUserTrustLevel = async (context: Context) => {
+  const isFullyTrusted = hasAnyRole(await context.user.roles, [
+    "admin",
+    "embassador",
+  ])
+  const isPartiallyTrusted =
+    !isFullyTrusted && hasAnyRole(await context.user.roles, ["organizer"])
+  const nonTrusted = !(isFullyTrusted || isPartiallyTrusted)
+
+  return {
+    isFullyTrusted,
+    isPartiallyTrusted,
+    nonTrusted,
+  }
+}
 
 const resolvers: ResolverMap = {
   Query: {
@@ -82,18 +94,20 @@ const resolvers: ResolverMap = {
       if (!context.user) {
         throw Error("not authenticated")
       }
-
-      if (
-        !hasAnyRole(await context.user.roles, [
-          "admin",
-          "embassador",
-          "organizer",
-        ])
-      ) {
-        throw Error("Cannot create event, please validate as organizer")
-      }
+      const userTrustLevel = await getUserTrustLevel(context)
 
       const event = new Event()
+
+      event.publishedState = input.publishedState
+
+      if (userTrustLevel.isFullyTrusted) {
+        event.revisionState = RevisionState.ACCEPTED
+      } else if (userTrustLevel.isPartiallyTrusted) {
+        event.revisionState = RevisionState.PENDING_SUGGESTED_REVISION
+      } else {
+        event.revisionState = RevisionState.PENDING_MANDATORY_REVISION
+      }
+
       event.owner = Promise.resolve(context.user)
       event.infos = Promise.resolve(
         input.infos.map(infoInput => {
@@ -132,13 +146,11 @@ const resolvers: ResolverMap = {
         throw Error("not authenticated")
       }
       const event = await Event.findOne(id)
-      const isSuperUser = hasAnyRole(await context.user.roles, [
-        "admin",
-        "embassador",
-      ])
+      const userTrustLevel = await getUserTrustLevel(context)
+
       const isOwner = (await event.owner).id !== context.user.id
 
-      if (!(isSuperUser || isOwner)) {
+      if (!((userTrustLevel.isFullyTrusted) || isOwner)) {
         throw Error("Only the owner can edit their events")
       }
       if (Object.keys(fields).length === 0) {
@@ -178,6 +190,9 @@ const resolvers: ResolverMap = {
       }
       if (input.location) {
         event.location = input.location
+      }
+      if (event.revisionState === RevisionState.ACCEPTED) {
+        event.revisionState = RevisionState.PENDING_SUGGESTED_REVISION
       }
       return event.save()
     },

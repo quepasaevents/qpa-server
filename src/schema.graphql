@@ -17,6 +17,7 @@ scalar RoleType
 scalar Translations
 scalar Upload
 scalar EventImageType
+scalar EventPublishedState
 
 type UserSession {
     hash: String!
@@ -66,6 +67,7 @@ type CalendarEvent {
     occurrences: [EventOccurrence]
     tags: [EventTag]
     images: EventImages
+    publishedState: EventPublishedState!
 }
 
 type EventTag {
@@ -162,7 +164,7 @@ input CreateEventInput {
     infos: [EventInformationInput]!
     location: EventLocationInput!
     tagNames: [String!]!
-    status: String!
+    publishedState: EventPublishedState!
 }
 
 input UpdateEventInput {
@@ -172,6 +174,7 @@ input UpdateEventInput {
     location: EventLocationInput
     tagNames: [String!]!
     status: String
+    publishedState: EventPublishedState!
 }
 
 input GrantRoleInput {
@@ -199,7 +202,6 @@ input CreateEventTagInput {
     translations: [CreateModifyEventTagTranslationInput!]!
 }
 
-
 input UpdateEventTagInput {
     id: ID!
     name: String!
@@ -226,6 +228,33 @@ input EventGalleryImagesInput {
     eventId: ID!
     imageIds: [ID!]!
 }
+input StartEventRevisionInput {
+    eventId: ID!
+}
+input ReviseEventInput {
+    revisionId: ID!
+    accepting: Boolean!
+    denying: Boolean!
+    spam: Boolean!
+    comment: String
+}
+type EventRevision {
+    id: ID!
+    event: CalendarEvent!
+    author: User!
+    accepting: Boolean
+    denying: Boolean
+    spam: Boolean
+    comment: String
+    createdAt: Date!
+    submittedAt: Date
+}
+input RequestRevisionInput {
+    eventId: ID!
+}
+input EventRevisionInput {
+    revisionId: ID!
+}
 
 type Mutation {
     # Auth
@@ -239,6 +268,11 @@ type Mutation {
     createEvent(input: CreateEventInput!): CalendarEvent
     updateEvent(input: UpdateEventInput!): CalendarEvent
     deleteEvent(id: ID!): User!
+
+    startEventRevision(input: StartEventRevisionInput!): EventRevision
+    submitEventRevision(input: ReviseEventInput!): EventRevision
+    requestEventRevision(input: RequestRevisionInput!): CalendarEvent
+    dismissOpenEventRevision(input: EventRevisionInput!): EventRevision
 
     # Event Images
     setEventImage(input: EventImageUploadInput!): CalendarEvent

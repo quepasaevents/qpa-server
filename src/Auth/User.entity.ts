@@ -8,6 +8,7 @@ import {
 import { Event } from "../Calendar/Event.entity"
 import {Session, SessionInvite} from "./Session.entity"
 import UserRole from "./UserRole.entity";
+import EventRevision from "../Events/EventRevision.entity";
 
 @Entity("app_user")
 export class User extends BaseEntity {
@@ -37,4 +38,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => UserRole, role => role.user)
   roles: Promise<UserRole[]>
+
+  @OneToMany(_ => EventRevision, revision => revision.author)
+  eventRevisions: Promise<EventRevision[]>
 }

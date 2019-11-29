@@ -13,7 +13,8 @@ import { DateTime } from "luxon"
 import { rrulestr } from "rrule"
 import { EventTag } from "./EventTag.entity"
 import { format } from "date-fns"
-import { EventImage } from "../Image/EventImage.entity";
+import { EventImage } from "../Image/EventImage.entity"
+import EventRevision from "../Events/EventRevision.entity"
 
 export const breakTime = (isoString: string) => {
   const tSplit = isoString.split("T")
@@ -21,6 +22,20 @@ export const breakTime = (isoString: string) => {
     date: tSplit[0],
     time: tSplit[1].substr(0, 8),
   }
+}
+
+export enum EventPublishedState {
+  PUBLISHED = "published",
+  DRAFT = "draft",
+}
+
+export enum RevisionState {
+  PENDING_SUGGESTED_REVISION = "pending_suggested_revision",
+  PENDING_MANDATORY_REVISION = "pending_mandatory_revision",
+  CHANGES_REQUIRED = "changes_required",
+  ACCEPTED = "accepted",
+  DENIED = "denied",
+  SPAM = "spam",
 }
 
 export class EventLocation {
@@ -83,14 +98,38 @@ export class Event extends BaseEntity {
   status: string
 
   @OneToMany(type => EventImage, image => image.event, {
-    onDelete: 'CASCADE'
+    onDelete: "CASCADE",
   })
   images: Promise<EventImage[]>
+
+  @OneToMany(_ => EventRevision, revision => revision.event, {
+    onDelete: "CASCADE",
+  })
+  revisions: Promise<EventRevision[]>
+
+  @Column("boolean")
+  pendingRevision: boolean
+
+  @Column("varchar")
+  publishedState: EventPublishedState
+
+  @Column("varchar")
+  revisionState: RevisionState
 
   @Column(type => EventLocation)
   location: EventLocation
 
   getOccurrences(): EventOccurrence[] {
+    const revisionAllowsGoingLive = [
+      RevisionState.PENDING_SUGGESTED_REVISION,
+      RevisionState.ACCEPTED,
+    ].includes(this.revisionState)
+    const isPublished = this.publishedState === EventPublishedState.PUBLISHED
+
+    if (!revisionAllowsGoingLive || !isPublished) {
+      return []
+    }
+
     const occurences = []
     const justTime = {
       start: format(new Date(this.time.start), "HH:mm"),
@@ -99,8 +138,8 @@ export class Event extends BaseEntity {
     if (!this.time.recurrence) {
       const occ = new EventOccurrence()
       occ.during = `[${this.time.start},${this.time.end}]`
-      occ.start = format(new Date(this.time.start),"yyyy-MM-dd'T'HH:mm")
-      occ.end = format(new Date(this.time.end),"yyyy-MM-dd'T'HH:mm")
+      occ.start = format(new Date(this.time.start), "yyyy-MM-dd'T'HH:mm")
+      occ.end = format(new Date(this.time.end), "yyyy-MM-dd'T'HH:mm")
       occurences.push(occ)
     } else {
       const dates = rrulestr(this.time.recurrence).all(
@@ -138,7 +177,7 @@ export class Event extends BaseEntity {
         occurences.push(occ)
       })
     }
-    console.log('the occurrences calculated', occurences)
+    console.log("the occurrences calculated", occurences)
     return occurences
   }
 }
