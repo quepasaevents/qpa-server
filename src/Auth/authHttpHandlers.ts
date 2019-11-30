@@ -52,7 +52,7 @@ const authHttpHandlers = (sessionManager: SessionManager) => ({
     console.log('Found session with hash', session.hash)
     res.setHeader('set-cookie', `authentication=${session.hash};Path=/;HttpOnly;Max-Age=2628000;Secure`)
 
-    res.send('alright')
+    res.send(session.hash)
   },
 
   signupHandler: async (req: Request, res: Response) => {
