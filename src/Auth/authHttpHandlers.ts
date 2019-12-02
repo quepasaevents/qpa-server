@@ -49,10 +49,9 @@ const authHttpHandlers = (sessionManager: SessionManager) => ({
       throw new Error('Session is null')
     }
 
-    console.log('Found session with hash', session.hash)
-    res.setHeader('set-cookie', `authentication=${session.hash};Path=/;HttpOnly;Max-Age=2628000;Secure`)
+    res.setHeader('set-cookie', `authentication=${session.hash};${sessionManager.domain !== 'localhost' ? "Secure;" : ""};Domain=${sessionManager.domain};HttpOnly;Path=/;Max-Age=15778800`)
 
-    res.send('alright')
+    res.send(session.hash)
   },
 
   signupHandler: async (req: Request, res: Response) => {

@@ -16,6 +16,7 @@ const start = async () => {
     sendEmail: sendEmail,
     emailTargetDomain: config.domain,
     emailSenderDomain: config.mailgun.domain,
+    domain: config.domain
   })
 
   const imageBucketService = new ImageBucketService({
@@ -51,6 +52,7 @@ const start = async () => {
   app.post("/api/signup", authHandlers.signupHandler)
   app.post("/api/login", authHandlers.loginHandler)
   app.post("/api/init-session", authHandlers.initializeSessionHandler)
+  app.get("/api/init-session/:hash", authHandlers.initializeSessionHandler)
   app.get("/api/signout", authHandlers.signoutHandler)
 
   apolloExpressServer.applyMiddleware({ app })
