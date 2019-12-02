@@ -12,6 +12,7 @@ import SessionManager from "./Auth/SessionManager"
 import { tagResolvers } from "./Calendar/tagsResolvers"
 import ImageBucketService from "./Image/ImageBucketService"
 import { EventImageResolvers } from "./Image/eventImageResolvers"
+import revisionResolvers from './Events/revisionResolvers'
 
 interface Dependencies {
   typeormConnection: Connection
@@ -65,6 +66,7 @@ export const createServer = async (
         ...UserQueryResolvers,
         ...tagResolvers.Query,
         ...eventImageResolvers.Query,
+        ...revisionResolvers.Query
       },
       Mutation: {
         ...resolvers.Mutation,
@@ -73,12 +75,16 @@ export const createServer = async (
         ...UserMutationResolvers,
         ...tagResolvers.Mutation,
         ...eventImageResolvers.Mutation,
+        ...revisionResolvers.Mutation
       },
       UserSession: {
         ...authResolvers.UserSession,
       },
       EventTag: {
         ...tagResolvers.EventTag,
+      },
+      EventRevision: {
+        ...revisionResolvers.EventRevision
       },
       ...eventResolvers,
       ...userResolvers,

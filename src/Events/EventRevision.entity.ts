@@ -19,28 +19,28 @@ export default class EventRevision extends BaseEntity {
   @ManyToOne(_ => Event, event => event.revisions)
   event: Promise<Event>
 
-  @Column("boolean")
+  @Column("boolean", {nullable: true})
   accepting: boolean
 
-  @Column("boolean")
+  @Column("boolean", {nullable: true})
   denying: boolean
 
-  @Column("boolean")
+  @Column("boolean", {nullable: true})
   spam: boolean
 
-  @Column("varchar")
+  @Column("varchar", {nullable: true})
   comment: string
 
   @Column("timestamp")
   createdAt: Date
 
-  @Column("timestamp")
+  @Column("timestamp", {nullable: true})
   submittedAt: Date
 
-  @ManyToOne(type => User)
+  @ManyToOne(type => User, {nullable: true})
   dismissedBy: Promise<User>
 
-  @Column("timestamp")
+  @Column("timestamp", {nullable: true})
   staleAt: Date
 
   async isActive() {

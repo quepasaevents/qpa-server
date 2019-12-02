@@ -89,6 +89,13 @@ const resolvers: ResolverMap = {
         gallery: allImages.filter(image => image.type === ImageType.Gallery),
       }
     },
+    revisions: async (event: Event, req, context: Context) => {
+      const {nonTrusted} = await getUserTrustLevel(context)
+      if (nonTrusted) {
+        throw new Error("You cannot access the revision history")
+      }
+      return event.revisions
+    }
   },
   EventOccurrence: {
     start: (eOcc: EventOccurrence) => {

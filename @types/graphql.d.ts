@@ -75,6 +75,7 @@ declare namespace GQL {
     images: IEventImages | null;
     publishedState: any;
     revisionState: any;
+    revisions: Array<IEventRevision | null> | null;
   }
 
   interface IInfoOnCalendarEventArguments {
@@ -83,6 +84,7 @@ declare namespace GQL {
 
   interface IEventInformation {
     __typename: 'EventInformation';
+    id: string;
     language: string;
     title: string;
     description: string | null;
@@ -144,6 +146,19 @@ declare namespace GQL {
     url: string;
   }
 
+  interface IEventRevision {
+    __typename: 'EventRevision';
+    id: string;
+    event: ICalendarEvent;
+    author: IUser;
+    accepting: boolean | null;
+    denying: boolean | null;
+    spam: boolean | null;
+    comment: string | null;
+    createdAt: any;
+    submittedAt: any | null;
+  }
+
   interface IUserRole {
     __typename: 'UserRole';
     user: IUser;
@@ -174,10 +189,10 @@ declare namespace GQL {
     createEvent: ICalendarEvent | null;
     updateEvent: ICalendarEvent | null;
     deleteEvent: IUser;
-    startEventRevision: IEventRevision | null;
-    submitEventRevision: IEventRevision | null;
+    startEventRevision: ICalendarEvent | null;
+    submitEventRevision: ICalendarEvent | null;
     requestEventRevision: ICalendarEvent | null;
-    dismissOpenEventRevision: IEventRevision | null;
+    dismissOpenEventRevision: ICalendarEvent | null;
     setEventImage: ICalendarEvent | null;
     unsetEventImage: ICalendarEvent | null;
     addEventGalleryImages: ICalendarEvent | null;
@@ -335,19 +350,6 @@ declare namespace GQL {
 
   interface IStartEventRevisionInput {
     eventId: string;
-  }
-
-  interface IEventRevision {
-    __typename: 'EventRevision';
-    id: string;
-    event: ICalendarEvent;
-    author: IUser;
-    accepting: boolean | null;
-    denying: boolean | null;
-    spam: boolean | null;
-    comment: string | null;
-    createdAt: any;
-    submittedAt: any | null;
   }
 
   interface IReviseEventInput {

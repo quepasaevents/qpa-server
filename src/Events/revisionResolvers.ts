@@ -47,7 +47,10 @@ const revisionResolvers: ResolverMap = {
       newRevision.createdAt = new Date()
       newRevision.event = Promise.resolve(event)
       newRevision.author = Promise.resolve(context.user)
-      return newRevision.save()
+      const eventRevisions = (await event.revisions) || []
+      event.revisions = Promise.resolve([...eventRevisions, newRevision])
+      await newRevision.save()
+      return event.save()
     },
     submitEventRevision: async (
       _,
@@ -65,6 +68,7 @@ const revisionResolvers: ResolverMap = {
           `You can only submit your own revision, this revision belongs to ${revisionAuthor.name}.`
         )
       }
+      return revision.event
     },
     requestEventRevision: async (
       _,
@@ -98,9 +102,16 @@ const revisionResolvers: ResolverMap = {
         throw new Error("Revision is not active and so cannot be dismissed")
       }
       revision.dismissedBy = Promise.resolve(context.user)
-      return revision.save()
+      await revision.save()
+      return revision.event
     }
   },
+  Query: {
+
+  },
+  EventRevision: {
+
+  }
 }
 
 export default revisionResolvers
