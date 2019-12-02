@@ -1,10 +1,16 @@
-import { Event, EventInformation, EventOccurrence, RevisionState } from "../Calendar/Event.entity";
-import { Context, ResolverMap } from "../@types/graphql-utils";
-import { getTags } from "./EventsService";
-import { equals } from "ramda";
-import { User } from "../Auth/User.entity";
-import { hasAnyRole } from "../Auth/authUtils";
-import { ImageType } from "../Image/EventImage.entity";
+import {
+  Event,
+  EventInformation,
+  EventOccurrence,
+  EventRevisionState,
+} from "../Calendar/Event.entity"
+import { Context, ResolverMap } from "../@types/graphql-utils"
+import { getTags } from "./EventsService"
+import { equals } from "ramda"
+import { User } from "../Auth/User.entity"
+import { hasAnyRole } from "../Auth/authUtils"
+import { ImageType } from "../Image/EventImage.entity"
+import { QueryBuilder, getConnection } from "typeorm"
 
 const getUserTrustLevel = async (context: Context) => {
   const isFullyTrusted = hasAnyRole(await context.user.roles, [
@@ -28,13 +34,21 @@ const resolvers: ResolverMap = {
       return Event.findOne(req.id)
     },
     events: async (_, req: GQL.IEventsOnQueryArguments) => {
-      return Event.find({
-        take: req.filter.limit,
-        where:
-          req.filter && req.filter.owner
-            ? `"ownerId"='${req.filter.owner}'`
-            : null,
-      })
+      const queryBuilder = getConnection()
+        .getRepository(Event)
+        .createQueryBuilder()
+
+      if (req.filter.owner) {
+        queryBuilder.where("ownerId = :ownerId", { ownerId: req.filter.owner })
+      } else if (req.filter.pendingRevision) {
+          queryBuilder.where(`"revisionState" = '${EventRevisionState.PENDING_MANDATORY_REVISION}'`)
+            .orWhere(`"revisionState" = '${EventRevisionState.PENDING_SUGGESTED_REVISION}'`)
+      }
+
+      if (req.filter.limit) {
+        queryBuilder.limit(req.filter.limit)
+      }
+      return queryBuilder.getMany()
     },
     occurrences: async (_, req: GQL.IOccurrencesOnQueryArguments) => {
       const { from, to } = req.filter
@@ -101,11 +115,11 @@ const resolvers: ResolverMap = {
       event.publishedState = input.publishedState
 
       if (userTrustLevel.isFullyTrusted) {
-        event.revisionState = RevisionState.ACCEPTED
+        event.revisionState = EventRevisionState.ACCEPTED
       } else if (userTrustLevel.isPartiallyTrusted) {
-        event.revisionState = RevisionState.PENDING_SUGGESTED_REVISION
+        event.revisionState = EventRevisionState.PENDING_SUGGESTED_REVISION
       } else {
-        event.revisionState = RevisionState.PENDING_MANDATORY_REVISION
+        event.revisionState = EventRevisionState.PENDING_MANDATORY_REVISION
       }
 
       event.owner = Promise.resolve(context.user)
@@ -150,7 +164,7 @@ const resolvers: ResolverMap = {
 
       const isOwner = (await event.owner).id !== context.user.id
 
-      if (!((userTrustLevel.isFullyTrusted) || isOwner)) {
+      if (!(userTrustLevel.isFullyTrusted || isOwner)) {
         throw Error("Only the owner can edit their events")
       }
       if (Object.keys(fields).length === 0) {
@@ -191,8 +205,8 @@ const resolvers: ResolverMap = {
       if (input.location) {
         event.location = input.location
       }
-      if (event.revisionState === RevisionState.ACCEPTED) {
-        event.revisionState = RevisionState.PENDING_SUGGESTED_REVISION
+      if (event.revisionState === EventRevisionState.ACCEPTED) {
+        event.revisionState = EventRevisionState.PENDING_SUGGESTED_REVISION
       }
       return event.save()
     },

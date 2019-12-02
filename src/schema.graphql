@@ -68,6 +68,7 @@ type CalendarEvent {
     tags: [EventTag]
     images: EventImages
     publishedState: EventPublishedState!
+    revisionState: EventEventRevisionState!
 }
 
 type EventTag {
@@ -111,6 +112,7 @@ scalar TimeZone
 
 #  "confirmed" | "tentative" | "cancelled"
 scalar EventStatus
+scalar EventEventRevisionState
 
 # e.g. 'de', 'en', etc'
 scalar Language
@@ -127,9 +129,7 @@ scalar Category
 input EventsQueryFilter {
     owner: ID
     limit: Int
-    from: Timestamp
-    to: Timestamp
-    categories: [Category]
+    pendingRevision: Boolean
 }
 
 input OccurrencesQueryFilter {

@@ -1,6 +1,6 @@
 import { Context, ResolverMap } from "../@types/graphql-utils";
 import { hasHigherRole } from "../Auth/authUtils"
-import { Event, RevisionState } from "../Calendar/Event.entity"
+import { Event, EventRevisionState } from "../Calendar/Event.entity"
 import EventRevision from "./EventRevision.entity"
 
 const OPEN_REVISION_STALE_MS = 15 * 60 * 1000
@@ -79,13 +79,13 @@ const revisionResolvers: ResolverMap = {
       if (!((await hasHigherRole(context)) || isOwner)) {
         throw new Error("Only owner can request revision")
       }
-      if (event.revisionState !== RevisionState.CHANGES_REQUIRED) {
+      if (event.revisionState !== EventRevisionState.CHANGES_REQUIRED) {
         throw new Error(
           `No changes were required, current event state is ${event.revisionState}`
         )
       }
 
-      event.revisionState = RevisionState.PENDING_MANDATORY_REVISION
+      event.revisionState = EventRevisionState.PENDING_MANDATORY_REVISION
       return event.save()
     },
     dismissOpenEventRevision: async (_, req: GQL.IDismissOpenEventRevisionOnMutationArguments, context: Context) => {

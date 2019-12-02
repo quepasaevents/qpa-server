@@ -7,6 +7,7 @@ const isDebugSQL = !!process.env.DEBUG_SQL
 const logging: LoggerOptions = ["error"]
 if (isDebugSQL) {
   logging.push("query")
+  logging.push("info")
 }
 const config: PostgresConnectionOptions = {
   type: "postgres",

@@ -29,7 +29,7 @@ export enum EventPublishedState {
   DRAFT = "draft",
 }
 
-export enum RevisionState {
+export enum EventRevisionState {
   PENDING_SUGGESTED_REVISION = "pending_suggested_revision",
   PENDING_MANDATORY_REVISION = "pending_mandatory_revision",
   CHANGES_REQUIRED = "changes_required",
@@ -107,22 +107,19 @@ export class Event extends BaseEntity {
   })
   revisions: Promise<EventRevision[]>
 
-  @Column("boolean")
-  pendingRevision: boolean
-
   @Column("varchar")
   publishedState: EventPublishedState
 
   @Column("varchar")
-  revisionState: RevisionState
+  revisionState: EventRevisionState
 
   @Column(type => EventLocation)
   location: EventLocation
 
   getOccurrences(): EventOccurrence[] {
     const revisionAllowsGoingLive = [
-      RevisionState.PENDING_SUGGESTED_REVISION,
-      RevisionState.ACCEPTED,
+      EventRevisionState.PENDING_SUGGESTED_REVISION,
+      EventRevisionState.ACCEPTED,
     ].includes(this.revisionState)
     const isPublished = this.publishedState === EventPublishedState.PUBLISHED
 

@@ -74,6 +74,7 @@ declare namespace GQL {
     tags: Array<IEventTag | null> | null;
     images: IEventImages | null;
     publishedState: any;
+    revisionState: any;
   }
 
   interface IInfoOnCalendarEventArguments {
@@ -152,9 +153,7 @@ declare namespace GQL {
   interface IEventsQueryFilter {
     owner?: string | null;
     limit?: number | null;
-    from?: any | null;
-    to?: any | null;
-    categories?: Array<any | null> | null;
+    pendingRevision?: boolean | null;
   }
 
   interface IOccurrencesQueryFilter {
