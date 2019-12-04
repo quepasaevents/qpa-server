@@ -151,9 +151,7 @@ declare namespace GQL {
     id: string;
     event: ICalendarEvent;
     author: IUser;
-    accepting: boolean | null;
-    denying: boolean | null;
-    spam: boolean | null;
+    conclusion: string | null;
     comment: string | null;
     createdAt: any;
     submittedAt: any | null;
@@ -355,9 +353,7 @@ declare namespace GQL {
 
   interface IReviseEventInput {
     revisionId: string;
-    accepting: boolean;
-    denying: boolean;
-    spam: boolean;
+    conclusion: string;
     comment?: string | null;
   }
 

@@ -8,6 +8,12 @@ import {
 import { User } from "../Auth/User.entity"
 import { Event } from "../Calendar/Event.entity"
 
+export enum EventRevisionConclusion {
+  ACCEPT= "accept",
+  REJECT="reject",
+  REQUEST_CHANGES="request_changes",
+  SPAM="spam"
+}
 @Entity()
 export default class EventRevision extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
@@ -19,17 +25,8 @@ export default class EventRevision extends BaseEntity {
   @ManyToOne(_ => Event, event => event.revisions)
   event: Promise<Event>
 
-  @Column("boolean", {nullable: true})
-  accepting: boolean
-
-  @Column("boolean", {nullable: true})
-  denying: boolean
-
-  @Column("boolean", {nullable: true})
-  spam: boolean
-
   @Column("varchar", {nullable: true})
-  comment: string
+  conclusion: EventRevisionConclusion
 
   @Column("timestamp")
   createdAt: Date

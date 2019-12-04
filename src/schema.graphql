@@ -235,18 +235,14 @@ input StartEventRevisionInput {
 }
 input ReviseEventInput {
     revisionId: ID!
-    accepting: Boolean!
-    denying: Boolean!
-    spam: Boolean!
+    conclusion: String!
     comment: String
 }
 type EventRevision {
     id: ID!
     event: CalendarEvent!
     author: User!
-    accepting: Boolean
-    denying: Boolean
-    spam: Boolean
+    conclusion: String
     comment: String
     createdAt: Date!
     submittedAt: Date

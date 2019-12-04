@@ -1,7 +1,7 @@
-import { Context, ResolverMap } from "../@types/graphql-utils"
-import { hasHigherRole } from "../Auth/authUtils"
-import { Event, EventRevisionState } from "../Calendar/Event.entity"
-import EventRevision from "./EventRevision.entity"
+import { Context, ResolverMap } from "../@types/graphql-utils";
+import { hasHigherRole } from "../Auth/authUtils";
+import { Event, EventRevisionState } from "../Calendar/Event.entity";
+import EventRevision, { EventRevisionConclusion } from "./EventRevision.entity";
 
 const OPEN_REVISION_STALE_MS = 15 * 60 * 1000
 const revisionResolvers: ResolverMap = {
@@ -67,6 +67,46 @@ const revisionResolvers: ResolverMap = {
         throw new Error(
           `You can only submit your own revision, this revision belongs to ${revisionAuthor.name}.`
         )
+      }
+      if (!req.input.conclusion) {
+        throw new Error(
+          "Revision must have a conclusion"
+        )
+      }
+      revision.conclusion = req.input.conclusion as EventRevisionConclusion
+      revision.submittedAt = new Date()
+      await revision.save()
+
+      const event = await revision.event
+      const nullifyOccurrences = async () => {
+        const existingOccurrences = await event.occurrences
+        if (existingOccurrences?.length) {
+          event.occurrences = Promise.resolve([])
+        }
+      }
+      switch(revision.conclusion) {
+        case EventRevisionConclusion.ACCEPT: {
+          event.occurrences = Promise.resolve(event.getOccurrences())
+          event.revisionState = EventRevisionState.ACCEPTED
+          break
+        }
+        case EventRevisionConclusion.REJECT: {
+          event.revisionState = EventRevisionState.DENIED
+          break
+        }
+        case EventRevisionConclusion.REQUEST_CHANGES: {
+          await nullifyOccurrences()
+          event.revisionState = EventRevisionState.CHANGES_REQUIRED
+          break
+        }
+        case EventRevisionConclusion.SPAM: {
+          await nullifyOccurrences()
+          event.revisionState = EventRevisionState.CHANGES_REQUIRED
+          break
+        }
+        default: {
+          throw new Error(`Conclusion type ${revision.conclusion} is not supported`)
+        }
       }
       return revision.event
     },
