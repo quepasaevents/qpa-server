@@ -206,13 +206,12 @@ const resolvers: ResolverMap = {
       }
       if (input.tagNames) {
         const tagsToSet = await getTags(input.tagNames)
-        console.log("tagsToSet, ", tagsToSet)
         event.tags = Promise.resolve(tagsToSet)
       }
       if (input.location) {
         event.location = input.location
       }
-      if (event.revisionState === EventRevisionState.ACCEPTED) {
+      if (!userTrustLevel.isFullyTrusted && event.revisionState === EventRevisionState.ACCEPTED) {
         event.revisionState = EventRevisionState.PENDING_SUGGESTED_REVISION
       }
       return event.save()
