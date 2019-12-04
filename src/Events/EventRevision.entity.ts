@@ -44,6 +44,6 @@ export default class EventRevision extends BaseEntity {
   staleAt: Date
 
   async isActive() {
-    return !(this.submittedAt || this.staleAt || (await this.dismissedBy).id)
+    return !(this.submittedAt || this.staleAt || (await this.dismissedBy)?.id)
   }
 }
