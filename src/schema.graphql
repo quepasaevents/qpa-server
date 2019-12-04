@@ -250,6 +250,7 @@ type EventRevision {
     comment: String
     createdAt: Date!
     submittedAt: Date
+    dismissedBy: User
 }
 input RequestRevisionInput {
     eventId: ID!

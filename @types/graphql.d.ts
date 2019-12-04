@@ -157,6 +157,7 @@ declare namespace GQL {
     comment: string | null;
     createdAt: any;
     submittedAt: any | null;
+    dismissedBy: IUser | null;
   }
 
   interface IUserRole {
