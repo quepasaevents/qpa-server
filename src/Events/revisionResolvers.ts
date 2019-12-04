@@ -1,4 +1,4 @@
-import { Context, ResolverMap } from "../@types/graphql-utils";
+import { Context, ResolverMap } from "../@types/graphql-utils"
 import { hasHigherRole } from "../Auth/authUtils"
 import { Event, EventRevisionState } from "../Calendar/Event.entity"
 import EventRevision from "./EventRevision.entity"
@@ -16,17 +16,17 @@ const revisionResolvers: ResolverMap = {
         throw new Error("Insufficient permissions to revise an event")
       }
       const event = await Event.findOne(req.input.eventId)
-      const openRevisions = (await event.revisions).filter(
-        revision => revision.isActive()
+      const openRevisions = (await event.revisions).filter(revision =>
+        revision.isActive()
       )
 
       const msTimeForStaleRevision = Date.now() - OPEN_REVISION_STALE_MS
       const revisionsToBeMarkedStale = []
       const openValidRevisions = []
-      openRevisions.forEach(revision => {
+      openRevisions.forEach(async revision => {
         if (revision.createdAt.getTime() < msTimeForStaleRevision) {
           revisionsToBeMarkedStale.push(revision)
-        } else {
+        } else if (!(revision.submittedAt || (await revision.dismissedBy))) {
           openValidRevisions.push(revision)
         }
       })
@@ -76,7 +76,6 @@ const revisionResolvers: ResolverMap = {
       context,
       info
     ) => {
-      const userHasHigherRole = await hasHigherRole(context)
       const event = await Event.findOne(req.input.eventId)
       const isOwner = (await event.owner).id === (await context.user).id
 
@@ -92,7 +91,11 @@ const revisionResolvers: ResolverMap = {
       event.revisionState = EventRevisionState.PENDING_MANDATORY_REVISION
       return event.save()
     },
-    dismissOpenEventRevision: async (_, req: GQL.IDismissOpenEventRevisionOnMutationArguments, context: Context) => {
+    dismissOpenEventRevision: async (
+      _,
+      req: GQL.IDismissOpenEventRevisionOnMutationArguments,
+      context: Context
+    ) => {
       const userHasHigherRole = await hasHigherRole(context)
       if (!userHasHigherRole) {
         throw new Error("Insufficient permissions to dismiss a revision")
@@ -104,14 +107,10 @@ const revisionResolvers: ResolverMap = {
       revision.dismissedBy = Promise.resolve(context.user)
       await revision.save()
       return revision.event
-    }
+    },
   },
-  Query: {
-
-  },
-  EventRevision: {
-
-  }
+  Query: {},
+  EventRevision: {},
 }
 
 export default revisionResolvers
