@@ -85,8 +85,8 @@ const revisionResolvers: ResolverMap = {
       }
       switch(revision.conclusion) {
         case EventRevisionConclusion.ACCEPT: {
-          event.occurrences = Promise.resolve(event.getOccurrences())
           event.revisionState = EventRevisionState.ACCEPTED
+          event.occurrences = Promise.resolve(event.getOccurrences())
           break
         }
         case EventRevisionConclusion.REJECT: {
@@ -107,7 +107,8 @@ const revisionResolvers: ResolverMap = {
           throw new Error(`Conclusion type ${revision.conclusion} is not supported`)
         }
       }
-      return revision.event
+      await event.save()
+      return event
     },
     requestEventRevision: async (
       _,
