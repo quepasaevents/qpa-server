@@ -22,7 +22,9 @@ export default class EventRevision extends BaseEntity {
   @ManyToOne(_ => User, user => user.eventRevisions)
   author: Promise<User>
 
-  @ManyToOne(_ => Event, event => event.revisions)
+  @ManyToOne(_ => Event, event => event.revisions, {
+    onDelete: "CASCADE"
+  })
   event: Promise<Event>
 
   @Column("varchar", {nullable: true})
