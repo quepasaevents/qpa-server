@@ -141,6 +141,9 @@ input OccurrencesQueryFilter {
     categories: [Category]
     limit: Int
 }
+input RevisionsQueryFilter {
+    limit: Int
+}
 
 input EventTimeInput {
     timeZone: TimeZone!
@@ -247,6 +250,7 @@ type EventRevision {
     createdAt: Date!
     submittedAt: Date
     dismissedBy: User
+    lastChangedAt: Date!
 }
 input RequestRevisionInput {
     eventId: ID!
@@ -299,4 +303,6 @@ type Query {
     occurrence(id: ID!): EventOccurrence
 
     tags: [EventTag]
+
+    revisions(filter: RevisionsQueryFilter!): [EventRevision]
 }

@@ -44,7 +44,6 @@ const revisionResolvers: ResolverMap = {
       }
 
       const newRevision = new EventRevision()
-      newRevision.createdAt = new Date()
       newRevision.event = Promise.resolve(event)
       newRevision.author = Promise.resolve(context.user)
       const eventRevisions = (await event.revisions) || []
@@ -120,7 +119,7 @@ const revisionResolvers: ResolverMap = {
       const isOwner = (await event.owner).id === (await context.user).id
 
       if (!((await hasHigherRole(context)) || isOwner)) {
-        throw new Error("Only owner can request revision")
+        throw new Error("Only owner, embassador or admin can request revision")
       }
       if (event.revisionState !== EventRevisionState.CHANGES_REQUIRED) {
         throw new Error(
@@ -149,7 +148,20 @@ const revisionResolvers: ResolverMap = {
       return revision.event
     },
   },
-  Query: {},
+  Query: {
+    revisions: async (_, req: GQL.IRevisionsOnQueryArguments, context: Context) => {
+      const userHasHigherRole = await hasHigherRole(context)
+      if (!userHasHigherRole) {
+        throw new Error("Insufficient permissions to dismiss a revision")
+      }
+      return EventRevision.find({
+        order: {
+          lastChangedAt: "DESC",
+        },
+        take: req.filter.limit || 20
+      })
+    }
+  },
   EventRevision: {},
 }
 

@@ -29,6 +29,7 @@ declare namespace GQL {
     occurrences: Array<IEventOccurrence | null> | null;
     occurrence: IEventOccurrence | null;
     tags: Array<IEventTag | null> | null;
+    revisions: Array<IEventRevision | null> | null;
   }
 
   interface IUserOnQueryArguments {
@@ -49,6 +50,10 @@ declare namespace GQL {
 
   interface IOccurrenceOnQueryArguments {
     id: string;
+  }
+
+  interface IRevisionsOnQueryArguments {
+    filter: IRevisionsQueryFilter;
   }
 
   interface IUser {
@@ -156,6 +161,7 @@ declare namespace GQL {
     createdAt: any;
     submittedAt: any | null;
     dismissedBy: IUser | null;
+    lastChangedAt: any;
   }
 
   interface IUserRole {
@@ -175,6 +181,10 @@ declare namespace GQL {
     to?: any | null;
     timeZone?: any | null;
     categories?: Array<any | null> | null;
+    limit?: number | null;
+  }
+
+  interface IRevisionsQueryFilter {
     limit?: number | null;
   }
 

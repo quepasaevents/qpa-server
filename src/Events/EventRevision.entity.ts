@@ -1,10 +1,10 @@
 import {
-  BaseEntity,
+  BaseEntity, BeforeInsert, BeforeUpdate,
   Column,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn,
-} from "typeorm"
+  PrimaryGeneratedColumn
+} from "typeorm";
 import { User } from "../Auth/User.entity"
 import { Event } from "../Calendar/Event.entity"
 
@@ -31,6 +31,9 @@ export default class EventRevision extends BaseEntity {
   @Column("timestamp")
   createdAt: Date
 
+  @Column("timestamp")
+  lastChangedAt: Date
+
   @Column("timestamp", {nullable: true})
   submittedAt: Date
 
@@ -39,6 +42,18 @@ export default class EventRevision extends BaseEntity {
 
   @Column("timestamp", {nullable: true})
   staleAt: Date
+
+  @BeforeInsert()
+  setCreatedAt() {
+    const now = new Date()
+    this.createdAt = now
+    this.lastChangedAt = now
+  }
+
+  @BeforeUpdate()
+  setLastChanged(){
+    this.lastChangedAt = new Date()
+  }
 
   async isActive() {
     return !(this.submittedAt || this.staleAt || (await this.dismissedBy)?.id)
