@@ -29,7 +29,7 @@
     "graphql-tag": "^2.10.1",
     "graphql-tools": "^4.0.5",
     "graphql-upload": "^8.1.0",
-    "luxon": "^1.17.2",
+    "luxon": "^2.5.2",
     "mailgun-js": "^0.22.0",
     "morgan": "^1.9.1",
     "node-pre-gyp": "^0.13.0",
